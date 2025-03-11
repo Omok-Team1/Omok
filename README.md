@@ -7,3 +7,5 @@
 # 팀원
 ![image](https://media-cldnry.s-nbcnews.com/image/upload/rockcms/2022-01/210602-doge-meme-nft-mb-1715-8afb7e.jpg)
 1. 박종한
+
+2. 이채은
