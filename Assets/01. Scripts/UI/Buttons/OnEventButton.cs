@@ -19,11 +19,19 @@ public class OnEventButton : UserFriendlyComponent
         {
             button.onClick.AddListener(EventMethod);
         }
+        
+        CastingChildren();
     }
 
     public override void EventMethod()
     {
+        UIManager.Instance.triggeredEventUIComponent = this;
         EventManager.Instance.PublishMessageQueue();
+    }
+    
+    public override List<IUIComponent> GetChildren()
+    {
+        return childrenComponent;
     }
     
     [Header("영어로 띄어쓰기 없는 카멜표기법을 권장합니다.")]

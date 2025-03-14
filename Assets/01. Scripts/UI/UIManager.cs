@@ -126,8 +126,6 @@ public class UIManager : Singleton<UIManager>
     {
         command?.Execute();
     }
-    
-    public LogInEventHandler LogInEventHandler;
 
     /// <summary>
     /// 최상위의 UI Canvas
@@ -136,4 +134,7 @@ public class UIManager : Singleton<UIManager>
     
     //private IUIComponent uiCanvas;
     private readonly Stack<List<IUIComponent>> _canvasTrace = new();
+    
+    //이벤트 처리를 위해 분리된 IOnEventSO에서 사용하기 위한, 이벤트를 발생시킨 주체에 대한 정보
+    public IUIComponent triggeredEventUIComponent;
 }

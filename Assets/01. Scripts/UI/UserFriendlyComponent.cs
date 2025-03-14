@@ -22,6 +22,7 @@ public abstract class UserFriendlyComponent : MonoBehaviour, IUIComponent
     /// <returns></returns>
     public virtual List<IUIComponent> GetChildren()
     {
+        Debug.LogWarning("Create Empty List, Check GetChildren()");
         return new List<IUIComponent>();
     }
 

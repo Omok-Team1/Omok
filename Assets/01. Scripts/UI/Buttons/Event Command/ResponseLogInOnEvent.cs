@@ -6,13 +6,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResponseLogInOnEvent", menuName = "IOnEventSO/ResponseLogInOnEvent")]
 public class ResponseLogInOnEvent : IOnEventSO
 {
+    // ReSharper disable Unity.PerformanceAnalysis
     public override void OnEvent(EventMessage msg)
     {
-        resultCanvas.SetActive(true);
-
-        //KeyValueException!! Just For Test
-        Debug.Log(msg.GetParameter<int>());
+        if (msg.GetParameter<string>() == "Success")
+        {
+            SceneId.Title.Load();
+        }
+        else
+        {
+            Debug.Log(msg.GetParameter<string>());
+            UIManager.Instance.OpenChildrenCanvas(UIManager.Instance.triggeredEventUIComponent);
+        }
     }
-
-    [SerializeField] private GameObject resultCanvas;
 }
