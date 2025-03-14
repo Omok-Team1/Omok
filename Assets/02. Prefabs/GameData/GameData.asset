@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4b33b804cdd43b9bfc458ca6f2be8c0, type: 3}
+  m_Name: GameData
+  m_EditorClassIdentifier: 
+  player1Marker: {fileID: 21300000, guid: 0e5acd3c060678b42bf389154f635ed7, type: 3}
+  player2Marker: {fileID: 21300000, guid: feae3c9b50f733f4eaef65484625c3de, type: 3}
+  emptySprite: {fileID: 21300000, guid: bc821aa98a2cb17458131b932b048fdb, type: 3}
+  cellPrefab: {fileID: 5386392480969014079, guid: e1ee1474de07db749ad576fd1af47c52, type: 3}
+  gridPrefab: {fileID: 3132327626336732221, guid: 3737355c92d5b4c44933d7f178568a1c, type: 3}
+  currentTurn: 0
+  winner: 0
+  player1WinPoint: 0
+  player2WinPoint: 0
