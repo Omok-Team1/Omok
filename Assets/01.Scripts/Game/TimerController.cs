@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections;
+using TMPro;
+using UnityEngine.UI;
 
 public class TimerController : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class TimerController : MonoBehaviour
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
     private bool isPlayer1Turn = true; // 플레이어1이 턴을 시작하는지 여부
+
+    // UI 요소
+    public TextMeshProUGUI timerText;    // 텍스트 UI
+    public Image FillImage;        // Radial fill 이미지
 
     private void Start()
     {
@@ -43,6 +48,9 @@ public class TimerController : MonoBehaviour
                 isTurnRunning = false;
                 EndTurn();
             }
+
+            // UI 업데이트
+            UpdateUI();
         }
 
         // 플레이어의 상태가 Lose로 변경되면 다른 플레이어는 Win 상태가 됨
@@ -97,5 +105,16 @@ public class TimerController : MonoBehaviour
             isTurnRunning = false;
             EndTurn();
         }
+    }
+
+    // UI 업데이트
+    private void UpdateUI()
+    {
+        // 남은 시간 계산
+        float remainingTime = turnTimeLimit - currentTurnTime;
+        timerText.text = Mathf.Ceil(remainingTime).ToString("F0"); // 소수점 없이 표시
+
+        // Radial Fill 업데이트
+        FillImage.fillAmount = remainingTime / turnTimeLimit;
     }
 }
