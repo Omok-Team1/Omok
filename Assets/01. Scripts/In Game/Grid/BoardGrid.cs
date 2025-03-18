@@ -11,6 +11,8 @@ public class BoardGrid : MonoBehaviour
     {
         _gameData = Addressables.LoadAssetAsync<GameData>("Assets/02. Prefabs/GameData/GameData.asset").WaitForCompletion();
         
+        _cameraOffsetY = gameObject.transform.position.y;
+        
         Init(_gameData);
     }
     
@@ -19,7 +21,8 @@ public class BoardGrid : MonoBehaviour
     {
         get
         {
-            if (row < 0 || row > GridSize - 1 || col < 0 || col > GridSize - 1)
+            // 격자 사이즈가 바뀌면 범위도 여기도 수정해줘야함!
+            if (row < -7 || row >= GridSize - 7 || col < -7 || col >= GridSize - 7)
                 return null;
             else
                 return _grid[(row, col)];
@@ -41,6 +44,7 @@ public class BoardGrid : MonoBehaviour
                 _grid[coordi].CellOnwer = Turn.PLAYER2;
             }
 
+            _grid[coordi].gameObject.layer = LayerMask.NameToLayer("Selected");
             _remainCells--;
             return true;
         }
@@ -64,7 +68,6 @@ public class BoardGrid : MonoBehaviour
     {
         _gameData = gameData;
         _remainCells = GridSize * GridSize;
-        _gridSprite = GetComponent<SpriteRenderer>();
         
         _grid = new Dictionary<(int, int), Cell>();
 
@@ -72,25 +75,23 @@ public class BoardGrid : MonoBehaviour
         {
             for (int col = -7; col < GridSize - 7; col++)
             {
-                //Vector3 pos = new Vector3((col * _gridSprite.bounds.size.x) / GridSize,
-                                        //(row * _gridSprite.bounds.size.y) / GridSize + _cameraOffsetY, 0);
                 Vector3 pos = new Vector3(col, row + _cameraOffsetY, 0);
                 
                 GameObject obj = Instantiate(gameData.cellPrefab, pos, Quaternion.identity);
                 obj.transform.SetParent(transform);
                 
                 Cell cell = obj.AddComponent<Cell>();
-                cell.Init((row + 1, col + 1), gameData.emptySprite);
-                _grid.Add((row + 1, col + 1), cell);
+                cell.Init((row, col), gameData.emptySprite);
+                _grid.Add((row, col), cell);
             }
         }
     }
 
     public void Clear()
     {
-        for (int row = 0; row < GridSize; row++)
+        for (int row = -7; row < GridSize - 7; row++)
         {
-            for (int col = 0; col < GridSize; col++)
+            for (int col = -7; col < GridSize - 7; col++)
             {
                 _grid[(row, col)].EraseMarker(_gameData.emptySprite);
             }
@@ -109,13 +110,11 @@ public class BoardGrid : MonoBehaviour
     }
 
     private int _remainCells = 0;
-    public bool RemainCells => _remainCells < GridSize * GridSize;
+    public bool RemainCells => _remainCells <= 0;
 
-    public const int GridSize = 15;
+    private const int GridSize = 15;
     
-    private readonly float _cameraOffsetY = -1f;
-    
+    private float _cameraOffsetY;
     private GameData _gameData;
-    private SpriteRenderer _gridSprite;
     private IDictionary<(int, int), Cell> _grid;
 }

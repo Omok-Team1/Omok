@@ -15,13 +15,11 @@ public class Select : MonoBehaviour
     }
     void OnMouseEnter()
     {
-        Debug.Log("Mouse enter");
         spriteRenderer.color = Color.green;
     }
 
     void OnMouseExit()
     {
-        Debug.Log("Mouse Exit");
         spriteRenderer.color = Color.white;
     }
 }
