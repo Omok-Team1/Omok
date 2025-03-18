@@ -7,10 +7,21 @@ public class ConstraintCheckState : IState
     public ConstraintCheckState(StateMachine stateMachine)
     {
         StateMachine = stateMachine;
+        
+        _actions.AddCommand(new CheckDoubleThree());
     }
     
     public void EnterState()
     {
+        if (_actions.ExecuteCommands() is true)
+        {
+            Debug.Log("쌍삼이 검출 되었습니다.");
+        }
+        else
+        {
+            Debug.Log("쌍삼이 검출 되지 않았습니다.");
+        }
+        
         StateMachine.ChangeState<PlayerState>();
     }
 

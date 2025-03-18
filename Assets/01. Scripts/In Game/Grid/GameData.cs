@@ -8,6 +8,7 @@ public class GameData : ScriptableObject
     //Marker Sprite & Cell Prefab Data
     public Sprite player1Marker;
     public Sprite player2Marker;
+    public Sprite constraintMarker;
     public Sprite emptySprite;
     
     public GameObject cellPrefab;

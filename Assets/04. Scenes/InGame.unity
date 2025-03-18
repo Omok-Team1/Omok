@@ -674,6 +674,7 @@ GameObject:
   - component: {fileID: 397960418}
   - component: {fileID: 397960417}
   - component: {fileID: 397960416}
+  - component: {fileID: 397960419}
   m_Layer: 5
   m_Name: '[Canvas] Profile'
   m_TagString: Untagged
@@ -768,6 +769,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &397960419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397960414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 200357b3a72090143993bb7934ae339f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &401512088
 GameObject:
   m_ObjectHideFlags: 0
@@ -1552,6 +1565,7 @@ GameObject:
   - component: {fileID: 1450225398}
   - component: {fileID: 1450225397}
   - component: {fileID: 1450225396}
+  - component: {fileID: 1450225399}
   m_Layer: 5
   m_Name: '[Button] Surrender'
   m_TagString: Untagged
@@ -1661,6 +1675,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1450225394}
   m_CullTransparentMesh: 1
+--- !u!114 &1450225399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450225394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58fedb251ea29b0418e4b2ddc0e1776c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childrenObject: []
+  targetScene: 1
 --- !u!1 &1735626060
 GameObject:
   m_ObjectHideFlags: 0

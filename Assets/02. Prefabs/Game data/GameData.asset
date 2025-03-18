@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1Marker: {fileID: 21300000, guid: f0fa05008c947cc4681dd4844cf6c9d7, type: 3}
   player2Marker: {fileID: 21300000, guid: 3e3df7c2aa7ee084bb677b70ee1e45bb, type: 3}
+  constraintMarker: {fileID: 21300000, guid: 5fc2516ac15159049b0e5af5f7717e52, type: 3}
   emptySprite: {fileID: 21300000, guid: bc821aa98a2cb17458131b932b048fdb, type: 3}
   cellPrefab: {fileID: 5386392480969014079, guid: e1ee1474de07db749ad576fd1af47c52, type: 3}
   gridPrefab: {fileID: 3132327626336732221, guid: 3737355c92d5b4c44933d7f178568a1c, type: 3}

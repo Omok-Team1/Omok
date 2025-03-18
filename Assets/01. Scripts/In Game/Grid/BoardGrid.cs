@@ -29,11 +29,15 @@ public class BoardGrid : MonoBehaviour
         }
     }
     
-    public bool TryMarkingOnCell((int, int) coordi)
+    public bool TryMarkingOnCell((int, int) coordi, Sprite sprite = null)
     {
         if (_grid[coordi].Marker is not null)
         {
-            if (_gameData.currentTurn == Turn.PLAYER1)
+            if (sprite is not null)
+            {
+                _grid[coordi].Marker = sprite;
+            }
+            else if (_gameData.currentTurn == Turn.PLAYER1)
             {
                 _grid[coordi].Marker = _gameData.player1Marker;
                 _grid[coordi].CellOnwer = Turn.PLAYER1;
@@ -46,6 +50,7 @@ public class BoardGrid : MonoBehaviour
 
             _grid[coordi].gameObject.layer = LayerMask.NameToLayer("Selected");
             _remainCells--;
+            
             return true;
         }
         
