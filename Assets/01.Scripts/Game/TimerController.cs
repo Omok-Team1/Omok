@@ -4,10 +4,6 @@ using UnityEngine.UI;
 
 public class TimerController : MonoBehaviour
 {
-    public enum PlayerState { Playing, Win, Lose }
-    public PlayerState player1State = PlayerState.Playing;
-    public PlayerState player2State = PlayerState.Playing;
-
     private float turnTimeLimit = 30f; // 30초 제한시간
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
@@ -30,31 +26,19 @@ public class TimerController : MonoBehaviour
 
             if (currentTurnTime >= turnTimeLimit)
             {
-                // 제한시간 초과 시 상태를 Lose로 변경
-                if (isPlayer1Turn)
-                {
-                    player1State = PlayerState.Lose;
-                    Debug.Log("Player 1 lost due to time limit.");
-                }
-                else
-                {
-                    player2State = PlayerState.Lose;
-                    Debug.Log("Player 2 lost due to time limit.");
-                }
+                // 제한시간 초과 시 상대 턴으로 넘어감
+                Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
 
                 // 제한시간 초과 시 이벤트 메시지를 큐에 추가
                 EventManager.Instance.PublishMessageQueue();
 
-                isTurnRunning = false;
-                EndTurn();
+                // 제한시간 초과 시 상대 턴으로 전환
+                EndTurn(true);
             }
 
             // UI 업데이트
             UpdateUI();
         }
-
-        // 플레이어의 상태가 Lose로 변경되면 다른 플레이어는 Win 상태가 됨
-        CheckForWinner();
     }
 
     // 턴 시작
@@ -62,39 +46,21 @@ public class TimerController : MonoBehaviour
     {
         currentTurnTime = 0f;
         isTurnRunning = true;
-        if (isPlayer1Turn)
-        {
-            player1State = PlayerState.Playing;
-            Debug.Log("Player 1's turn started. Time limit: " + turnTimeLimit + " seconds.");
-        }
-        else
-        {
-            player2State = PlayerState.Playing;
-            Debug.Log("Player 2's turn started. Time limit: " + turnTimeLimit + " seconds.");
-        }
+        Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + "'s turn started. Time limit: " + turnTimeLimit + " seconds.");
     }
 
     // 턴 종료
-    private void EndTurn()
+    private void EndTurn(bool timeExceeded = false)
     {
+        if (timeExceeded)
+        {
+            // 시간 초과로 인해 상대 턴으로 전환
+            Debug.Log("Turn ended due to time limit.");
+        }
+
         // 턴이 끝나면 다른 플레이어의 턴으로 전환
         isPlayer1Turn = !isPlayer1Turn;
         StartTurn();
-    }
-
-    // 플레이어의 상태가 Lose일 때 다른 플레이어를 Win으로 설정
-    private void CheckForWinner()
-    {
-        if (player1State == PlayerState.Lose && player2State == PlayerState.Playing)
-        {
-            player2State = PlayerState.Win;
-            Debug.Log("Player 2 wins!");
-        }
-        else if (player2State == PlayerState.Lose && player1State == PlayerState.Playing)
-        {
-            player1State = PlayerState.Win;
-            Debug.Log("Player 1 wins!");
-        }
     }
 
     // 플레이어가 턴을 마쳤을 때 호출되는 함수
@@ -112,7 +78,27 @@ public class TimerController : MonoBehaviour
     {
         // 남은 시간 계산
         float remainingTime = turnTimeLimit - currentTurnTime;
-        timerText.text = Mathf.Ceil(remainingTime).ToString("F0"); // 소수점 없이 표시
+        
+        // 남은 시간이 0일 때 0으로 표시하도록 수정
+        timerText.text = Mathf.Floor(remainingTime).ToString("F0"); // 소수점 없이 표시
+        
+        // 남은 시간이 10초 이하일 때 색상 변경
+        Color warningColor = new Color(0xEC / 255f, 0x27 / 255f, 0x27 / 255f); // #EC2727 색상
+
+        if (remainingTime <= 11f)
+        {
+            // 타이머 텍스트 색상 변경
+            timerText.color = warningColor;
+
+            // Radial Fill 색상 변경
+            FillImage.color = warningColor;
+        }
+        else
+        {
+            // 원래 색상으로 돌아가기 (타이머 텍스트와 FillImage의 기본 색상)
+            timerText.color = Color.white;
+            FillImage.color = Color.white;
+        }
 
         // Radial Fill 업데이트
         FillImage.fillAmount = remainingTime / turnTimeLimit;

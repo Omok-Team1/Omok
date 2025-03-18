@@ -464,6 +464,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5411687584281076395, guid: 47c58a493312dfc42a7bbf5f82cf85ad, type: 3}
+      propertyPath: m_Color.b
+      value: 0.15263437
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411687584281076395, guid: 47c58a493312dfc42a7bbf5f82cf85ad, type: 3}
+      propertyPath: m_Color.g
+      value: 0.15263437
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411687584281076395, guid: 47c58a493312dfc42a7bbf5f82cf85ad, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9245283
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411687584281076395, guid: 47c58a493312dfc42a7bbf5f82cf85ad, type: 3}
+      propertyPath: m_FillAmount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5718287090130954925, guid: 47c58a493312dfc42a7bbf5f82cf85ad, type: 3}
       propertyPath: m_Name
       value: Timer

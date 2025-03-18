@@ -95,6 +95,7 @@
       <updated>1742174136798</updated>
       <workItem from="1742174138764" duration="191000" />
       <workItem from="1742174454242" duration="1842000" />
+      <workItem from="1742256890210" duration="3121000" />
     </task>
     <servers />
   </component>
@@ -104,6 +105,8 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityProjectDiscoverer">
     <option name="hasUnityReference" value="true" />
+    <option name="unityProject" value="true" />
+    <option name="unityProjectFolder" value="true" />
   </component>
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
   <component name="VcsManagerConfiguration">
