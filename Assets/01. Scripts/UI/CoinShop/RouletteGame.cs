@@ -4,38 +4,39 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
+[System.Serializable]
+public class RouletteSegment
+{
+    public float angle; // 세그먼트의 각도 크기
+    public int value; // 세그먼트의 코인 가치
+    public GameObject resultPanel; // 연결된 결과 패널
+}
+
 public class RouletteGame : MonoBehaviour
 {
     [Header("룰렛 설정")]
     [SerializeField] private Transform rouletteWheel; // 회전할 룰렛 스프라이트
+    [SerializeField] private Transform centerPoint; // 룰렛의 중앙 기준점 (빈 오브젝트)
     [SerializeField] private float spinSpeed = 300f; // 회전 속도
     [SerializeField] private float minSpinTime = 2f; // 최소 회전 시간
     [SerializeField] private float maxSpinTime = 5f; // 최대 회전 시간
     
-    [Header("영역 인식 설정")]
-    [SerializeField] private CircleCollider2D arrowCollider; // 화살표 콜라이더
-    [SerializeField] private Image[] segmentImages; // 각 영역의 투명 이미지 배열 (유지)
+    [Header("영역 설정")]
+    [SerializeField] private Transform arrowTransform; // 화살표 위치
+    [SerializeField] private float startAngle = 0f; // 첫 번째 세그먼트 시작 각도 (0도는 오른쪽)
+    [SerializeField] private RouletteSegment[] segments; // 룰렛 세그먼트 배열
     
     [Header("UI 요소")]
     [SerializeField] private Button startButton; // 시작 버튼
     [SerializeField] private TextMeshProUGUI cooldownText; // TextMeshPro 쿨타임 텍스트
-    
-    [Header("결과 패널")]
-    [SerializeField] private GameObject panel0; // 꽝 패널
-    [SerializeField] private GameObject panel1; // 1코인 패널
-    [SerializeField] private GameObject panel10; // 10코인 패널
-    [SerializeField] private GameObject panel50; // 50코인 패널
-    [SerializeField] private GameObject panel100; // 100코인 패널
-    
-    [Header("돌아가기 버튼")]
-    [SerializeField] private Button backButton0; // 꽝 패널의 돌아가기 버튼
-    [SerializeField] private Button backButton1; // 1코인 패널의 돌아가기 버튼
-    [SerializeField] private Button backButton10; // 10코인 패널의 돌아가기 버튼
-    [SerializeField] private Button backButton50; // 50코인 패널의 돌아가기 버튼
-    [SerializeField] private Button backButton100; // 100코인 패널의 돌아가기 버튼
+    [SerializeField] private Button backButtonPrefab; // 돌아가기 버튼 프리팹 (옵션)
     
     [Header("이펙트")]
-    [SerializeField] private ParticleSystem specialEffect; // 100코인 특수 이펙트
+    [SerializeField] private ParticleSystem specialEffect; // 특수 이펙트 (높은 가치에 사용)
+    [SerializeField] private int specialEffectThreshold = 50; // 특수 이펙트를 재생할 최소 가치
+    
+    // 각 세그먼트의 시작 각도를 저장할 배열
+    private float[] segmentStartAngles;
     
     private bool canSpin = true; // 룰렛 회전 가능 여부
     private float cooldownTime = 10f; // 쿨타임 10초
@@ -46,6 +47,13 @@ public class RouletteGame : MonoBehaviour
     private void Start()
     {
         coinManager = FindObjectOfType<CoinManager>();
+        
+        // 룰렛 중앙점 검증
+        if (centerPoint == null)
+        {
+            centerPoint = rouletteWheel; // 기본값으로 룰렛 휠 자체를 사용
+            Debug.LogWarning("룰렛 중앙 기준점이 설정되지 않았습니다. 룰렛 휠 자체를 기준점으로 사용합니다.");
+        }
         
         // 시작 버튼 체크
         if (startButton != null)
@@ -63,64 +71,129 @@ public class RouletteGame : MonoBehaviour
             cooldownText.text = "룰렛 준비 완료!";
         }
         
-        // 돌아가기 버튼 리스너 추가
-        SetupBackButtons();
+        // 세그먼트 설정 및 패널 검증
+        ValidateSegments();
+        
+        // 세그먼트 각도 계산
+        InitializeSegmentAngles();
         
         // 모든 패널 초기화 (비활성화)
         CloseAllPanels();
         
-        // 화살표 콜라이더 및 세그먼트 이미지 검증
-        ValidateComponents();
+        // 돌아가기 버튼 설정
+        SetupBackButtons();
     }
     
-    // 화살표 콜라이더 및 세그먼트 이미지 검증
-    private void ValidateComponents()
+    // 세그먼트 설정 검증
+    private void ValidateSegments()
     {
-        // 화살표 콜라이더 검증
-        if (arrowCollider == null)
+        if (segments == null || segments.Length == 0)
         {
-            Debug.LogWarning("화살표 콜라이더가 할당되지 않았습니다!");
-        }
-        else
-        {
-            Debug.Log("화살표 콜라이더가 정상적으로 할당되었습니다: " + arrowCollider.name);
+            Debug.LogError("룰렛 세그먼트가 설정되지 않았습니다!");
+            // 기본 세그먼트 생성
+            segments = new RouletteSegment[6];
+            for (int i = 0; i < 6; i++)
+            {
+                segments[i] = new RouletteSegment { angle = 60f, value = i == 0 ? 0 : (i == 4 ? 100 : i * 10) };
+            }
         }
         
-        // 세그먼트 이미지 검증
-        if (segmentImages == null || segmentImages.Length == 0)
+        // 세그먼트 각도 합계 검증
+        float totalAngle = 0f;
+        for (int i = 0; i < segments.Length; i++)
         {
-            Debug.LogWarning("룰렛 영역용 이미지가 할당되지 않았습니다!");
-        }
-        else 
-        {
-            Debug.Log("총 " + segmentImages.Length + "개의 룰렛 영역용 이미지가 등록되었습니다.");
+            totalAngle += segments[i].angle;
             
-            // 각 이미지 확인
-            for (int i = 0; i < segmentImages.Length; i++)
+            // 패널 검증
+            if (segments[i].resultPanel == null)
             {
-                if (segmentImages[i] != null)
-                {
-                    // 투명한 이미지인지 확인 (디버깅 용도)
-                    Color color = segmentImages[i].color;
-                    Debug.Log("세그먼트 " + i + " 이미지: " + segmentImages[i].name + 
-                             " (투명도: " + color.a + ")");
-                }
-                else
-                {
-                    Debug.LogWarning("세그먼트 " + i + " 이미지가 null입니다!");
-                }
+                Debug.LogWarning($"세그먼트 {i} (가치: {segments[i].value})의 결과 패널이 할당되지 않았습니다!");
+            }
+        }
+        
+        // 각도 합계가 360도인지 확인
+        if (Mathf.Abs(totalAngle - 360f) > 0.01f)
+        {
+            Debug.LogWarning($"세그먼트 각도의 합계({totalAngle})가 360도가 아닙니다. 자동으로 조정됩니다.");
+            
+            // 각도 조정
+            float scaleFactor = 360f / totalAngle;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                segments[i].angle *= scaleFactor;
             }
         }
     }
     
-    // 돌아가기 버튼 설정
+    // 각 세그먼트의 시작 각도 계산
+    private void InitializeSegmentAngles()
+    {
+        // 시작 각도 배열 초기화
+        segmentStartAngles = new float[segments.Length];
+        
+        // 첫 번째 세그먼트의 시작 각도 설정
+        segmentStartAngles[0] = startAngle;
+        
+        // 나머지 세그먼트의 시작 각도 계산
+        for (int i = 1; i < segments.Length; i++)
+        {
+            segmentStartAngles[i] = segmentStartAngles[i-1] + segments[i-1].angle;
+            // 각도가 360도를 넘어가면 0도로 돌려주기
+            segmentStartAngles[i] = NormalizeAngle(segmentStartAngles[i]);
+        }
+        
+        // 디버그 로그
+        for (int i = 0; i < segments.Length; i++)
+        {
+            float endAngle = NormalizeAngle(segmentStartAngles[i] + segments[i].angle);
+            Debug.Log($"세그먼트 {i} (가치: {segments[i].value}): 시작각도 {segmentStartAngles[i]}, 끝각도 {endAngle}, 크기 {segments[i].angle}");
+        }
+    }
+    
+    // 각도를 0~360 범위로 정규화
+    private float NormalizeAngle(float angle)
+    {
+        angle = angle % 360f;
+        if (angle < 0)
+        {
+            angle += 360f;
+        }
+        return angle;
+    }
+    
+    // 돌아가기 버튼 설정 - 각 결과 패널에 버튼 찾고 이벤트 연결
     private void SetupBackButtons()
     {
-        if (backButton0 != null) backButton0.onClick.AddListener(CloseAllPanels);
-        if (backButton1 != null) backButton1.onClick.AddListener(CloseAllPanels);
-        if (backButton10 != null) backButton10.onClick.AddListener(CloseAllPanels);
-        if (backButton50 != null) backButton50.onClick.AddListener(CloseAllPanels);
-        if (backButton100 != null) backButton100.onClick.AddListener(CloseAllPanels);
+        foreach (var segment in segments)
+        {
+            if (segment.resultPanel != null)
+            {
+                // 패널 내의 '돌아가기' 버튼 찾기
+                Button backButton = segment.resultPanel.GetComponentInChildren<Button>();
+                
+                // 버튼이 없다면 경고 표시
+                if (backButton == null)
+                {
+                    Debug.LogWarning($"가치 {segment.value}의 결과 패널에 버튼이 없습니다. 돌아가기 버튼을 추가하세요.");
+                    
+                    // 프리팹이 할당되어 있으면 동적으로 버튼 생성 (옵션)
+                    if (backButtonPrefab != null)
+                    {
+                        Button newButton = Instantiate(backButtonPrefab, segment.resultPanel.transform);
+                        backButton = newButton;
+                        Debug.Log($"가치 {segment.value}의 결과 패널에 버튼을 동적으로 생성했습니다.");
+                    }
+                }
+                
+                // 버튼에 이벤트 연결
+                if (backButton != null)
+                {
+                    backButton.onClick.RemoveAllListeners(); // 기존 이벤트 제거
+                    backButton.onClick.AddListener(CloseResultPanel);
+                    Debug.Log($"가치 {segment.value}의 결과 패널 버튼에 닫기 이벤트를 연결했습니다.");
+                }
+            }
+        }
     }
     
     // 룰렛 회전 시작 함수
@@ -191,178 +264,197 @@ public class RouletteGame : MonoBehaviour
         // 완전히 정지
         isSpinning = false;
         
-        // 정지한 위치 감지 - 화살표가 위치한 영역 확인
-        int segmentIndex = CheckArrowOverlap();
+        // 정지한 위치 감지 - 화살표와 룰렛 중심 사이의 각도 계산
+        int segmentIndex = GetCurrentSegment();
         OnStop(segmentIndex);
     }
     
-    // 화살표 콜라이더 위치에서 영역 이미지 확인
-    private int CheckArrowOverlap()
+    // 현재 화살표가 가리키는 세그먼트 인덱스 반환 (수정됨)
+    private int GetCurrentSegment()
     {
-        if (arrowCollider == null)
+        if (arrowTransform == null || centerPoint == null)
         {
-            Debug.LogError("화살표 콜라이더가 없습니다!");
+            Debug.LogError("화살표 또는 룰렛 중앙점 Transform이 할당되지 않았습니다!");
             return 0; // 기본값 반환
         }
         
-        Debug.Log("화살표 콜라이더 위치: " + arrowCollider.transform.position);
+        // 룰렛 회전 각도 가져오기
+        float wheelRotation = rouletteWheel.eulerAngles.z;
         
-        // 화살표 콜라이더의 위치
-        Vector2 arrowPosition = arrowCollider.transform.position;
+        // 화살표와 룰렛 중심 사이의 벡터 계산
+        Vector2 rouletteCenter = centerPoint.position;
+        Vector2 arrowPosition = arrowTransform.position;
+        Vector2 direction = arrowPosition - rouletteCenter;
         
-        // 각 세그먼트 이미지를 확인하여 화살표 콜라이더가 위에 있는지 확인
-        for (int i = 0; i < segmentImages.Length; i++)
+        // 각도 계산 (0도는 오른쪽, 시계 방향으로 증가)
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        
+        // 룰렛 회전 각도를 고려하여 조정
+        angle = NormalizeAngle(angle - wheelRotation);
+        
+        Debug.Log($"화살표와 룰렛 중심 사이의 각도(룰렛 회전 반영): {angle}도");
+        
+        // 어떤 세그먼트에 속하는지 확인
+        for (int i = 0; i < segments.Length; i++)
         {
-            Image image = segmentImages[i];
-            if (image == null) continue;
+            float startAngle = segmentStartAngles[i];
+            float endAngle = NormalizeAngle(startAngle + segments[i].angle);
             
-            // UI 요소의 RectTransform 가져오기
-            RectTransform rectTransform = image.rectTransform;
-            
-            // UI 이미지가 화살표 콜라이더 위치를 포함하는지 확인
-            if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, 
-                Camera.main.WorldToScreenPoint(arrowPosition), Camera.main))
+            // 세그먼트가 0도/360도를 걸쳐 있는 경우
+            if (startAngle > endAngle)
             {
-                Debug.Log("화살표 콜라이더가 세그먼트 " + i + "에 위치함");
+                if (angle >= startAngle || angle < endAngle)
+                {
+                    Debug.Log($"화살표가 세그먼트 {i} (가치: {segments[i].value})을 가리킵니다.");
+                    return i;
+                }
+            }
+            // 일반적인 경우
+            else if (angle >= startAngle && angle < endAngle)
+            {
+                Debug.Log($"화살표가 세그먼트 {i} (가치: {segments[i].value})을 가리킵니다.");
                 return i;
             }
         }
         
-        // 어떤 영역도 감지되지 않은 경우 추가 확인 방법 시도
-        int closestSegment = FindClosestSegment(arrowPosition);
-        Debug.Log("영역 감지 실패, 가장 가까운 세그먼트 " + closestSegment + " 선택");
-        return closestSegment;
-    }
-    
-    // 화살표와 가장 가까운 세그먼트 찾기
-    private int FindClosestSegment(Vector2 arrowPosition)
-    {
-        float closestDistance = float.MaxValue;
-        int closestSegment = 0;
-        
-        for (int i = 0; i < segmentImages.Length; i++)
-        {
-            if (segmentImages[i] == null) continue;
-            
-            // 이미지의 RectTransform 가져오기
-            RectTransform rectTransform = segmentImages[i].rectTransform;
-            
-            // 이미지 중심점 찾기
-            Vector3[] corners = new Vector3[4];
-            rectTransform.GetWorldCorners(corners);
-            Vector2 imageCenter = (corners[0] + corners[2]) / 2;
-            
-            // 화살표와의 거리 계산
-            float distance = Vector2.Distance(arrowPosition, imageCenter);
-            
-            // 더 가까운 세그먼트 발견 시 업데이트
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestSegment = i;
-            }
-        }
-        
-        return closestSegment;
+        // 예상치 못한 경우
+        Debug.LogWarning("어떤 세그먼트도 감지되지 않음, 기본값(0번 세그먼트) 반환");
+        return 0;
     }
     
     // 룰렛 정지 후 처리 함수
-    private void OnStop(int segmentNumber)
+    private void OnStop(int segmentIndex)
     {
-        // 영역에 따른 패널 표시 및 코인 조정
-        switch (segmentNumber)
+        // 세그먼트 인덱스가 유효한지 검사
+        if (segmentIndex < 0 || segmentIndex >= segments.Length)
         {
-            case 0: // 꽝
-                RulletPanel0PopUp();
-                break;
-            case 1: // 1코인
-                RulletPanel1PopUp();
-                break;
-            case 2: // 10코인
-                RulletPanel10PopUp();
-                break;
-            case 3: // 50코인
-                RulletPanel50PopUp();
-                break;
-            case 4: // 100코인
-                RulletPanel100PopUp();
-                break;
-            case 5: // 1
-                RulletPanel1PopUp();
-                break;
-            default:
-                // 다른 값이 들어온 경우도 처리
-                if (segmentNumber > 5)
+            Debug.LogWarning($"유효하지 않은 세그먼트 인덱스: {segmentIndex}, 첫 번째 세그먼트로 처리합니다.");
+            segmentIndex = 0;
+        }
+        
+        // 해당 세그먼트의 가치 가져오기
+        int segmentValue = segments[segmentIndex].value;
+        GameObject resultPanel = segments[segmentIndex].resultPanel;
+        
+        // 결과 패널이 할당되어 있는지 확인
+        if (resultPanel == null)
+        {
+            Debug.LogWarning($"세그먼트 {segmentIndex} (가치: {segmentValue})의 결과 패널이 할당되지 않았습니다.");
+            // 기본 처리 로직 - 가치에 따라 코인 추가만 함
+            if (segmentValue > 0)
+            {
+                Debug.Log($"{segmentValue}코인 획득! 코인이 {segmentValue}개 추가됩니다.");
+                if (coinManager != null)
                 {
-                    // 범위를 벗어난 높은 값은 최고 보상으로 처리
-                    RulletPanel100PopUp();
+                    coinManager.AddCoin(segmentValue);
                 }
-                else
-                {
-                    // 범위를 벗어난 낮은 값은 꽝으로 처리
-                    RulletPanel0PopUp();
-                }
-                break;
+            }
+            else
+            {
+                Debug.Log("꽝! 아쉽게도 보상이 없습니다.");
+            }
+            return;
+        }
+        
+        // 모든 패널 닫고 결과 패널 표시
+        CloseAllPanels();
+        resultPanel.SetActive(true);
+        
+        // 코인 추가
+        if (segmentValue > 0 && coinManager != null)
+        {
+            Debug.Log($"{segmentValue}코인 획득! 코인이 {segmentValue}개 추가됩니다.");
+            coinManager.AddCoin(segmentValue);
+            
+            // 특수 이펙트 재생 (높은 가치의 경우)
+            if (segmentValue >= specialEffectThreshold && specialEffect != null)
+            {
+                specialEffect.Play();
+            }
+        }
+        else
+        {
+            Debug.Log("꽝! 아쉽게도 보상이 없습니다.");
         }
     }
     
-    // 모든 패널 닫기 (public으로 변경하여 버튼에서 직접 호출 가능)
+    // 결과 패널 닫기 - 버튼에서 호출할 공개 메서드
+    public void CloseResultPanel()
+    {
+        CloseAllPanels();
+        Debug.Log("결과 패널을 닫았습니다.");
+    }
+    
+    // 모든 패널 닫기 (public으로 하여 버튼에서 직접 호출 가능)
     public void CloseAllPanels()
     {
-        panel0.SetActive(false);
-        panel1.SetActive(false);
-        panel10.SetActive(false);
-        panel50.SetActive(false);
-        panel100.SetActive(false);
-    }
-    
-    // 꽝 패널 표시 함수
-    private void RulletPanel0PopUp()
-    {
-        CloseAllPanels();
-        panel0.SetActive(true);
-        Debug.Log("꽝! 아쉽게도 보상이 없습니다.");
-    }
-    
-   // 1코인 패널 표시 함수
-    private void RulletPanel1PopUp()
-    {
-        CloseAllPanels();
-        panel1.SetActive(true);
-        Debug.Log("1코인 획득! 코인이 1개 추가됩니다.");
-        coinManager.AddCoin(1);
-    }
-    
-    // 10코인 패널 표시 함수
-    private void RulletPanel10PopUp()
-    {
-        CloseAllPanels();
-        panel10.SetActive(true);
-        Debug.Log("10코인 획득! 코인이 10개 추가됩니다.");
-        coinManager.AddCoin(10);
-    }
-    
-    // 50코인 패널 표시 함수
-    private void RulletPanel50PopUp()
-    {
-        CloseAllPanels();
-        panel50.SetActive(true);
-        Debug.Log("50코인 획득!!! 코인이 50개 추가됩니다.");
-        coinManager.AddCoin(50);
-    }
-    
-    // 100코인 패널 표시 함수
-    private void RulletPanel100PopUp()
-    {
-        CloseAllPanels();
-        panel100.SetActive(true);
-        Debug.Log("100코인 획득!!! 축하합니다! 코인이 100개 추가됩니다.");
-        coinManager.AddCoin(100);
-        
-        // 특수 이펙트 재생
-        if (specialEffect != null)
+        // 모든 세그먼트의 결과 패널 비활성화
+        foreach (var segment in segments)
         {
-            specialEffect.Play();
+            if (segment.resultPanel != null)
+            {
+                segment.resultPanel.SetActive(false);
+            }
+        }
+    }
+    
+    // 디버깅용 기즈모 표시
+    private void OnDrawGizmos()
+    {
+        // 에디터 모드와 플레이 모드 모두에서 표시
+        Transform center = centerPoint != null ? centerPoint : (rouletteWheel != null ? rouletteWheel : transform);
+        
+        // 룰렛 중심 시각화
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(center.position, 30f);
+        
+        // 화살표 위치 시각화
+        if (arrowTransform != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(arrowTransform.position, 20f);
+            
+            // 룰렛과 화살표 사이 선 그리기
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(center.position, arrowTransform.position);
+        }
+        
+        // 세그먼트 시각화 (플레이 모드와 에디터 모드 모두에서)
+        if (segments != null && segments.Length > 0)
+        {
+            float currentAngle = startAngle;
+            
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (segments[i] == null) continue;
+                
+                Gizmos.color = new Color(0, 1, 0, 0.5f);
+                
+                float startRad = currentAngle * Mathf.Deg2Rad;
+                float endRad = (currentAngle + segments[i].angle) * Mathf.Deg2Rad;
+                
+                Vector3 startDir = new Vector3(Mathf.Cos(startRad), Mathf.Sin(startRad), 0);
+                Vector3 endDir = new Vector3(Mathf.Cos(endRad), Mathf.Sin(endRad), 0);
+                
+                float radius = 200f; // 시각화용 반지름
+                
+                Gizmos.DrawLine(center.position, center.position + startDir * radius);
+                Gizmos.DrawLine(center.position, center.position + endDir * radius);
+                
+                // 세그먼트 중앙에 라벨 표시
+                float middleRad = (startRad + endRad) / 2;
+                Vector3 middleDir = new Vector3(Mathf.Cos(middleRad), Mathf.Sin(middleRad), 0);
+                Vector3 labelPos = center.position + middleDir * (radius * 0.7f);
+                
+                // 세그먼트 값 표시 (Unity 에디터에서만 보임)
+                #if UNITY_EDITOR
+                UnityEditor.Handles.Label(labelPos, segments[i].value.ToString());
+                #endif
+                
+                // 다음 세그먼트의 시작 각도 업데이트
+                currentAngle += segments[i].angle;
+                currentAngle = NormalizeAngle(currentAngle);
+            }
         }
     }
 }
