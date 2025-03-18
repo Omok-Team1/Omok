@@ -9,9 +9,13 @@ public class TimerController : MonoBehaviour
     private bool isTurnRunning = false;
     private bool isPlayer1Turn = true; // 플레이어1이 턴을 시작하는지 여부
 
-    // UI 요소
     public TextMeshProUGUI timerText;    // 텍스트 UI
     public Image FillImage;        // Radial fill 이미지
+    
+    public AudioSource countdownAudioSource; // 카운트다운 사운드를 위한 AudioSource
+    public AudioClip countdownSound;         // 카운트다운 소리 (오디오 클립)
+
+    private bool hasPlayedCountdownSound = false; // 10초에서 한 번만 카운트다운 사운드를 재생하기 위한 변수
 
     private void Start()
     {
@@ -38,9 +42,22 @@ public class TimerController : MonoBehaviour
 
             // UI 업데이트
             UpdateUI();
+            
+            if (currentTurnTime >= turnTimeLimit - 8f && !hasPlayedCountdownSound)
+            {
+                PlayCountdownSound();
+                hasPlayedCountdownSound = true; // 사운드를 한 번만 재생하도록 설정
+            }
         }
     }
-
+    private void PlayCountdownSound()
+    {
+        if (countdownAudioSource != null && countdownSound != null)
+        {
+            countdownAudioSource.PlayOneShot(countdownSound); // 카운트다운 소리를 한 번 재생
+        }
+    }
+    
     // 턴 시작
     private void StartTurn()
     {
@@ -85,7 +102,7 @@ public class TimerController : MonoBehaviour
         // 남은 시간이 10초 이하일 때 색상 변경
         Color warningColor = new Color(0xEC / 255f, 0x27 / 255f, 0x27 / 255f); // #EC2727 색상
 
-        if (remainingTime <= 11f)
+        if (remainingTime <= 8f)
         {
             // 타이머 텍스트 색상 변경
             timerText.color = warningColor;
