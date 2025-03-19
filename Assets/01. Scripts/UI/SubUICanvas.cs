@@ -13,7 +13,7 @@ public class SubUICanvas : UICanvas
     public override void Init()
     {
         base.Init();
-
+        
         foreach (var uiComponent in _children)
         {
             uiComponent.Hide();

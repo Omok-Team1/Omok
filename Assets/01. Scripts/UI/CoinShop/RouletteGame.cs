@@ -131,8 +131,6 @@ public class RouletteGame : MonoBehaviour
         // 각도가 360도를 넘어가면 0도로 돌려주기
             segmentStartAngles[i] = NormalizeAngle(segmentStartAngles[i]);
         }
-        
-        // 디버그 로그
         for (int i = 0; i < segments.Length; i++)
         {
             float endAngle = NormalizeAngle(segmentStartAngles[i] + segments[i].angle);
@@ -171,7 +169,6 @@ public class RouletteGame : MonoBehaviour
                 {
                     backButton.onClick.RemoveAllListeners(); // 기존 이벤트 제거
                     backButton.onClick.AddListener(CloseResultPanel);
-                    Debug.Log($"가치 {segment.value}의 결과 패널 버튼에 닫기 이벤트를 연결했습니다.");
                 }
             }
         }

@@ -6,7 +6,6 @@ using DG.Tweening; // DOTween 추가
 
 public class ShopManager : MonoBehaviour
 {
-    [SerializeField] private string rouletteSceneName = "RouletteScene"; // 룰렛 씬?
     [SerializeField] private Button[] payButtons; // 결제 버튼 배열
     [SerializeField] private int[] coinAmounts; // 각 버튼에 해당하는 코인 증가량
     
@@ -61,7 +60,7 @@ public class ShopManager : MonoBehaviour
         // DOTween 초기화
         DOTween.SetTweensCapacity(500, 50);
         
-        Debug.Log("ShopManager 초기화 완료: 모든 패널이 닫혀있고 버튼 리스너가 설정되었습니다.");
+        
     }
     
     // 패널 버그 방지 2
@@ -291,15 +290,8 @@ public class ShopManager : MonoBehaviour
         if (payFailPanel.activeInHierarchy)
             ClosePanelWithAnimation(payFailPanel);
             
-        Debug.Log("모든 패널이 닫히고 있습니다.");
     }
     
-    // 룰렛 이동 - 무료 룰렛 버튼 클릭 시 호출
-    public void GotoRoulette()
-    {
-        Debug.Log("무료 룰렛 게임으로 이동합니다!");
-        SceneManager.LoadScene(rouletteSceneName);
-    }
     
     // 패널 버그 방지 3
     private void OnEnable()
