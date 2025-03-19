@@ -12,8 +12,7 @@ public class CheckDoubleThree : ICommand
         {
             foreach (Cell cell in doubleCell)
             {
-                _boardManager.OnDropMarker(cell._coordinate, _boardManager._gameData.constraintMarker);
-                Debug.Log(cell._coordinate);
+                _boardManager.OnDropMarker(cell._coordinate, _boardManager.GameData.constraintMarker);
             }
             return true;
         }

@@ -4,20 +4,30 @@ using UnityEngine;
 
 public class OpponentState : IState
 {
+    public OpponentState(StateMachine stateMachine)
+    {
+        StateMachine = stateMachine;
+    }
+    
     public void EnterState()
     {
-        throw new System.NotImplementedException();
+        var bestCoordi = OmokAIController.GetBestMove();
+        
+        GameManager.Instance.BoardManager.RecordDrop(bestCoordi);
+        
+        StateMachine.ChangeState<OnDropState>();
     }
 
     public void UpdateState()
     {
-        throw new System.NotImplementedException();
+        //Do nothing at Unity Update event loop...
     }
 
     public void ExitState()
     {
-        throw new System.NotImplementedException();
+
     }
 
+    private readonly Invoker _actions;
     public StateMachine StateMachine { get; set; }
 }

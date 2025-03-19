@@ -11,14 +11,14 @@ public class StateFactory : IConcreteFactory
 
         StateMachine stateMachine = GameManager.Instance.GetComponent<StateMachine>();
         
-        states.Add(typeof(MatchingState), new MatchingState());
+        states.Add(typeof(MatchingState), new MatchingState(stateMachine));
         states.Add(typeof(StartState), new StartState(stateMachine));
         states.Add(typeof(PlayerState), new PlayerState(stateMachine));
-        states.Add(typeof(OpponentState), new OpponentState());
+        states.Add(typeof(OpponentState), new OpponentState(stateMachine));
         states.Add(typeof(OnDropState), new OnDropState(stateMachine));
         states.Add(typeof(ChangeTurnState), new ChangeTurnState(stateMachine));
         states.Add(typeof(ConstraintCheckState), new ConstraintCheckState(stateMachine));
-        states.Add(typeof(EndGameState), new EndGameState());
+        states.Add(typeof(EndGameState), new EndGameState(stateMachine));
         
         return states;
     }

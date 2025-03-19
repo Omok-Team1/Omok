@@ -9,7 +9,7 @@ public class StateMachine : MonoBehaviour
     {
         _states = Factory.CreateItems<StateFactory>();
         
-        _currentState = _states[typeof(StartState)];
+        _currentState = _states[typeof(MatchingState)];
     }
     
     public void ChangeState<T>()

@@ -29,6 +29,15 @@ public class BoardGrid : MonoBehaviour
         }
     }
     
+    //Iterator
+    public IEnumerator<Cell> GetEnumerator()
+    {
+        foreach (var (key, value) in _grid)
+        {
+            yield return value;
+        }
+    }
+    
     public bool TryMarkingOnCell((int, int) coordi, Sprite sprite = null)
     {
         if (_grid[coordi].Marker is not null)

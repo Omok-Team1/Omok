@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class MatchingState : IState
 {
+    public MatchingState(StateMachine stateMachine)
+    {
+        stateMachine = stateMachine;
+    }
+    
     public void EnterState()
     {
-        throw new System.NotImplementedException();
+        GameManager.Instance.BoardManager.GameData.currentTurn = Turn.PLAYER1;
+        StateMachine.ChangeState<PlayerState>();
     }
 
     public void UpdateState()
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void ExitState()
     {
-        throw new System.NotImplementedException();
+
     }
 
     public StateMachine StateMachine { get; set; }

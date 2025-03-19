@@ -15,6 +15,11 @@ public class Invoker
         return true;
     }
 
+    public bool ExecuteCommand(ICommand command)
+    {
+        return command.Execute();
+    }
+    
     public void AddCommand(ICommand command)
     {
         _commands.Add(command);

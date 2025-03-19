@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 
 public class BoardManager : MonoBehaviour
 {
@@ -88,6 +89,14 @@ public class BoardManager : MonoBehaviour
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
         else
             _matchRecord.Push(data);
+    }
+    
+    public void RecordDrop((int, int)? data)
+    {
+        if (data is null)
+            throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
+        else
+            _matchRecord.Push(_grid[data.Value.Item1, data.Value.Item2]);
     }
 
     public Cell GetRecentOnDrop()
@@ -214,8 +223,10 @@ public class BoardManager : MonoBehaviour
     
     private BoardGrid _grid;
     public BoardGrid Grid => _grid;
-    
-    public GameData _gameData;
+
+    private GameData _gameData;
+    public GameData GameData => _gameData;
 
     private readonly Stack<Cell> _matchRecord = new();
+    public Stack<Cell> MatchRecord => _matchRecord;
 }

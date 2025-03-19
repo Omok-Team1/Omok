@@ -11,13 +11,16 @@ public abstract class UICanvas : MonoBehaviour, IUIComponent
     {
         _children = GetComponentsInChildren<IUIComponent>().
             Where(c => !ReferenceEquals(c, this)).ToList();
+
+        if(String.IsNullOrEmpty(eventName) is false && uiEvent is not null)
+            EventManager.Instance.AddListener(eventName, uiEvent, gameObject);
         
         foreach (var child in _children)
         {
             child.Init();
         }
     }
-
+    
     public void Show()
     {
         gameObject.SetActive(true);
@@ -44,4 +47,7 @@ public abstract class UICanvas : MonoBehaviour, IUIComponent
     }
     
     protected List<IUIComponent> _children = new();
+
+    [SerializeField] private string eventName;
+    [SerializeField] private IOnEventSO uiEvent;
 }

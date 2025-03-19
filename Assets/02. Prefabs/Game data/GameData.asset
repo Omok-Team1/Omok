@@ -18,7 +18,7 @@ MonoBehaviour:
   emptySprite: {fileID: 21300000, guid: bc821aa98a2cb17458131b932b048fdb, type: 3}
   cellPrefab: {fileID: 5386392480969014079, guid: e1ee1474de07db749ad576fd1af47c52, type: 3}
   gridPrefab: {fileID: 3132327626336732221, guid: 3737355c92d5b4c44933d7f178568a1c, type: 3}
-  currentTurn: 1
-  winner: 0
+  currentTurn: 2
+  winner: 2
   player1WinPoint: 0
-  player2WinPoint: 0
+  player2WinPoint: 1

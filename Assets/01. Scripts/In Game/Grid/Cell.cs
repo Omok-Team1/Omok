@@ -9,6 +9,7 @@ public class Cell : MonoBehaviour
     {
         _coordinate = coordinate;
         _cellSprite = GetComponent<SpriteRenderer>();
+        
         _cellOnwer = Turn.NONE;
         Marker = emptySprite;
     }
