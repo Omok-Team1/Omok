@@ -24,53 +24,61 @@ public class CoinManager : MonoBehaviour
         public int coins;
     }
     
-    private void Awake()
-    {
-        // Singleton
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            
-            // 저장 경로 설정 - 에셋 폴더 내 저장
-            saveFilePath = Path.Combine(Application.dataPath, saveFileName);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+   // 저장 경로 변경: Assets 폴더 내에 CoinData.json 저장
+	private void Awake()
+	{
+    if (Instance == null)
+    	{
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        
+        // 저장 경로: Unity의 Assets 폴더 내
+        saveFilePath = Path.Combine(Application.dataPath, saveFileName);
+   	 }
+    else
+    	{
+        Destroy(gameObject);
+  	  	}
+	}
+
+
     
     private void Start()
-    {
-        LoadCoins();
-        UpdateCoinDisplay();
-    }
+{
+    LoadCoins(); // 코인 데이터 불러오기
+    UpdateCoinDisplay(); // 즉시 UI 업데이트
+}
+
+
+
     
     // 코인 로드 함수
     private void LoadCoins()
+{
+    if (File.Exists(saveFilePath))
     {
-        if (File.Exists(saveFilePath))
+        try
         {
-            try
-            {
-                string jsonData = File.ReadAllText(saveFilePath);
-                SaveData data = JsonUtility.FromJson<SaveData>(jsonData);
-                coin = data.coins;
-                Debug.Log($"코인 데이터를 불러왔습니다. 현재 코인: {coin}");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"코인 데이터 로드 중 오류 발생: {e.Message}");
-                coin = initialCoins;
-            }
+            string jsonData = File.ReadAllText(saveFilePath);
+            SaveData data = JsonUtility.FromJson<SaveData>(jsonData);
+            coin = data.coins; // 저장된 코인 불러오기
+            Debug.Log($"코인 데이터를 불러왔습니다. 현재 코인: {coin}");
         }
-        else
+        catch (System.Exception e)
         {
-            coin = initialCoins;
-            Debug.Log($"저장된 코인 데이터가 없습니다. 초기 코인으로 설정: {initialCoins}");
+            Debug.LogError($"코인 데이터 로드 중 오류 발생: {e.Message}");
+            coin = initialCoins; // 오류 발생 시 초기값 설정
         }
     }
+    else
+    {
+        coin = initialCoins;
+        Debug.Log($"저장된 코인 데이터가 없습니다. 초기 코인으로 설정: {initialCoins}");
+    }
+
+    UpdateCoinDisplay(); // 불러온 코인 값으로 UI 업데이트
+}
+
     
     // 코인 저장 함수
     private void SaveCoins()
@@ -139,13 +147,20 @@ public class CoinManager : MonoBehaviour
     }
     
     // 코인 표시 업데이트
-    private void UpdateCoinDisplay()
+   public void UpdateCoinDisplay()
+{
+    if (CurrentCoinText != null)
     {
-        if (CurrentCoinText != null)
-        {
-            CurrentCoinText.text = coin.ToString();
-        }
+        CurrentCoinText.text = coin.ToString();
     }
+
+    // 모든 CoinDisplay UI 업데이트
+    CoinDisplay[] coinDisplays = FindObjectsOfType<CoinDisplay>();
+    foreach (var display in coinDisplays)
+    {
+        display.UpdateCoinText();
+    }
+}
     
     // 애플리케이션 종료 시 저장
     private void OnApplicationQuit()
