@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.IO;
 
 public class CoinManager : MonoBehaviour
 {
@@ -13,6 +14,16 @@ public class CoinManager : MonoBehaviour
     public int coin { get; private set; } // 현재 코인 수
     private const int RETRY_COST = 100; // 리트라이 비용
     
+    // 저장 경로 설정
+    private string saveFilePath;
+    private const string saveFileName = "CoinData.json";
+    
+    [System.Serializable]
+    private class SaveData
+    {
+        public int coins;
+    }
+    
     private void Awake()
     {
         // Singleton
@@ -20,6 +31,9 @@ public class CoinManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // 저장 경로 설정 - 에셋 폴더 내 저장
+            saveFilePath = Path.Combine(Application.dataPath, saveFileName);
         }
         else
         {
@@ -29,8 +43,53 @@ public class CoinManager : MonoBehaviour
     
     private void Start()
     {
-        coin = initialCoins;
+        LoadCoins();
         UpdateCoinDisplay();
+    }
+    
+    // 코인 로드 함수
+    private void LoadCoins()
+    {
+        if (File.Exists(saveFilePath))
+        {
+            try
+            {
+                string jsonData = File.ReadAllText(saveFilePath);
+                SaveData data = JsonUtility.FromJson<SaveData>(jsonData);
+                coin = data.coins;
+                Debug.Log($"코인 데이터를 불러왔습니다. 현재 코인: {coin}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"코인 데이터 로드 중 오류 발생: {e.Message}");
+                coin = initialCoins;
+            }
+        }
+        else
+        {
+            coin = initialCoins;
+            Debug.Log($"저장된 코인 데이터가 없습니다. 초기 코인으로 설정: {initialCoins}");
+        }
+    }
+    
+    // 코인 저장 함수
+    private void SaveCoins()
+    {
+        try
+        {
+            SaveData data = new SaveData
+            {
+                coins = coin
+            };
+            
+            string jsonData = JsonUtility.ToJson(data, true);
+            File.WriteAllText(saveFilePath, jsonData);
+            Debug.Log($"코인 데이터를 저장했습니다. 저장 경로: {saveFilePath}");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"코인 데이터 저장 중 오류 발생: {e.Message}");
+        }
     }
     
     // 코인 증가 함수 - ShopManager와 연동
@@ -38,6 +97,7 @@ public class CoinManager : MonoBehaviour
     {
         coin += amount;
         UpdateCoinDisplay();
+        SaveCoins(); // 코인 변경 시 저장
         Debug.Log($"코인이 {amount}개 증가했습니다. 현재 코인: {coin}");
     }
     
@@ -61,6 +121,7 @@ public class CoinManager : MonoBehaviour
         {
             coin -= RETRY_COST;
             UpdateCoinDisplay();
+            SaveCoins(); // 코인 변경 시 저장
             Debug.Log($"게임 재시작! {RETRY_COST} 코인이 차감되었습니다. 남은 코인: {coin}");
             return true;
         }
@@ -83,6 +144,21 @@ public class CoinManager : MonoBehaviour
         if (CurrentCoinText != null)
         {
             CurrentCoinText.text = coin.ToString();
+        }
+    }
+    
+    // 애플리케이션 종료 시 저장
+    private void OnApplicationQuit()
+    {
+        SaveCoins();
+    }
+    
+    // 씬 변경 시 저장
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SaveCoins();
         }
     }
 }
