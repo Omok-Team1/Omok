@@ -4139,6 +4139,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2071212486}
+  - component: {fileID: 2071212489}
   - component: {fileID: 2071212488}
   - component: {fileID: 2071212487}
   m_Layer: 0
@@ -4265,6 +4266,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071212485}
   m_CullTransparentMesh: 1
+--- !u!114 &2071212489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071212485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe550025d0b078d469cd448721b763a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childrenObject: []
+  eventName: EndGame
+  eventMethod: {fileID: 11400000, guid: 9fb575601beea3942bbe76d8c7f449c1, type: 2}
 --- !u!1 &2145938243
 GameObject:
   m_ObjectHideFlags: 0

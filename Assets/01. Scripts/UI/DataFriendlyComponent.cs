@@ -36,10 +36,22 @@ public abstract class DataFriendlyComponent : MonoBehaviour, IUIComponent
         }
     }
 
-    public abstract void OnChangedDataEvent(GameData data);
+    /// <summary>
+    /// 인스펙터를 통해 전달 받은 Event Method를 실행합니다.
+    /// </summary>
+    public virtual void EventMethod()
+    {
+        EventManager.Instance.AddListener(eventName, eventMethod, gameObject);
+    }
     
     [Header("Only UICanvas Object")]
     [SerializeField] protected List<GameObject> childrenObject;
+
+    [Header("수신 받을 Event")]
+    [SerializeField] private string eventName;
+    
+    [Header("Event Name 수신시 실행할 메소드")]
+    [SerializeField] private IOnEventSO eventMethod;
     
     protected List<IUIComponent> childrenComponent = new();
 }

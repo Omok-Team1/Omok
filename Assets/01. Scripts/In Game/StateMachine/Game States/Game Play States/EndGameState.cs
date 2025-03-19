@@ -10,7 +10,7 @@ public class EndGameState : IState
      */
     public EndGameState(StateMachine stateMachine)
     {
-        stateMachine = stateMachine;
+        StateMachine = stateMachine;
         
         _actions.AddCommand(new PushEndGameEventCommand());
     }

@@ -6,12 +6,13 @@ public class MatchingState : IState
 {
     public MatchingState(StateMachine stateMachine)
     {
-        stateMachine = stateMachine;
+        StateMachine = stateMachine;
     }
     
     public void EnterState()
     {
         GameManager.Instance.BoardManager.GameData.currentTurn = Turn.PLAYER1;
+        
         StateMachine.ChangeState<PlayerState>();
     }
 

@@ -17,7 +17,6 @@ public class OnDropState : IState
         StateMachine = stateMachine;
         
         _actions.AddCommand(new TryOnDropCommand());
-        _actions.AddCommand(new PushOnDropEventCommand());
         _actions.AddCommand(new CheckEndGameCommand());
     }
 

@@ -8,7 +8,9 @@ public class EndGameOnEvent : IOnEventSO
     public override void OnEvent(EventMessage msg)
     {
         var listenerObj = msg.GetParameter<GameObject>();
+
+        var uiElement = listenerObj.GetComponent<IUIComponent>();
         
-        listenerObj.SetActive(true);
+        uiElement.Show();
     }
 }
