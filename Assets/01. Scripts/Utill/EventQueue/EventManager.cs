@@ -12,16 +12,22 @@ public class EventManager : Singleton<EventManager>
         SceneLoader.OnAnySceneLoadedStarts += _listeners.Clear;
     }
     
-    public void AddListener(string eventName, IOnEventSO listener)
+    /// <summary>
+    /// 인자로 전달한 Event를 기다리고 수신합니다.
+    /// </summary>
+    /// <param name="eventName">수신 받을 이벤트 이름</param>
+    /// <param name="listener">이벤트 함수</param>
+    /// <param name="listenerObj">해당 이벤트 함수를 멤버 메소드로 가지는 오브젝트</param>
+    public void AddListener(string eventName, IOnEventSO listener, GameObject listenerObj = null)
     {
-        if (_listeners.TryGetValue(eventName, out List<IOnEventSO> eventListener))
+        if (_listeners.TryGetValue(eventName, out List<(IOnEventSO, GameObject)> eventListener))
         {
-            eventListener.Add(listener);
+            eventListener.Add((listener, listenerObj));
         }
         else
         {
-            eventListener = new List<IOnEventSO>();
-            eventListener.Add(listener);
+            eventListener = new List<(IOnEventSO, GameObject)>();
+            eventListener.Add((listener, listenerObj));
             _listeners.Add(eventName, eventListener);
         }
     }
@@ -33,10 +39,12 @@ public class EventManager : Singleton<EventManager>
 
     public void ProcessEvent(EventMessage eventMessage)
     {
-        if (_listeners.TryGetValue(eventMessage.EventName, out List<IOnEventSO> eventListener))
+        if (_listeners.TryGetValue(eventMessage.EventName, out List<(IOnEventSO, GameObject)> eventListener))
         {
-            foreach (IOnEventSO listener in eventListener)
+            foreach (var (listener, listenerObj) in eventListener)
             {
+                eventMessage.AddParameter<GameObject>(listenerObj);
+                
                 listener.OnEvent(eventMessage);
             }
         }
@@ -52,6 +60,6 @@ public class EventManager : Singleton<EventManager>
         }
     }
     
-    private readonly Dictionary<string, List<IOnEventSO>> _listeners = new Dictionary<string, List<IOnEventSO>>();
+    private readonly IDictionary<string, List<(IOnEventSO, GameObject)>> _listeners = new Dictionary<string, List<(IOnEventSO, GameObject)>>();
     private Queue<EventMessage> _eventQueue = new Queue<EventMessage>();
 }

@@ -13,7 +13,7 @@ public class OnEventButton : UserFriendlyComponent
 {
     public override void Init()
     {
-        EventManager.Instance.AddListener(eventName ,eventOnEvent);
+        EventManager.Instance.AddListener(eventName ,eventOnEvent, gameObject);
         
         if (TryGetComponent(out Button button))
         {

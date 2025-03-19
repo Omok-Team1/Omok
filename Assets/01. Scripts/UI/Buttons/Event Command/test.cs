@@ -25,6 +25,13 @@ public class test : MonoBehaviour
         {
             Debug.Log("Publish Message Queue");
             EventManager.Instance.PublishMessageQueue();
+            
+            var message = new EventMessage("ResponseLogIn");
+        
+            message.AddParameter<string>("Success");
+            message.AddParameter<float>(2.5f);
+        
+            EventManager.Instance.PushEventMessageEvent(message);
         }
     }
 }
