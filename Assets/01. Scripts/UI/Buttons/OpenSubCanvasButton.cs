@@ -25,8 +25,14 @@ public class OpenSubCanvasButton : UserFriendlyComponent
 
     public override List<IUIComponent> GetChildren()
     {
+        if (childrenComponent == null || childrenComponent.Count == 0)
+        {
+            Debug.LogError($"오류: {gameObject.name}의 childrenComponent가 비어 있습니다!");
+        }
+
         return childrenComponent;
     }
+
 
     [SerializeField] private bool isThisCanvasHide = false;
 }

@@ -24,7 +24,7 @@ public class UIManager : Singleton<UIManager>
 
         _canvasTrace.Push(nextCanvasList);
 
-        // ⭐ Profile Canvas가 포함된 경우 숨기지 않도록 예외처리
+        // Profile Canvas가 포함된 경우 숨기지 않도록 예외처리
         bool isProfileCanvas = thisCanvas.Any(canvas => canvas is RootUICanvas);
 
         if (isThisCanvasHide && !isProfileCanvas)
@@ -62,23 +62,32 @@ public class UIManager : Singleton<UIManager>
 
     public void CloseChildrenCanvas()
     {
-        if (!ReferenceEquals(_rootCanvas, _canvasTrace.Peek()))
+        if (_canvasTrace.Count <= 1)
         {
-            foreach (var subCanvas in _canvasTrace.Pop())
-            {
-                subCanvas.Hide();
-            }
-        
+            Debug.LogWarning("UI 스택에 닫을 캔버스가 없습니다.");
+            return;
+        }
+
+        var currentCanvas = _canvasTrace.Pop();
+        bool foundActiveCanvas = false;
+
+        foreach (var subCanvas in currentCanvas)
+        {
+            subCanvas.Hide();
+            foundActiveCanvas = true;
+        }
+
+        if (_canvasTrace.Count > 0 && foundActiveCanvas)
+        {
             foreach (var nextCanvas in _canvasTrace.Peek())
             {
                 nextCanvas.Show();
             }
         }
-        else
-        {
-            Debug.LogError("Root canvas can't be Close");
-        }
     }
+
+
+
     
     public void CloseAllChildrenCanvas()
     {
@@ -107,4 +116,26 @@ public class UIManager : Singleton<UIManager>
     private readonly Stack<List<IUIComponent>> _canvasTrace = new();
     
     public IUIComponent triggeredEventUIComponent;
+  
+    // ShopTotalPanel을 열 때 ProfileCanvas를 _canvasTrace에 추가
+    public void OpenShopPanel()
+    {
+        // ProfileCanvas가 이미 스택에 있는지 확인
+        if (_canvasTrace.Count == 0)
+        {
+            var profileCanvas = FindObjectOfType<RootUICanvas>();
+            if (profileCanvas != null)
+            {
+                _canvasTrace.Push(new List<IUIComponent> { profileCanvas });
+            }
+        }
+    
+        // ShopTotalPanel 열기
+        var shopPanel = FindObjectOfType<StorePanel>();
+        if (shopPanel != null)
+        {
+            _canvasTrace.Push(new List<IUIComponent> { shopPanel });
+            shopPanel.Show();
+        }
+    }
 }

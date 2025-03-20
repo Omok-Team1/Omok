@@ -14,8 +14,18 @@ public class ReturnToPreviousButton : UserFriendlyComponent
         }
     }
 
+    // override 키워드 추가
     public override void EventMethod()
     {
-        UIManager.Instance.CloseChildrenCanvas();
+        // UIManager가 초기화되었는지 확인
+        if (UIManager.Instance != null)
+        {
+            Debug.Log("ReturnToPreviousButton: 이전 화면으로 돌아가기 시도");
+            UIManager.Instance.CloseChildrenCanvas();
+        }
+        else
+        {
+            Debug.LogError("UIManager 인스턴스가 없습니다.");
+        }
     }
 }

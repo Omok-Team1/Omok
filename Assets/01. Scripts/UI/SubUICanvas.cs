@@ -13,12 +13,14 @@ public class SubUICanvas : UICanvas
     public override void Init()
     {
         base.Init();
-    
-        // 모든 자식 UI를 숨기지 않음 (슬라이드 효과를 위해)
+
         foreach (var uiComponent in _children)
         {
-            // 기본적으로 비활성화하지 않고, OpenChildrenCanvas에서 관리
+            uiComponent.Hide();
         }
+
+        Hide(); // 추가: UI가 초기화될 때 숨겨지도록 함
     }
+
 
 }

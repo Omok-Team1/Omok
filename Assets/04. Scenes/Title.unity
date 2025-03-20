@@ -1092,7 +1092,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &84601450
 GameObject:
@@ -7485,7 +7485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7877358, g: 0.7877358, b: 0.7877358, a: 0.84705883}
+  m_Color: {r: 0.21568629, g: 0.21568629, b: 0.21568629, a: 0.93333334}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8759,7 +8759,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!1 &1305645187
 GameObject:
@@ -10653,7 +10653,7 @@ MonoBehaviour:
   childrenObject:
   - {fileID: 1594618451}
   isThisCanvasHide: 1
-  targetStorePanel: {fileID: 0}
+  targetStorePanel: {fileID: 1448395951}
 --- !u!1 &1493027425
 GameObject:
   m_ObjectHideFlags: 0
@@ -12258,7 +12258,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1731712198}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1731712198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14650,7 +14662,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &2117005315
 MonoBehaviour:
