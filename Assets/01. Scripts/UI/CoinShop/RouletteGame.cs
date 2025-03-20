@@ -134,7 +134,6 @@ public class RouletteGame : MonoBehaviour
         for (int i = 0; i < segments.Length; i++)
         {
             float endAngle = NormalizeAngle(segmentStartAngles[i] + segments[i].angle);
-            Debug.Log($"세그먼트 {i} (동전값: {segments[i].value}): 시작각도 {segmentStartAngles[i]}, 끝각도 {endAngle}, 크기 {segments[i].angle}");
         }
     }
     

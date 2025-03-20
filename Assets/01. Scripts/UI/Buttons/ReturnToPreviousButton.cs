@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[
-    RequireComponent(typeof(Button))
-]
+[RequireComponent(typeof(Button))]
 public class ReturnToPreviousButton : UserFriendlyComponent
 {
     public override void Init()

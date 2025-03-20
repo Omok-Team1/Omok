@@ -15,14 +15,19 @@ public class StorePanel : SubUICanvas
     {
         // Awake에서 RectTransform 초기화 (활성화 여부와 무관하게 실행)
         _rectTransform = GetComponent<RectTransform>();
+
+        // 원래 위치를 기본값으로 설정 (ShopCanvas가 비활성화 상태라도 저장)
         _originalPosition = _rectTransform.anchoredPosition;
+
+        // 시작 위치를 화면 오른쪽 밖으로 설정
+        _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
     }
 
     public override void Init()
     {
         base.Init();
-        
-        // 초기 위치 설정
+
+        // 초기 위치 설정 (비활성화 상태에서도 적용되도록 보장)
         if (_rectTransform != null)
         {
             _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
@@ -32,7 +37,7 @@ public class StorePanel : SubUICanvas
     public override void Show()
     {
         Debug.Log("StorePanel Show 호출됨");
-        
+
         // 애니메이션 중이거나 RectTransform이 없으면 리턴
         if (_isAnimating || _rectTransform == null) return;
 
@@ -40,26 +45,25 @@ public class StorePanel : SubUICanvas
         _currentTween?.Kill();
         _isAnimating = true;
 
-        // 시작 위치 설정
-        _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
-
         // 슬라이드 인 애니메이션
         _currentTween = _rectTransform.DOAnchorPosX(_originalPosition.x, slideDuration)
             .SetEase(slideEase)
             .OnComplete(() => _isAnimating = false)
             .OnKill(() => _isAnimating = false);
+
+        gameObject.SetActive(true);
     }
 
     public override void Hide()
     {
         Debug.Log("StorePanel Hide 호출됨");
-        
+
         // 애니메이션 중이거나 RectTransform이 없으면 리턴
         if (_isAnimating || _rectTransform == null) return;
-        
+
         // 비활성화 상태라면 아무것도 하지 않음
         if (!gameObject.activeSelf) return;
-        
+
         // 기존 Tween 정리
         _currentTween?.Kill();
         _isAnimating = true;
@@ -67,11 +71,13 @@ public class StorePanel : SubUICanvas
         // 슬라이드 아웃 애니메이션
         _currentTween = _rectTransform.DOAnchorPosX(Screen.width, slideDuration)
             .SetEase(slideEase)
-            .OnComplete(() => {
+            .OnComplete(() =>
+            {
                 gameObject.SetActive(false);
                 _isAnimating = false;
             })
-            .OnKill(() => {
+            .OnKill(() =>
+            {
                 gameObject.SetActive(false);
                 _isAnimating = false;
             });

@@ -5,15 +5,15 @@ using UnityEngine.UI;
 public class BackButton : MonoBehaviour
 {
     [SerializeField] private StorePanel targetStorePanel; // 타겟 StorePanel 지정
-    
+
     private void Start()
     {
         // 버튼 컴포넌트 가져오기
         Button button = GetComponent<Button>();
-        
+
         // 클릭 이벤트 등록
         button.onClick.AddListener(OnButtonClick);
-        
+
         // 타겟 StorePanel이 없으면 자동으로 찾기 시도
         if (targetStorePanel == null)
         {
@@ -24,13 +24,12 @@ public class BackButton : MonoBehaviour
             }
         }
     }
-    
+
     private void OnButtonClick()
     {
-        // 타겟 StorePanel이 설정되어 있다면 Hide 메서드 호출
         if (targetStorePanel != null)
         {
-            targetStorePanel.Hide();
+            targetStorePanel.Hide(); // DoTween 애니메이션 실행
         }
         else
         {
