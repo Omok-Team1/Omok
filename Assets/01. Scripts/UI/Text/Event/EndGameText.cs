@@ -10,9 +10,9 @@ public class EndGameText : IOnEventSO
     {
         var listenerObj = msg.GetParameter<GameObject>();
         
-        var text = listenerObj.GetComponent<TextMeshPro>();
+        var text = listenerObj.GetComponent<TextMeshProUGUI>();
 
-        text.text = msg.GetParameter<Turn>() + " " + text.text;
+        text.text = msg.GetParameter<Turn>() + "가 " + text.text;
         
         text.text = text.text.Replace("{point}", msg.GetParameter<int>().ToString());
     }

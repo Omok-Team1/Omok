@@ -2020,6 +2020,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!1 &868342553
 GameObject:
   m_ObjectHideFlags: 0
@@ -2189,6 +2191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!1 &1005407513
 GameObject:
   m_ObjectHideFlags: 0
@@ -2306,6 +2310,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: LogInFailed
+  uiEvent: {fileID: 11400000, guid: 18605ae289c69444f98fdf4b01b4351a, type: 2}
 --- !u!1 &1021076651
 GameObject:
   m_ObjectHideFlags: 0
@@ -2744,6 +2750,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 200357b3a72090143993bb7934ae339f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!1 &1190170896
 GameObject:
   m_ObjectHideFlags: 0
@@ -2899,6 +2907,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1190170896}
   m_CullTransparentMesh: 1
+--- !u!1 &1219407555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1219407557}
+  - component: {fileID: 1219407556}
+  m_Layer: 0
+  m_Name: TempNetworkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1219407556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219407555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f2c5041ffd1ef49822ebc4b43f88aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  logInEvent: {fileID: 11400000, guid: be41357b7845e324fa40513f23374d8d, type: 2}
+--- !u!4 &1219407557
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219407555}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1252636522
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,8 +3088,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   childrenObject:
   - {fileID: 1802410311218963005}
-  eventName: ResponseLogIn
-  eventOnEvent: {fileID: 11400000, guid: aff511069fea9de4caf61b2b7a79031c, type: 2}
+  requestEventName: LogIn
+  messageParameters:
+    primitiveBool: 0
+    primitiveByte: 0
+    primitiveSbyte: 2
+    primitiveChar: 0
+    primitiveDouble: 0
+    primitiveFloat: 0
+    primitiveInt: 0
+    primitiveUint: 0
+    primitiveLong: 0
+    primitiveUlong: 0
+    primitiveShort: 0
+    primitiveUshort: 0
+    primitiveString: 
+  responseEventName: ResponseLogIn
+  responseOnEvent: {fileID: 11400000, guid: aff511069fea9de4caf61b2b7a79031c, type: 2}
 --- !u!1 &1308839685
 GameObject:
   m_ObjectHideFlags: 0
@@ -3590,6 +3658,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1400131427}
   - component: {fileID: 1400131428}
+  - component: {fileID: 1400131429}
   m_Layer: 5
   m_Name: Input Fields
   m_TagString: Untagged
@@ -3644,6 +3713,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1400131429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1400131426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67b113d66f376204b9a1456823f5350a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childrenObject: []
+  eventName: LogIn
+  eventMethod: {fileID: 11400000, guid: fee7ff805e55e6647a4fdfba39eb6df2, type: 2}
 --- !u!1 &1424626993
 GameObject:
   m_ObjectHideFlags: 0
@@ -4249,6 +4333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0a2700428c03f44cb0e04d4cb0d7a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputfieldtest: {fileID: 11400000, guid: 0d554a7bf74a49b4eb16c2f758de77db, type: 2}
 --- !u!4 &1599917413
 Transform:
   m_ObjectHideFlags: 0
@@ -6076,7 +6161,7 @@ GameObject:
   - component: {fileID: 1990818709}
   - component: {fileID: 1990818708}
   - component: {fileID: 1990818707}
-  - component: {fileID: 1990818706}
+  - component: {fileID: 1990818710}
   m_Layer: 0
   m_Name: '[Button] OK'
   m_TagString: Untagged
@@ -6104,19 +6189,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -700}
   m_SizeDelta: {x: 300, y: 64}
   m_Pivot: {x: 0.5, y: 1}
---- !u!114 &1990818706
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990818704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 963738b2db7b55a4283b0e41fb9fa91b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  childrenObject: []
 --- !u!114 &1990818707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6199,6 +6271,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990818704}
   m_CullTransparentMesh: 1
+--- !u!114 &1990818710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990818704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58fedb251ea29b0418e4b2ddc0e1776c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childrenObject: []
+  targetScene: 1
 --- !u!1 &2016778678
 GameObject:
   m_ObjectHideFlags: 0
@@ -6762,6 +6848,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!114 &6585139786792008026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6979,3 +7067,4 @@ SceneRoots:
   - {fileID: 1500749556}
   - {fileID: 1968180392}
   - {fileID: 1599917413}
+  - {fileID: 1219407557}

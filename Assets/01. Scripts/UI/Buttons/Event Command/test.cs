@@ -7,12 +7,14 @@ public class test : MonoBehaviour
 {
     void Start()
     {
-        var message = new EventMessage("ResponseLogIn");
+        // var message = new EventMessage("ResponseLogIn");
+        //
+        // message.AddParameter<string>("Hello World");
+        // message.AddParameter<float>(2.5f);
+        //
+        // EventManager.Instance.PushEventMessageEvent(message);
         
-        message.AddParameter<string>("Hello World");
-        message.AddParameter<float>(2.5f);
-        
-        EventManager.Instance.PushEventMessageEvent(message);
+        EventManager.Instance.AddListener("RequestLogIn", inputfieldtest, gameObject);
     }
 
     private void OnGUI()
@@ -34,4 +36,6 @@ public class test : MonoBehaviour
             EventManager.Instance.PushEventMessageEvent(message);
         }
     }
+
+    [SerializeField] private IOnEventSO inputfieldtest;
 }

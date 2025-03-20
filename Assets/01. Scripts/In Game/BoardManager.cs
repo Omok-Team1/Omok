@@ -18,10 +18,17 @@ public class BoardManager : MonoBehaviour
     public bool OnDropMarker()
     {
         var selected = _matchRecord.Peek()._coordinate;
-        
+
         if (_matchRecord.Peek() is not null && _grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(selected);
-
+        //for debug
+        else if (_grid[selected.Item1, selected.Item2].Marker != _gameData.emptySprite)
+        {
+            Debug.LogError("해당 좌표에 이미 돌이 놓여져 있습니다.");
+            //TODO: AI 알고리즘 수정이 필요함
+            //throw new Exception("Duplicated Marker found.");
+        }
+        
         return false;
     }
     

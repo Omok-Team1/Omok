@@ -79,7 +79,8 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void CloseChildrenCanvas()
     {
-        if (!ReferenceEquals(_rootCanvas, _canvasTrace.Peek()))
+        //현재 Canvas가 root면 닫지 않는다.
+        if (_canvasTrace.Count > 1)
         {
             foreach (var subCanvas in _canvasTrace.Pop())
             {

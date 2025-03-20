@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,8 +8,15 @@ public class ListenEventText : DataFriendlyComponent
 {
     public override void Init()
     {
-        TryGetComponent(out _textMeshPro);
+        if (TryGetComponent(out _text))
+        {
+            EventMethod();
+        }
+        else
+        {
+            throw new Exception("TextMeshProUGUI is missing.");
+        }
     }
     
-    private TextMeshPro _textMeshPro;
+    private TextMeshProUGUI _text;
 }
