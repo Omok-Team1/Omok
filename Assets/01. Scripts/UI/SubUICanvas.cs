@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class SubUICanvas : UICanvas
 {
+    
+    protected virtual void Awake()
+    {
+        // 자식 클래스에서 오버라이드 가능하도록 기본 구조만 제공
+    }
+
     private void Start()
     {
         Init();

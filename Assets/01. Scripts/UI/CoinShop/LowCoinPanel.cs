@@ -8,14 +8,14 @@ public class LowCoinPanel : MonoBehaviour
     [SerializeField] private Button cancelButton;
     [SerializeField] private TextMeshProUGUI messageText;
     [SerializeField] private int requiredCoins = 100;
-    
+
     private GameStartManager gameStartManager;
 
     private void Awake()
     {
         // 기본적으로 패널은 비활성화 상태로 시작
         gameObject.SetActive(false);
-        
+
         // GameStartManager 찾기
         gameStartManager = FindObjectOfType<GameStartManager>();
 
@@ -30,11 +30,7 @@ public class LowCoinPanel : MonoBehaviour
             cancelButton.onClick.AddListener(OnCancelClicked);
         }
 
-        // 메시지 설정
-        if (messageText != null)
-        {
-            messageText.text = $"코인이 부족해서 게임을 할 수 없어요. 상점으로 이동할까요?";
-        }
+        
     }
 
     private void OnEnable()
@@ -43,7 +39,7 @@ public class LowCoinPanel : MonoBehaviour
         if (messageText != null)
         {
             int currentCoins = CoinManager.Instance ? CoinManager.Instance.coin : 0;
-            
+
             messageText.text = $"코인이 부족해요...\n(현재: {currentCoins}, 필요: {requiredCoins})\n상점으로 이동할까요?";
         }
     }
@@ -51,12 +47,30 @@ public class LowCoinPanel : MonoBehaviour
     // 확인 버튼 클릭 시 (상점으로 이동)
     private void OnConfirmClicked()
     {
-        if (gameStartManager != null)
+        // 모든 StorePanel 찾기 (비활성화 포함)
+        StorePanel[] storePanels = Resources.FindObjectsOfTypeAll<StorePanel>();
+        
+        // 태그가 "MainStorePanel"인 StorePanel 찾기
+        StorePanel targetStorePanel = null;
+        foreach (var panel in storePanels)
         {
-            gameStartManager.OnConfirmGoToShop();
+            if (panel.CompareTag("MainStorePanel"))
+            {
+                targetStorePanel = panel;
+                break;
+            }
+        }
+
+        if (targetStorePanel != null)
+        {
+            targetStorePanel.Show(); // 애니메이션 실행
+            gameObject.SetActive(false); // 패널 닫기
+        }
+        else
+        {
+            Debug.LogError("태그가 'MainStorePanel'인 상점 패널을 찾을 수 없습니다!");
         }
     }
-
     // 취소 버튼 클릭 시
     private void OnCancelClicked()
     {

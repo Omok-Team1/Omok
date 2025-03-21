@@ -94,17 +94,21 @@ public class GameStartManager : MonoBehaviour
         {
             lowCoinPanel.SetActive(false);
         }
-        
+
         if (confirmStartGamePanel != null)
         {
             confirmStartGamePanel.SetActive(false);
         }
-        
+
         // 상점 패널 열기
         StorePanel storePanel = FindObjectOfType<StorePanel>();
         if (storePanel != null)
         {
             storePanel.Show();
+        }
+        else
+        {
+            Debug.LogError("상점 패널을 찾을 수 없습니다!");
         }
     }
     

@@ -6,42 +6,38 @@ public class StorePanel : SubUICanvas
 {
     [SerializeField] private float slideDuration = 0.5f;
     [SerializeField] private Ease slideEase = Ease.OutBack;
-
+    [SerializeField] private Canvas targetParentCanvas;
     private RectTransform _rectTransform;
     private Vector2 _originalPosition;
     private bool _isAnimating;
     private Tween _currentTween;
     private Canvas _parentCanvas; // 부모 캔버스 추적
 
-    public bool IsAnimating => _isAnimating; 
+    public bool IsAnimating => _isAnimating;
 
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
         _originalPosition = _rectTransform.anchoredPosition;
         _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
-        
+
         // 부모 캔버스 저장 (상위 캔버스가 비활성화되는 걸 방지하기 위해)
         _parentCanvas = GetComponentInParent<Canvas>();
     }
 
     public override void Show()
     {
-        if (_isAnimating || _rectTransform == null) return;
+        if (targetParentCanvas != null && !targetParentCanvas.gameObject.activeSelf)
+        {
+            targetParentCanvas.gameObject.SetActive(true); // 부모 캔버스 강제 활성화
+        }
 
         _currentTween?.Kill();
         _isAnimating = true;
 
-        // 부모 캔버스도 활성화 (상위 캔버스가 비활성화되면 애니메이션이 중간에 멈추는 문제 방지)
-        if (_parentCanvas != null)
-        {
-            _parentCanvas.gameObject.SetActive(true);
-        }
-
         _currentTween = _rectTransform.DOAnchorPosX(_originalPosition.x, slideDuration)
             .SetEase(slideEase)
-            .OnComplete(() => _isAnimating = false)
-            .OnKill(() => _isAnimating = false);
+            .OnComplete(() => _isAnimating = false);
 
         gameObject.SetActive(true);
     }
@@ -60,7 +56,7 @@ public class StorePanel : SubUICanvas
             {
                 gameObject.SetActive(false);
                 _isAnimating = false;
-                
+
                 // 부모 캔버스도 여기서 비활성화 (애니메이션이 끝난 후 실행)
                 if (_parentCanvas != null)
                 {
@@ -95,10 +91,7 @@ public class StorePanel : SubUICanvas
                 }
                 // gameObject.SetActive(false); - UIManager가 처리하므로 여기서는 호출하지 않음
             })
-            .OnKill(() =>
-            {
-                _isAnimating = false;
-            });
+            .OnKill(() => { _isAnimating = false; });
     }
 
     // UIManager가 애니메이션이 끝날 때까지 기다리도록 함
