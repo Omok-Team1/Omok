@@ -7,8 +7,7 @@
     <list default="true" id="744218b4-3b4c-4d48-add0-6fddc6013976" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Omok/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Omok/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/04.Scenes/Timer.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/04.Scenes/Timer.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +18,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/01.Scripts/UI/TimerController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController1.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController2.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -97,7 +97,8 @@
       <updated>1742174136798</updated>
       <workItem from="1742174138764" duration="191000" />
       <workItem from="1742174454242" duration="1842000" />
-      <workItem from="1742256890210" duration="6445000" />
+      <workItem from="1742256890210" duration="7331000" />
+      <workItem from="1742516278126" duration="3517000" />
     </task>
     <servers />
   </component>

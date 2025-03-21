@@ -3,16 +3,15 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 
-public class TimerController : MonoBehaviour
+public class TimerController2 : MonoBehaviour
 {
     private float turnTimeLimit = 30f; // 30초 제한시간
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
     private bool isPlayer1Turn = true; // 플레이어1이 턴을 시작하는지 여부
 
-    public TextMeshProUGUI timerText;    // 텍스트 UI
-    public Image FillImage;        // Radial fill 이미지
-    
+    public TextMeshProUGUI timerText;    // 시간 표시를 위한 텍스트 UI
+    public Image FillImage;              // Horizontal Fill 이미지를 사용한 타이머 진행률
     public AudioSource countdownAudioSource; // 카운트다운 사운드를 위한 AudioSource
     public AudioClip countdownSound;         // 카운트다운 소리 (오디오 클립)
 
@@ -51,6 +50,7 @@ public class TimerController : MonoBehaviour
             }
         }
     }
+
     private void PlayCountdownSound()
     {
         if (countdownAudioSource != null && countdownSound != null)
@@ -58,7 +58,7 @@ public class TimerController : MonoBehaviour
             countdownAudioSource.PlayOneShot(countdownSound); // 카운트다운 소리를 한 번 재생
         }
     }
-    
+
     // 턴 시작
     private void StartTurn()
     {
@@ -107,8 +107,10 @@ public class TimerController : MonoBehaviour
         // 남은 시간 계산
         float remainingTime = turnTimeLimit - currentTurnTime;
         
+        timerText.text = Mathf.Floor(remainingTime * 100) / 100f == 0 ? "00.00" : (Mathf.Floor(remainingTime * 100) / 100f).ToString("00.00");
+
         // 남은 시간이 0일 때 0으로 표시하도록 수정
-        timerText.text = Mathf.Floor(remainingTime).ToString("F0"); // 소수점 없이 표시
+        timerText.text = remainingTime.ToString("00.00") + " sec"; // 00.00 형식으로 표시
         
         // 남은 시간이 10초 이하일 때 색상 변경
         Color warningColor = new Color(0xEC / 255f, 0x27 / 255f, 0x27 / 255f); // #EC2727 색상
@@ -118,17 +120,17 @@ public class TimerController : MonoBehaviour
             // 타이머 텍스트 색상 변경
             timerText.color = warningColor;
 
-            // Radial Fill 색상 변경
+            // FillImage 색상 변경
             FillImage.color = warningColor;
         }
         else
         {
             // 원래 색상으로 돌아가기 (타이머 텍스트와 FillImage의 기본 색상)
             timerText.color = Color.white;
-            FillImage.color = new Color(0xE6 / 255f, 0xE6 / 255f, 0xE6 / 255f);
+            FillImage.color = Color.white;
         }
 
-        // Radial Fill 업데이트
-        FillImage.fillAmount = remainingTime / turnTimeLimit;
+        // FillImage 업데이트
+        FillImage.fillAmount = remainingTime / turnTimeLimit; // Horizontal Fill 방식으로 타이머 진행률 표시
     }
 }
