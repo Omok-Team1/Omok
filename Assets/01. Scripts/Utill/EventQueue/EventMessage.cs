@@ -23,6 +23,20 @@ public class EventMessage
         if(Parameters.ContainsKey(type) is true) Parameters[type] = value;
         else Parameters.Add(type, value);
     }
+    
+    public bool TryGetParameter<T>(out T value)
+    {
+        if (Parameters.TryGetValue(typeof(T), out object val))
+        {
+            value = (T)val;
+            return true;
+        }
+        else
+        {
+            value = default(T);
+            return false;
+        }
+    }
 
     public T GetParameter<T>()
     {

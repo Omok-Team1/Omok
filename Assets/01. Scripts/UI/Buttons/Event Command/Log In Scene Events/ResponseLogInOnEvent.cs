@@ -6,7 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResponseLogInOnEvent", menuName = "IOnEventSO/ResponseLogInOnEvent")]
 public class ResponseLogInOnEvent : IOnEventSO
 {
-    // ReSharper disable Unity.PerformanceAnalysis
     public override void OnEvent(EventMessage msg)
     {
         if (msg.GetParameter<string>() == "Success")

@@ -60,6 +60,11 @@ public class EventManager : Singleton<EventManager>
             ProcessEvent(eventMessage);
         }
     }
+
+    public void PublishSingleMessage(EventMessage eventMessage)
+    {
+        ProcessEvent(eventMessage);
+    }
     
     private readonly IDictionary<string, List<(IOnEventSO, GameObject)>> _listeners = new Dictionary<string, List<(IOnEventSO, GameObject)>>();
     private Queue<EventMessage> _eventQueue = new Queue<EventMessage>();

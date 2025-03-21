@@ -20,7 +20,7 @@ public class RequestSignUpOnEvent : IOnEventSO
         message.AddParameter<List<string>>(_inputFieldsDatas);
         
         EventManager.Instance.PushEventMessageEvent(message);
-        EventManager.Instance.PublishMessageQueue();
+        //EventManager.Instance.PublishMessageQueue();
     }
     
     private readonly List<string> _inputFieldsDatas = new List<string>();

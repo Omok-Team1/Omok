@@ -13,7 +13,7 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
     void Start()
     {
         EventManager.Instance.AddListener("RequestLogIn", logInEvent ,gameObject);
-        EventManager.Instance.AddListener("RequestSignIn", logInEvent ,gameObject);
+        EventManager.Instance.AddListener("RequestSignUp", signupEvent ,gameObject);
     }
 
     public void requestsignup(SignUpData data)
@@ -23,22 +23,30 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
     
     public IEnumerator RequestSignUp(SignUpData data)
     {
+        Debug.Log(GetJsonData(data) + " : Sign Up Data");
+            byte[] bodyRaw = DataSerialize(GetJsonData(data));
 
-            byte[] bodyRaw = DataSerialize(data.GetJsonData());
-
-            using (UnityWebRequest www = new UnityWebRequest(Constants.SERVER_URL + "users/signup",
+            using (UnityWebRequest www = new UnityWebRequest(Constants.SERVER_URL + "/users/signup",
                        UnityWebRequest.kHttpVerbPOST))
             {
                 www.uploadHandler = new UploadHandlerRaw(bodyRaw);
                 www.downloadHandler = new DownloadHandlerBuffer();
                 www.SetRequestHeader("Content-Type", "application/json");
 
+                Debug.Log("Started Requesting Sign Up");
                 yield return www.SendWebRequest();
-            
+                Debug.Log("End Requesting Sign Up");
+                
                 if (www.result == UnityWebRequest.Result.ConnectionError ||
                     www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     Debug.Log("Error : " + www.error);
+                    
+                    var result = www.downloadHandler.text;
+                    // var resultCode = JsonUtility.FromJson<SigninResult>(result);
+                    //
+                    // Debug.Log("Wow " + resultCode.result);
+                    Debug.Log(result);
 
                     if (www.responseCode == 409)
                     {
@@ -50,6 +58,14 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                 {
                     var result = www.downloadHandler.text;
                     Debug.Log(result);
+                    Debug.Log("Success");
+                    
+                    var message = new EventMessage("ResponseSignUp");
+                        
+                    message.AddParameter<string>("Success");
+
+                    EventManager.Instance.PushEventMessageEvent(message);
+                    EventManager.Instance.PublishMessageQueue();
                 
                     //TODO: 회원가입 성공 팝업 표시
                 }
@@ -95,10 +111,10 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                 else
                 {
                     var result = www.downloadHandler.text;
-                    var resultCode = JsonUtility.FromJson<SigninResult>(result);
-                    
-                    Debug.Log("Wow " + resultCode.result);
                     Debug.Log(result);
+                    //var resultCode = JsonUtility.FromJson<SigninResult>(result);
+                    
+                    //Debug.Log("Wow " + resultCode.result);
                 
                     //TODO: 회원가입 성공 팝업 표시
         
@@ -106,6 +122,13 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                     // message.AddParameter<float>(2.5f);
                     //
                     // EventManager.Instance.PushEventMessageEvent(message);
+                    
+                    var message = new EventMessage("ResponseLogIn");
+                        
+                    message.AddParameter<string>("Success");
+
+                    EventManager.Instance.PushEventMessageEvent(message);
+                    EventManager.Instance.PublishMessageQueue();
                 }
             }
     }
@@ -113,6 +136,10 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
     private byte[] DataSerialize(string data)
     {
         return System.Text.Encoding.UTF8.GetBytes(data);
+    }
+    public string GetJsonData(SignUpData data)
+    {
+        return JsonUtility.ToJson(data);
     }
 }
 
@@ -142,20 +169,34 @@ public struct SignUpData
 {
     public string username;
     public string password;
-    public byte[] image;
-
-    public SignUpData(string inputString, string s, byte[] image)
-    {
-        username = inputString;
-        password = s;
-        this.image = image;
-    }
-    
-    public string GetJsonData()
-    {
-        return JsonUtility.ToJson(this);
-    }
+    public string nickname;
 }
+// public struct SignUpData
+// {
+//     public string username;
+//     public string password;
+//     public string nickname;
+//     //public byte[] image;
+//
+//     // public SignUpData(string inputString, string s, byte[] image)
+//     // {
+//     //     username = inputString;
+//     //     password = s;
+//     //     this.image = image;
+//     // }
+//     
+//     public SignUpData(string inputString, string s, string s1)
+//     {
+//         username = inputString;
+//         password = s;
+//         nickname = s1;
+//     }
+//     
+//     public string GetJsonData()
+//     {
+//         return JsonUtility.ToJson(this);
+//     }
+// }
 
 public interface IDataFormat
 {

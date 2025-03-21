@@ -28,14 +28,25 @@ public class OnEventButton : UserFriendlyComponent
     {
         UIManager.Instance.triggeredEventUIComponent = this;
 
-        var message = new EventMessage(requestEventName);
-        
-        foreach (var param in _messageParamsInfo)
+        //메세지를 만들어야 할 때
+        if (requestEventName is not null && requestEventName.Length > 0)
         {
-            message.AddParameter(param.Item1, param.Item2);
+            var message = new EventMessage(requestEventName);
+
+            foreach (var param in MessageParamsInfo)
+            {
+                message.AddParameter(param.Item1, param.Item2);
+            }
+            
+            EventManager.Instance.PushEventMessageEvent(message);
+
+            if (isSingleMessage is true)
+            {
+                EventManager.Instance.PublishSingleMessage(message);
+                return;
+            }
         }
         
-        EventManager.Instance.PushEventMessageEvent(message);
         EventManager.Instance.PublishMessageQueue();
     }
     
@@ -43,11 +54,15 @@ public class OnEventButton : UserFriendlyComponent
     {
         return childrenComponent;
     }
+
+    [SerializeField] private bool isSingleMessage;
     
+    [Tooltip("OnClik 이벤트 발생 시 메세지를 만들어야 한다면, 이벤트 이름과 필요한 데이터 파라미터들을 채워주세요")]
     [Header("발신할 이벤트 이름입니다.")]
     [SerializeField] private string requestEventName;
     
-    [Header("이벤트를 발신할 때 메세지에 필요한 데이터들을 설정한 후 메세지를 발신합니다.")]
+    [Tooltip("필수로 입력해야하는 값들이 아닙니다.")]
+    [Header("이벤트 발신 시 메세지에 필요한 데이터들을 설정한 후 메세지를 발신합니다.")]
     [SerializeField] private MessagePrimitiveParams messageParameters;
     
     [Header("수신 받을 이벤트 이름입니다.")]
@@ -56,8 +71,8 @@ public class OnEventButton : UserFriendlyComponent
     [Header("이벤트를 수신 받았을 때 이벤트를 처리할 이벤트 함수입니다.")]
     [SerializeField] private IOnEventSO responseOnEvent;
 
-    private static readonly List<(Type, object)> _messageParamsInfo = new();
-    public static List<(Type, object)> MessageParamsInfo
+    private readonly List<(Type, object)> _messageParamsInfo = new();
+    public List<(Type, object)> MessageParamsInfo
     {
         get
         {

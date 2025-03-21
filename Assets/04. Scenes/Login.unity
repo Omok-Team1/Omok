@@ -2183,7 +2183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &973438555
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2302,7 +2302,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1005407514
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3027,7 +3027,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   logInEvent: {fileID: 11400000, guid: be41357b7845e324fa40513f23374d8d, type: 2}
-  signupEvent: {fileID: 0}
+  signupEvent: {fileID: 11400000, guid: 75b7d26c5f0f06d4397951f94960fb70, type: 2}
 --- !u!4 &1219407557
 Transform:
   m_ObjectHideFlags: 0
@@ -3179,6 +3179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   childrenObject:
   - {fileID: 1802410311218963005}
+  isSingleMessage: 0
   requestEventName: LogIn
   messageParameters:
     primitiveBool: 0
@@ -3455,6 +3456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   childrenObject: []
+  isSingleMessage: 0
   requestEventName: Upload
   messageParameters:
     primitiveBool: 0
@@ -3486,7 +3488,7 @@ GameObject:
   - component: {fileID: 1369826371}
   - component: {fileID: 1369826374}
   m_Layer: 5
-  m_Name: '[Button] Sign In'
+  m_Name: '[Button] Sign Up'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3607,9 +3609,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   childrenObject:
-  - {fileID: 1005407513}
   - {fileID: 973438554}
-  requestEventName: RequestSignUp
+  - {fileID: 1005407513}
+  isSingleMessage: 0
+  requestEventName: SignUp
   messageParameters:
     primitiveBool: 0
     primitiveByte: 0
@@ -3624,8 +3627,8 @@ MonoBehaviour:
     primitiveShort: 0
     primitiveUshort: 0
     primitiveString: 
-  responseEventName: 
-  responseOnEvent: {fileID: 0}
+  responseEventName: ResponseSignUp
+  responseOnEvent: {fileID: 11400000, guid: d349de5fd5b82ea41a199b49ed246964, type: 2}
 --- !u!1 &1380217150
 GameObject:
   m_ObjectHideFlags: 0
@@ -4849,7 +4852,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   childrenObject: []
-  eventName: RequestSignUp
+  eventName: SignUp
   eventMethod: {fileID: 11400000, guid: 697ba7972578bc544bb02db518ccf1bf, type: 2}
 --- !u!1 &1663631343
 GameObject:
@@ -6666,7 +6669,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1826236307679863354
 MonoBehaviour:
   m_ObjectHideFlags: 0

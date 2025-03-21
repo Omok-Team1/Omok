@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "TempRequestSignUpEvent", menuName = "IOnEventSO/TempRequestSignUpEvent")]
@@ -7,20 +8,56 @@ public class TempRequestSignUpEvent : IOnEventSO
 {
     public override void OnEvent(EventMessage msg)
     {
-        var inputStrings = msg.GetParameter<List<string>>();
-
-        foreach (var inputString in inputStrings)
-        {
-            foreach (var s in inputString)
-            {
-                Debug.Log(s);
-            }
-        }
-
-        var rawImage = msg.GetParameter<byte[]>();
+        WaitMessages.Enqueue(msg);
         
-        SignUpData inputData = new SignUpData(inputStrings[0], inputStrings[1], rawImage);
-        
-        TempNetworkManager.Instance.requestsignup(inputData);
+        if(coroutine is null)
+            coroutine = StaticCoroutine.StartStaticCoroutine(WaitForAllMessages());
     }
+
+    private IEnumerator WaitForAllMessages()
+    {
+        SignUpData signUpData;
+
+        signUpData.username = null;
+        signUpData.password = null;
+        signUpData.nickname = null;
+        
+        while (true)
+        {
+            // if (signUpData.username is not null && signUpData.password is not null &&
+            //     signUpData.image is not null)
+            if (signUpData.username is not null && signUpData.password is not null &&
+                signUpData.nickname is not null)
+            {
+                break;
+            }
+
+            if (WaitMessages.Count > 0)
+            {
+                var msg = WaitMessages.Dequeue();
+                
+                // if (msg.TryGetParameter(out byte[] rawImage) is true) 
+                // {
+                //     signUpData.image = rawImage;
+                // }
+                
+                if (msg.TryGetParameter(out List<string> inputStrings) is true)
+                {
+                    signUpData.username = inputStrings[0]; 
+                    signUpData.password = inputStrings[1];
+                    signUpData.nickname = inputStrings[2];
+                }
+            }
+            
+            yield return null;
+        }
+        
+        Debug.Log(signUpData.username + " Much");
+        Debug.Log(signUpData.password + " Wow");
+        Debug.Log(signUpData.nickname + " Moon");
+        
+        TempNetworkManager.Instance.requestsignup(signUpData);
+    }
+    
+    private Coroutine coroutine;
 }
