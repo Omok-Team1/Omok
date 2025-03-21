@@ -7,15 +7,23 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
 {
     //TEMP CODE
     [SerializeField] private IOnEventSO logInEvent;
+    //TEMP CODE
+    [SerializeField] private IOnEventSO signupEvent;
+    
     void Start()
     {
         EventManager.Instance.AddListener("RequestLogIn", logInEvent ,gameObject);
+        EventManager.Instance.AddListener("RequestSignIn", logInEvent ,gameObject);
+    }
+
+    public void requestsignup(SignUpData data)
+    {
+        StartCoroutine(RequestSignUp(data));
     }
     
-    public void RequestSignIn(IDataFormat data)
+    public IEnumerator RequestSignUp(SignUpData data)
     {
-        try
-        {
+
             byte[] bodyRaw = DataSerialize(data.GetJsonData());
 
             using (UnityWebRequest www = new UnityWebRequest(Constants.SERVER_URL + "users/signup",
@@ -25,9 +33,7 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                 www.downloadHandler = new DownloadHandlerBuffer();
                 www.SetRequestHeader("Content-Type", "application/json");
 
-                www.SendWebRequest();
-                
-                var message = new EventMessage("ResponseLogIn");
+                yield return www.SendWebRequest();
             
                 if (www.result == UnityWebRequest.Result.ConnectionError ||
                     www.result == UnityWebRequest.Result.ProtocolError)
@@ -38,11 +44,6 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                     {
                         //TODO: 중복 사용자 생성 팝업 표시
                         Debug.Log("중복 사용자");
-                        
-                        message.AddParameter<string>("Fail");
-                        message.AddParameter<float>(2.5f);
-        
-                        EventManager.Instance.PushEventMessageEvent(message);
                     }
                 }
                 else
@@ -51,18 +52,8 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
                     Debug.Log(result);
                 
                     //TODO: 회원가입 성공 팝업 표시
-        
-                    message.AddParameter<string>("Success");
-                    message.AddParameter<float>(2.5f);
-        
-                    EventManager.Instance.PushEventMessageEvent(message);
                 }
             }
-        }
-        catch (Exception e)
-        {
-            throw; // TODO handle exception
-        }
     }
 
     public void RequestLogIn(SigninData data)
@@ -139,6 +130,25 @@ public struct SigninData
     {
         username = inputString;
         password = s;
+    }
+    
+    public string GetJsonData()
+    {
+        return JsonUtility.ToJson(this);
+    }
+}
+
+public struct SignUpData
+{
+    public string username;
+    public string password;
+    public byte[] image;
+
+    public SignUpData(string inputString, string s, byte[] image)
+    {
+        username = inputString;
+        password = s;
+        this.image = image;
     }
     
     public string GetJsonData()
