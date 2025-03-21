@@ -21,7 +21,7 @@ public class StorePanel : SubUICanvas
         _originalPosition = _rectTransform.anchoredPosition;
         _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
         
-        // ✅ 부모 캔버스 저장 (상위 캔버스가 비활성화되는 걸 방지하기 위해)
+        // 부모 캔버스 저장 (상위 캔버스가 비활성화되는 걸 방지하기 위해)
         _parentCanvas = GetComponentInParent<Canvas>();
     }
 
@@ -73,6 +73,34 @@ public class StorePanel : SubUICanvas
                 _isAnimating = false;
             });
     }
+
+    // 새로 추가: 애니메이션 완료 후 UIManager.CloseChildrenCanvas 호출
+    public void HideAndCloseUI()
+    {
+        if (_isAnimating || _rectTransform == null) return;
+        if (!gameObject.activeSelf) return;
+
+        _currentTween?.Kill();
+        _isAnimating = true;
+
+        _currentTween = _rectTransform.DOAnchorPosX(Screen.width, slideDuration)
+            .SetEase(slideEase)
+            .OnComplete(() =>
+            {
+                _isAnimating = false;
+                // 애니메이션이 완료된 후 UIManager 호출
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.CloseChildrenCanvas();
+                }
+                // gameObject.SetActive(false); - UIManager가 처리하므로 여기서는 호출하지 않음
+            })
+            .OnKill(() =>
+            {
+                _isAnimating = false;
+            });
+    }
+
     // UIManager가 애니메이션이 끝날 때까지 기다리도록 함
     public void WaitAndCloseCanvas(UIManager uiManager)
     {

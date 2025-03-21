@@ -34,7 +34,15 @@ public class BackButton : MonoBehaviour
         // 디버그 로그 추가
         Debug.Log("BackButton 클릭됨");
     
-        // UIManager를 통해 이전 화면으로 돌아가기
-        UIManager.Instance.CloseChildrenCanvas();
+        // 타겟 StorePanel이 있으면 애니메이션 완료 후 UI 닫기
+        if (targetStorePanel != null)
+        {
+            targetStorePanel.HideAndCloseUI();
+        }
+        else
+        {
+            // 타겟이 없으면 기존처럼 바로 UI 닫기
+            UIManager.Instance.CloseChildrenCanvas();
+        }
     }
 }

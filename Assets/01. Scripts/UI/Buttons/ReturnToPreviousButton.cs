@@ -21,7 +21,19 @@ public class ReturnToPreviousButton : UserFriendlyComponent
         if (UIManager.Instance != null)
         {
             Debug.Log("ReturnToPreviousButton: 이전 화면으로 돌아가기 시도");
-            UIManager.Instance.CloseChildrenCanvas();
+            
+            // 현재 활성화된 StorePanel 찾기
+            StorePanel storePanel = GetComponentInParent<StorePanel>();
+            if (storePanel != null)
+            {
+                // StorePanel이 있으면 애니메이션 완료 후 UI 닫기
+                storePanel.HideAndCloseUI();
+            }
+            else
+            {
+                // StorePanel이 없으면 기존처럼 바로 UI 닫기
+                UIManager.Instance.CloseChildrenCanvas();
+            }
         }
         else
         {
