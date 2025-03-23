@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 56841199}
   - component: {fileID: 56841196}
   m_Layer: 5
-  m_Name: '[Button] Sign In'
+  m_Name: '[Button] Sign Up'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2178,7 +2178,7 @@ GameObject:
   - component: {fileID: 973438556}
   - component: {fileID: 973438559}
   m_Layer: 0
-  m_Name: '[Canvas] Sign In Success Window'
+  m_Name: '[Canvas] Sign Up Success Window'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2297,7 +2297,7 @@ GameObject:
   - component: {fileID: 1005407515}
   - component: {fileID: 1005407518}
   m_Layer: 0
-  m_Name: '[Canvas] Sign In Fail Exception Window'
+  m_Name: '[Canvas] Sign Up Fail Exception Window'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4651,7 +4651,7 @@ GameObject:
   - component: {fileID: 1635854045}
   - component: {fileID: 1635854044}
   m_Layer: 0
-  m_Name: '[TMPro] Error Message'
+  m_Name: '[TMPro] Success Message'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -97,7 +97,7 @@ public static class OmokAIController
         {
             for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
             {
-                if (_board[row, col].CellOnwer != player) continue;
+                if (_board[row, col].CellOwner != player) continue;
 
                 foreach (var (dx, dy) in directions)
                 {
@@ -105,7 +105,7 @@ public static class OmokAIController
                     for (int i = 1; i < 5; i++)
                     {
                         int newRow = row + dx * i, newCol = col + dy * i;
-                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE / 2 || newCol < 0 || newCol >= Constants.BOARD_SIZE / 2 || _board[newRow, newCol].CellOnwer != player)
+                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE / 2 || newCol < 0 || newCol >= Constants.BOARD_SIZE / 2 || _board[newRow, newCol].CellOwner != player)
                             break;
                         count++;
                     }
@@ -123,13 +123,13 @@ public static class OmokAIController
         {
             for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
             {
-                if (_board[row, col].CellOnwer != Turn.NONE) continue;
+                if (_board[row, col].CellOwner != Turn.NONE) continue;
 
                 foreach (var (dx, dy) in directions)
                 {
                     int newRow = row + dx, newCol = col + dy;
                     
-                    if (newRow >= 0 && newRow < Constants.BOARD_SIZE / 2 && newCol >= 0 && newCol < Constants.BOARD_SIZE / 2 && _board[newRow, newCol].CellOnwer != Turn.NONE)
+                    if (newRow >= 0 && newRow < Constants.BOARD_SIZE / 2 && newCol >= 0 && newCol < Constants.BOARD_SIZE / 2 && _board[newRow, newCol].CellOwner != Turn.NONE)
                     {
                         moves.Add((row, col));
                         break;
@@ -144,7 +144,7 @@ public static class OmokAIController
     {
         foreach (var cell in _board)
         {
-            if (cell.CellOnwer == Turn.NONE) return false;
+            if (cell.CellOwner == Turn.NONE) return false;
         }
         return true;
     }
@@ -158,8 +158,8 @@ public static class OmokAIController
             {
                 for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
                 {
-                    if (_board[row, col].CellOnwer == Turn.NONE) continue;
-                    int playerMultiplier = _board[row, col].CellOnwer == Turn.PLAYER2 ? 1 : -1;
+                    if (_board[row, col].CellOwner == Turn.NONE) continue;
+                    int playerMultiplier = _board[row, col].CellOwner == Turn.PLAYER2 ? 1 : -1;
                     int count = 0;
                     bool isBlocked = false;
                     for (int i = 0; i < 5; i++)
@@ -172,7 +172,7 @@ public static class OmokAIController
                         }
                         if (_board[newRow, newCol] == _board[row, col])
                             count++;
-                        else if (_board[newRow, newCol].CellOnwer != Turn.NONE)
+                        else if (_board[newRow, newCol].CellOwner != Turn.NONE)
                         {
                             isBlocked = true;
                             break;
@@ -193,7 +193,7 @@ public static class OmokAIController
         ulong hash = 0;
         foreach (var cell in _board)
         {
-            hash = hash * 31 + (ulong)cell.CellOnwer;
+            hash = hash * 31 + (ulong)cell.CellOwner;
         }
         return hash;
     }
@@ -202,7 +202,7 @@ public static class OmokAIController
     {
         foreach (var cell in _board)
         {
-            if (cell.CellOnwer != Turn.NONE) return false;
+            if (cell.CellOwner != Turn.NONE) return false;
         }
         return true;
     }

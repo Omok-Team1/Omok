@@ -32,6 +32,14 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public void RemoveListener(string eventName, IOnEventSO listener, GameObject listenerObj = null)
+    {
+        if (_listeners.TryGetValue(eventName, out List<(IOnEventSO, GameObject)> eventListener))
+        {
+            eventListener.Remove((listener, listenerObj));
+        }
+    }
+
     public void PushEventMessageEvent(EventMessage eventMessage)
     {
         _eventQueue.Enqueue(eventMessage);

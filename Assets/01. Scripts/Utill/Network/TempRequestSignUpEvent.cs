@@ -52,11 +52,7 @@ public class TempRequestSignUpEvent : IOnEventSO
             yield return null;
         }
         
-        Debug.Log(signUpData.username + " Much");
-        Debug.Log(signUpData.password + " Wow");
-        Debug.Log(signUpData.nickname + " Moon");
-        
-        TempNetworkManager.Instance.requestsignup(signUpData);
+        TempNetworkManager.Instance.RequestsignUp(signUpData);
     }
     
     private Coroutine coroutine;

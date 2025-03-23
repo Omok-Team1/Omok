@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class TempNetworkManager : Singleton<TempNetworkManager>
+public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
 {
     //TEMP CODE
     [SerializeField] private IOnEventSO logInEvent;
@@ -16,12 +16,12 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
         EventManager.Instance.AddListener("RequestSignUp", signupEvent ,gameObject);
     }
 
-    public void requestsignup(SignUpData data)
+    public void RequestSignUp(SignUpData data)
     {
-        StartCoroutine(RequestSignUp(data));
+        StartCoroutine(RequestsignUp(data));
     }
     
-    public IEnumerator RequestSignUp(SignUpData data)
+    public IEnumerator RequestsignUp(SignUpData data)
     {
         Debug.Log(GetJsonData(data) + " : Sign Up Data");
             byte[] bodyRaw = DataSerialize(GetJsonData(data));
@@ -72,12 +72,12 @@ public class TempNetworkManager : Singleton<TempNetworkManager>
             }
     }
 
-    public void RequestLogIn(SigninData data)
+    public void RequestLogIn(SignInData data)
     {
         StartCoroutine(Requestsignin(data));
     }
     
-    public IEnumerator Requestsignin(SigninData data)
+    public IEnumerator Requestsignin(SignInData data)
     {
             byte[] bodyRaw = DataSerialize(data.GetJsonData());
 
@@ -148,12 +148,12 @@ public struct SigninResult
     public int result;
 }
 
-public struct SigninData
+public struct SignInData
 {
     public string username;
     public string password;
 
-    public SigninData(string inputString, string s)
+    public SignInData(string inputString, string s)
     {
         username = inputString;
         password = s;

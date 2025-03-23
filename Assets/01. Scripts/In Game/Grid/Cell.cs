@@ -10,7 +10,7 @@ public class Cell : MonoBehaviour
         _coordinate = coordinate;
         _cellSprite = GetComponent<SpriteRenderer>();
         
-        _cellOnwer = Turn.NONE;
+        _cellOwner = Turn.NONE;
         Marker = emptySprite;
     }
 
@@ -23,7 +23,7 @@ public class Cell : MonoBehaviour
     public (int, int) _coordinate { get; private set; }
 
     private SpriteRenderer _cellSprite;
-    private Turn _cellOnwer;
+    private Turn _cellOwner;
     
     public Sprite Marker
     {
@@ -31,9 +31,9 @@ public class Cell : MonoBehaviour
         set => _cellSprite.sprite = value;
     }
 
-    public Turn CellOnwer
+    public Turn CellOwner
     {
-        get => _cellOnwer;
-        set => _cellOnwer = value;
+        get => _cellOwner;
+        set => _cellOwner = value;
     }
 }

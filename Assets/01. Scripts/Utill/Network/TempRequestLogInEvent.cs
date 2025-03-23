@@ -17,7 +17,7 @@ public class TempRequestLogInEvent : IOnEventSO
             }
         }
         
-        SigninData inputData = new SigninData(inputStrings[0], inputStrings[1]);
+        SignInData inputData = new SignInData(inputStrings[0], inputStrings[1]);
         
         TempNetworkManager.Instance.RequestLogIn(inputData);
     }

@@ -7,6 +7,10 @@ public class OpponentState : IState
     public OpponentState(StateMachine stateMachine)
     {
         StateMachine = stateMachine;
+
+        _eventSO = ScriptableObject.CreateInstance<TimeOutOnEvent>();
+        
+        EventManager.Instance.AddListener("Player2TimeOver", _eventSO, StateMachine.gameObject);
     }
     
     public void EnterState()
@@ -16,6 +20,8 @@ public class OpponentState : IState
         GameManager.Instance.BoardManager.RecordDrop(bestCoordi);
         
         StateMachine.ChangeState<OnDropState>();
+        
+        GameManager.Instance.TimerController.EndPlayerTurn();
     }
 
     public void UpdateState()
@@ -25,8 +31,10 @@ public class OpponentState : IState
 
     public void ExitState()
     {
-
+       
     }
+    
+    private readonly IOnEventSO _eventSO;
 
     private readonly Invoker _actions;
     public StateMachine StateMachine { get; set; }
