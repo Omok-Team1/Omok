@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class EventMessage
 {
     public EventMessage(string eventName)
@@ -13,7 +14,28 @@ public class EventMessage
 
     public void AddParameter<T>(object value)
     {
-        Parameters.Add(typeof(T), value);
+        if(Parameters.ContainsKey(typeof(T)) is true) Parameters[typeof(T)] = value;
+        else Parameters.Add(typeof(T), value);
+    }
+    
+    public void AddParameter(Type type, object value)
+    {
+        if(Parameters.ContainsKey(type) is true) Parameters[type] = value;
+        else Parameters.Add(type, value);
+    }
+    
+    public bool TryGetParameter<T>(out T value)
+    {
+        if (Parameters.TryGetValue(typeof(T), out object val))
+        {
+            value = (T)val;
+            return true;
+        }
+        else
+        {
+            value = default(T);
+            return false;
+        }
     }
 
     public T GetParameter<T>()
@@ -22,6 +44,6 @@ public class EventMessage
         else throw new KeyNotFoundException("Invalid parameter type");
     }
 
-    public IDictionary<Type, object> Parameters;
+    private IDictionary<Type, object> Parameters;
     public string EventName;
 }

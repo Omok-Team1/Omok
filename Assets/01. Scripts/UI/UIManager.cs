@@ -54,19 +54,21 @@ public class UIManager : Singleton<UIManager>
     /// 파라미터로 전달 받은 childCoponent(= Child Canvas)를 활성화 합니다.
     /// </summary>
     /// <param name="currentCanvas">현재 활성화 되어 있는 캔버스 "반드시 this를 전달해야 합니다."</param>
-    /// <param name="childComponent">활성화 할 자식 캔버스</param>
+    /// <param name="targetChild">활성화 할 자식 캔버스</param>
     /// <param name="isThisCanvasHide"></param>
-    public void OpenTargetChildCanvas(IUIComponent currentCanvas, IUIComponent childComponent, bool isThisCanvasHide = false)
+    public void OpenTargetChildCanvas(IUIComponent currentCanvas, IUIComponent targetChild, bool isThisCanvasHide = false)
     {
+        List<IUIComponent> thisCanvas = _canvasTrace.Peek();
+        
+        _canvasTrace.Push(new List<IUIComponent> { targetChild });
+
         if (isThisCanvasHide)
         {
-            foreach (var subCanvas in currentCanvas.GetChildren())
+            foreach (var subCanvas in thisCanvas)
             {
                 subCanvas.Hide();
             }
         }
-        
-        _canvasTrace.Push(childComponent.GetChildren());
         
         foreach (var nextCanvas in _canvasTrace.Peek())
         {
@@ -79,7 +81,8 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void CloseChildrenCanvas()
     {
-        if (!ReferenceEquals(_rootCanvas, _canvasTrace.Peek()))
+        //현재 Canvas가 root면 닫지 않는다.
+        if (_canvasTrace.Count > 1)
         {
             foreach (var subCanvas in _canvasTrace.Pop())
             {

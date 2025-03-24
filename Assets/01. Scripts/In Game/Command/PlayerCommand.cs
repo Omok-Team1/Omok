@@ -16,6 +16,9 @@ public class PlayerCommand : ICommand
         else
         {
             _boardManager.RecordDrop(_raycastHit2D.collider.TryGetComponent<Cell>(out Cell cell) ? cell : null);
+            
+            GameManager.Instance.TimerController.EndPlayerTurn();
+            
             return true;
         }
     }

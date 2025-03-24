@@ -13,6 +13,9 @@ public class PlayerState : IState
         StateMachine = stateMachine;
         
         _actions.AddCommand(new PlayerCommand());
+
+        _eventSO = ScriptableObject.CreateInstance<TimeOutOnEvent>();
+        EventManager.Instance.AddListener("Player1TimeOver", _eventSO, StateMachine.gameObject);
     }
     
     public void EnterState()
@@ -31,9 +34,11 @@ public class PlayerState : IState
 
     public void ExitState()
     {
-
+        
     }
 
+    private readonly IOnEventSO _eventSO;
+    
     private readonly Invoker _actions = new();
     
     public StateMachine StateMachine { get; set; }

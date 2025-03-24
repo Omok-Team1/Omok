@@ -45,12 +45,15 @@ public abstract class DataFriendlyComponent : MonoBehaviour, IUIComponent
     }
     
     [Header("Only UICanvas Object")]
+    [Tooltip("필수로 채워야하는 값이 아닙니다.")]
     [SerializeField] protected List<GameObject> childrenObject;
 
     [Header("수신 받을 Event")]
+    [Tooltip("필수로 채워야하는 값이 아닙니다.")]
     [SerializeField] private string eventName;
     
     [Header("Event Name 수신시 실행할 메소드")]
+    [Tooltip("필수로 채워야하는 값이 아닙니다.")]
     [SerializeField] private IOnEventSO eventMethod;
     
     protected List<IUIComponent> childrenComponent = new();

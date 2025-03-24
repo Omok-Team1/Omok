@@ -32,6 +32,14 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public void RemoveListener(string eventName, IOnEventSO listener, GameObject listenerObj = null)
+    {
+        if (_listeners.TryGetValue(eventName, out List<(IOnEventSO, GameObject)> eventListener))
+        {
+            eventListener.Remove((listener, listenerObj));
+        }
+    }
+
     public void PushEventMessageEvent(EventMessage eventMessage)
     {
         _eventQueue.Enqueue(eventMessage);
@@ -43,6 +51,7 @@ public class EventManager : Singleton<EventManager>
         {
             foreach (var (listener, listenerObj) in eventListener)
             {
+                //같은 이벤트를 기다리는 게임 오브젝트들이 여러개 일 때 값(게임 오브젝트)를 덮어 쓴다.
                 eventMessage.AddParameter<GameObject>(listenerObj);
                 
                 listener.OnEvent(eventMessage);
@@ -58,6 +67,11 @@ public class EventManager : Singleton<EventManager>
             
             ProcessEvent(eventMessage);
         }
+    }
+
+    public void PublishSingleMessage(EventMessage eventMessage)
+    {
+        ProcessEvent(eventMessage);
     }
     
     private readonly IDictionary<string, List<(IOnEventSO, GameObject)>> _listeners = new Dictionary<string, List<(IOnEventSO, GameObject)>>();

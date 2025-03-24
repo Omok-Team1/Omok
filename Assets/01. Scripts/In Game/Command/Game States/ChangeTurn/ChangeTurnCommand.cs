@@ -7,6 +7,8 @@ public class ChangeTurnCommand : ICommand
     public bool Execute()
     {
         _boardManager.ChangeTurn();
+        
+        Debug.Log(_boardManager.GameData.currentTurn);
 
         return true;
     }

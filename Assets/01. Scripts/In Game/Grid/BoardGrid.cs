@@ -49,12 +49,12 @@ public class BoardGrid : MonoBehaviour
             else if (_gameData.currentTurn == Turn.PLAYER1)
             {
                 _grid[coordi].Marker = _gameData.player1Marker;
-                _grid[coordi].CellOnwer = Turn.PLAYER1;
+                _grid[coordi].CellOwner = Turn.PLAYER1;
             }
             else
             {
                 _grid[coordi].Marker = _gameData.player2Marker;
-                _grid[coordi].CellOnwer = Turn.PLAYER2;
+                _grid[coordi].CellOwner = Turn.PLAYER2;
             }
 
             _grid[coordi].gameObject.layer = LayerMask.NameToLayer("Selected");
@@ -120,7 +120,7 @@ public class BoardGrid : MonoBehaviour
     /// <returns></returns>
     public void MarkingTurnOnCell((int, int) coordi, Turn player)
     {
-        _grid[coordi].CellOnwer = player;
+        _grid[coordi].CellOwner = player;
     }
 
     private int _remainCells = 0;

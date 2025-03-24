@@ -18,10 +18,17 @@ public class BoardManager : MonoBehaviour
     public bool OnDropMarker()
     {
         var selected = _matchRecord.Peek()._coordinate;
-        
+
         if (_matchRecord.Peek() is not null && _grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(selected);
-
+        //for debug
+        else if (_grid[selected.Item1, selected.Item2].Marker != _gameData.emptySprite)
+        {
+            Debug.LogError("해당 좌표에 이미 돌이 놓여져 있습니다.");
+            //TODO: AI 알고리즘 수정이 필요함
+            //throw new Exception("Duplicated Marker found.");
+        }
+        
         return false;
     }
     
@@ -107,7 +114,7 @@ public class BoardManager : MonoBehaviour
     //여러가지 제약 조건을 추가 할 수 있도록 분리시키자!
     public List<Cell> ConstraintsCheck()
     {
-        var currentTurnCells = _matchRecord.Where(c => c.CellOnwer == _gameData.currentTurn).ToList();
+        var currentTurnCells = _matchRecord.Where(c => c.CellOwner == _gameData.currentTurn).ToList();
         
         List<Cell> cells = new List<Cell>();
         
@@ -135,13 +142,13 @@ public class BoardManager : MonoBehaviour
                     
                     if (_grid[nr, nc] is null) break;
                 
-                    if (_grid[nr, nc].CellOnwer != _gameData.currentTurn &&
-                        _grid[nr, nc].CellOnwer != Turn.NONE)
+                    if (_grid[nr, nc].CellOwner != _gameData.currentTurn &&
+                        _grid[nr, nc].CellOwner != Turn.NONE)
                     {
                         break;
                     }
 
-                    if (_grid[nr, nc].CellOnwer == _gameData.currentTurn)
+                    if (_grid[nr, nc].CellOwner == _gameData.currentTurn)
                         break;
                     
                     int doubleThreeCounter = 0;
@@ -152,12 +159,12 @@ public class BoardManager : MonoBehaviour
                         bool isAppearNone = false;
                         bool isOpenFour = false;
                     
-                        _grid[nr, nc].CellOnwer = _gameData.currentTurn;
+                        _grid[nr, nc].CellOwner = _gameData.currentTurn;
                         
                         counter = ConstraintsCheckRecursive(nr, nc, dy[virtualDir], dx[virtualDir], 0, isAppearNone, ref isOpenFour) + 
                                   ConstraintsCheckRecursive(nr, nc, -dy[virtualDir], -dx[virtualDir], 0, isAppearNone, ref isOpenFour) - 1;
 
-                        _grid[nr, nc].CellOnwer = Turn.NONE;
+                        _grid[nr, nc].CellOwner = Turn.NONE;
                         
                         if (counter == 3 && isOpenFour)
                         {
@@ -194,15 +201,15 @@ public class BoardManager : MonoBehaviour
         
         //Base Condition
         //현재 보는 칸이 상대방의 돌이라면 해당 방향은 더 이상 볼 필요가 없다.
-        if (_grid[row, col].CellOnwer != _gameData.currentTurn &&
-            _grid[row, col].CellOnwer != Turn.NONE)
+        if (_grid[row, col].CellOwner != _gameData.currentTurn &&
+            _grid[row, col].CellOwner != Turn.NONE)
         {
             isOpenFour = false;
             return count;
         }
 
         // 빈 칸을 처음 만나면 계속 탐색
-        if (_grid[row, col].CellOnwer == Turn.NONE)
+        if (_grid[row, col].CellOwner == Turn.NONE)
         {
             if (isAppearNone is false)
             {
