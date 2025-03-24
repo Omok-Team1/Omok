@@ -8,6 +8,8 @@ public class LowCoinPanel : MonoBehaviour
     [SerializeField] private Button cancelButton;
     [SerializeField] private TextMeshProUGUI messageText;
     [SerializeField] private int requiredCoins = 100;
+    [SerializeField] private StorePanel mainStorePanel; // 인스펙터에서 할당할 스토어 패널
+    [Tooltip("메인 상점 패널을 여기에 직접 연결하세요")]
 
     private GameStartManager gameStartManager;
 
@@ -29,8 +31,12 @@ public class LowCoinPanel : MonoBehaviour
         {
             cancelButton.onClick.AddListener(OnCancelClicked);
         }
-
         
+        // 상점 패널이 설정되지 않았다면 경고 로그 출력
+        if (mainStorePanel == null)
+        {
+            Debug.LogWarning("LowCoinPanel의 mainStorePanel이 할당되지 않았습니다. 인스펙터에서 연결해주세요.");
+        }
     }
 
     private void OnEnable()
@@ -47,30 +53,17 @@ public class LowCoinPanel : MonoBehaviour
     // 확인 버튼 클릭 시 (상점으로 이동)
     private void OnConfirmClicked()
     {
-        // 모든 StorePanel 찾기 (비활성화 포함)
-        StorePanel[] storePanels = Resources.FindObjectsOfTypeAll<StorePanel>();
-        
-        // 태그가 "MainStorePanel"인 StorePanel 찾기
-        StorePanel targetStorePanel = null;
-        foreach (var panel in storePanels)
+        if (mainStorePanel != null)
         {
-            if (panel.CompareTag("MainStorePanel"))
-            {
-                targetStorePanel = panel;
-                break;
-            }
-        }
-
-        if (targetStorePanel != null)
-        {
-            targetStorePanel.Show(); // 애니메이션 실행
+            mainStorePanel.Show(); // 애니메이션 실행
             gameObject.SetActive(false); // 패널 닫기
         }
         else
         {
-            Debug.LogError("태그가 'MainStorePanel'인 상점 패널을 찾을 수 없습니다!");
+            Debug.LogError("mainStorePanel이 할당되지 않았습니다. 인스펙터에서 연결해주세요.");
         }
     }
+
     // 취소 버튼 클릭 시
     private void OnCancelClicked()
     {

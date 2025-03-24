@@ -2829,6 +2829,7 @@ MonoBehaviour:
   cancelButton: {fileID: 1712037938}
   messageText: {fileID: 1204549280}
   requiredCoins: 100
+  mainStorePanel: {fileID: 1448395951}
 --- !u!114 &319264930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11254,7 +11255,7 @@ GameObject:
   - component: {fileID: 1448395953}
   m_Layer: 5
   m_Name: ShopTotalPanel
-  m_TagString: MainStorePanel
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

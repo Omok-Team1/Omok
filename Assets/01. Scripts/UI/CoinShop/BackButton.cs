@@ -5,27 +5,36 @@ using UnityEngine.UI;
 public class BackButton : MonoBehaviour
 {
     [SerializeField] private StorePanel targetStorePanel;
+    
+    private Button button;
+
+    private void Awake()
+    {
+        button = GetComponent<Button>();
+        button.onClick.AddListener(OnButtonClick);
+    }
 
     private void Start()
     {
-        Button button = GetComponent<Button>();
-        button.onClick.AddListener(OnButtonClick);
-
-        // 타겟이 할당되지 않은 경우 이름으로 찾기
+        // 타겟 StorePanel이 설정되지 않았다면 경고 로그 출력
         if (targetStorePanel == null)
         {
-            // 특정 이름의 StorePanel 찾기 (예: "ShopTotalPanel")
-            GameObject shopPanel = GameObject.Find("ShopTotalPanel");
-            if (shopPanel != null)
-            {
-                targetStorePanel = shopPanel.GetComponent<StorePanel>();
-            }
+            Debug.LogWarning("BackButton의 targetStorePanel이 할당되지 않았습니다. 인스펙터에서 연결해주세요.");
             
-            // 찾지 못한 경우 로그 출력
+            // 부모 계층에서 StorePanel 찾기 시도
+            targetStorePanel = GetComponentInParent<StorePanel>();
+            
             if (targetStorePanel == null)
             {
-                Debug.LogError("ShopTotalPanel을 찾을 수 없습니다.");
+                // 마지막 시도로 씬에서 찾기
+                targetStorePanel = FindObjectOfType<StorePanel>();
             }
+        }
+        
+        // 이 버튼을 항상 활성화 상태로 유지하도록 StorePanel에 등록
+        if (targetStorePanel != null)
+        {
+            targetStorePanel.RegisterAlwaysActiveObject(gameObject);
         }
     }
 
@@ -43,6 +52,7 @@ public class BackButton : MonoBehaviour
         {
             // 타겟이 없으면 기존처럼 바로 UI 닫기
             UIManager.Instance.CloseChildrenCanvas();
+            Debug.LogWarning("targetStorePanel이 설정되지 않아 기본 닫기 동작을 실행합니다.");
         }
     }
 }
