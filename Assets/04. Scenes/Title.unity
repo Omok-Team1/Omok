@@ -1031,6 +1031,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!114 &65074155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3564,6 +3566,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 200357b3a72090143993bb7934ae339f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!225 &397960420
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4203,6 +4207,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 261f5ef671f87e849ada7570e73ae4fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
   slideDuration: 0.5
   slideEase: 27
   targetParentCanvas: {fileID: 1295334635}
@@ -9588,6 +9594,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!114 &1295334633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11348,6 +11356,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 261f5ef671f87e849ada7570e73ae4fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
   slideDuration: 0.5
   slideEase: 27
   targetParentCanvas: {fileID: 1594618456}
@@ -12503,6 +12513,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!1 &1605060444
 GameObject:
   m_ObjectHideFlags: 0
@@ -16348,6 +16360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932310aa7c7426c4da47ab3cd48d8bc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventName: 
+  uiEvent: {fileID: 0}
 --- !u!1 &2128269293
 GameObject:
   m_ObjectHideFlags: 0

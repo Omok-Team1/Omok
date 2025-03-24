@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class StorePanel : SubUICanvas
 {
@@ -27,8 +28,9 @@ public class StorePanel : SubUICanvas
         }
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake(); // 부모 클래스의 Awake 호출
         _rectTransform = GetComponent<RectTransform>();
         _originalPosition = _rectTransform.anchoredPosition;
         _rectTransform.anchoredPosition = new Vector2(Screen.width, _originalPosition.y);
@@ -80,22 +82,22 @@ public class StorePanel : SubUICanvas
             .SetEase(slideEase)
             .OnComplete(() =>
             {
-                gameObject.SetActive(false);
                 _isAnimating = false;
-
-                // 부모 캔버스도 여기서 비활성화 (애니메이션이 끝난 후 실행)
-                if (_parentCanvas != null)
+                gameObject.SetActive(false); // 패널 명시적으로 비활성화
+    
+                // 항상 활성화된 상태로 유지할 오브젝트들 처리
+                foreach (var obj in _alwaysActiveObjects)
                 {
-                    // 항상 활성화되어야 할 오브젝트들은 먼저 활성화
-                    foreach (var obj in _alwaysActiveObjects)
+                    if (obj != null)
                     {
-                        if (obj != null)
-                        {
-                            obj.SetActive(true);
-                        }
+                        obj.SetActive(true);
                     }
-
-                    _parentCanvas.gameObject.SetActive(false);
+                }
+    
+                // 예외 처리 없이 직접 호출
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.CloseChildrenCanvas();
                 }
             })
             .OnKill(() =>
@@ -119,6 +121,7 @@ public class StorePanel : SubUICanvas
             .OnComplete(() =>
             {
                 _isAnimating = false;
+                gameObject.SetActive(false); // 패널 명시적으로 비활성화
                 
                 // 항상 활성화된 상태로 유지할 오브젝트들 처리
                 foreach (var obj in _alwaysActiveObjects)
@@ -129,15 +132,25 @@ public class StorePanel : SubUICanvas
                     }
                 }
                 
-                // 애니메이션이 완료된 후 UIManager 호출
-                if (UIManager.Instance != null)
+                try
                 {
-                    UIManager.Instance.CloseChildrenCanvas();
+                    // UI 스택 관리 체계와 별개로 게임오브젝트 상태 명시적 제어
+                    if (UIManager.Instance != null)
+                    {
+                        UIManager.Instance.CloseChildrenCanvas();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"UI 스택 처리 중 오류 발생: {e.Message}");
+                    // 오류가 발생해도 패널은 명시적으로 비활성화 상태 유지
                 }
             })
-            .OnKill(() => { _isAnimating = false; });
+            .OnKill(() => { 
+                _isAnimating = false;
+                gameObject.SetActive(false); // 트윈이 중단되더라도 패널 비활성화
+            });
     }
-
     // UIManager가 애니메이션이 끝날 때까지 기다리도록 함
     public IEnumerator WaitForAnimation(UIManager uiManager)
     {
