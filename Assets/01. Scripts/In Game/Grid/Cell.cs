@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Cell : MonoBehaviour
@@ -21,6 +19,9 @@ public class Cell : MonoBehaviour
     }
 
     public (int, int) _coordinate { get; private set; }
+
+    public int Row => _coordinate.Item1; // Row 추가
+    public int Col => _coordinate.Item2; // Col 추가
 
     private SpriteRenderer _cellSprite;
     private Turn _cellOwner;
