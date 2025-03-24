@@ -64,6 +64,7 @@ public class TimerController : MonoBehaviour
     {
         currentTurnTime = 0f;
         isTurnRunning = true;
+        hasPlayedCountdownSound = false;
         Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + "'s turn started. Time limit: " + turnTimeLimit + " seconds.");
     }
 
