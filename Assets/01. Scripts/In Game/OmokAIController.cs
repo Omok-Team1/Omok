@@ -101,7 +101,8 @@ public static class OmokAIController
         {
             for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
             {
-                if (_board[row, col].CellOwner != player) continue;
+                // 🔹 null 체크 추가
+                if (_board[row, col] == null || _board[row, col].CellOwner != player) continue;
 
                 foreach (var (dx, dy) in directions)
                 {
@@ -109,8 +110,14 @@ public static class OmokAIController
                     for (int i = 1; i < 5; i++)
                     {
                         int newRow = row + dx * i, newCol = col + dy * i;
-                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE || _board[newRow, newCol].CellOwner != player)
+                        
+                        // 🔹 null 체크 추가
+                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE || _board[newRow, newCol] == null)
                             break;
+
+                        if (_board[newRow, newCol].CellOwner != player)
+                            break;
+                        
                         count++;
                     }
                     if (count >= 5) return true;
@@ -120,9 +127,12 @@ public static class OmokAIController
         return false;
     }
 
+
     private static List<(int, int)> GetCandidateMoves()
     {
         List<(int, int)> moves = new List<(int, int)>();
+        HashSet<(int, int)> uniqueMoves = new HashSet<(int, int)>();
+
         for (int row = -7; row < Constants.BOARD_SIZE - 7; row++)
         {
             for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
@@ -133,14 +143,19 @@ public static class OmokAIController
                 {
                     int newRow = row + dx, newCol = col + dy;
 
-                    if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 && newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 && _board[newRow, newCol].CellOwner != Turn.NONE)
+                    if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 &&
+                        newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 &&
+                        _board[newRow, newCol].CellOwner != Turn.NONE)
                     {
-                        moves.Add((row, col));
+                        uniqueMoves.Add((row, col));
                         break;
                     }
                 }
             }
         }
+
+        moves.AddRange(uniqueMoves);
+        moves.Sort((a, b) => EvaluateMovePriority(b).CompareTo(EvaluateMovePriority(a)));
         return moves;
     }
 
@@ -162,18 +177,24 @@ public static class OmokAIController
             {
                 for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
                 {
-                    if (_board[row, col].CellOwner == Turn.NONE) continue;
+                    // 🔹 null 체크 추가
+                    if (_board[row, col] == null || _board[row, col].CellOwner == Turn.NONE) continue;
+
                     int playerMultiplier = _board[row, col].CellOwner == Turn.PLAYER2 ? 1 : -1;
                     int count = 0;
                     bool isBlocked = false;
+                    
                     for (int i = 0; i < 5; i++)
                     {
                         int newRow = row + dx * i, newCol = col + dy * i;
-                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE)
+                        
+                        // 🔹 null 체크 추가
+                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE || _board[newRow, newCol] == null)
                         {
                             isBlocked = true;
                             break;
                         }
+
                         if (_board[newRow, newCol] == _board[row, col])
                             count++;
                         else if (_board[newRow, newCol].CellOwner != Turn.NONE)
@@ -191,6 +212,7 @@ public static class OmokAIController
         }
         return score;
     }
+
 
     private static ulong ComputeHash()
     {
@@ -328,4 +350,60 @@ public static class OmokAIController
 
         return score;
     }
+
+    private static int EvaluateMovePriority((int row, int col) move)
+    {
+        int score = 0;
+
+        foreach (var (dx, dy) in directions)
+        {
+            int count = 1;
+            bool isBlockedStart = false, isBlockedEnd = false;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row + dx * i, newCol = move.col + dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 ||
+                    newCol < -7 || newCol >= Constants.BOARD_SIZE - 7)
+                {
+                    isBlockedEnd = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2) count++;
+                else if (_board[newRow, newCol].CellOwner == Turn.PLAYER1) 
+                {
+                    isBlockedEnd = true;
+                    break;
+                }
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row - dx * i, newCol = move.col - dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 ||
+                    newCol < -7 || newCol >= Constants.BOARD_SIZE - 7)
+                {
+                    isBlockedStart = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2) count++;
+                else if (_board[newRow, newCol].CellOwner == Turn.PLAYER1) 
+                {
+                    isBlockedStart = true;
+                    break;
+                }
+            }
+
+            if (count >= 5) return 1000;  // 즉시 승리 가능
+            if (!isBlockedStart && !isBlockedEnd)
+            {
+                if (count == 4) score += 500; // 열린 4
+                if (count == 3) score += 100; // 열린 3
+                if (count == 2) score += 10;  // 열린 2
+            }
+        }
+
+        return score;
+    }
+
 }
