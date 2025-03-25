@@ -7,8 +7,7 @@ public static class OmokAIController
     private const int SEARCH_DEPTH = 3;
     private static readonly (int, int)[] directions = { (1, 0), (0, 1), (1, 1), (1, -1) };
     private static Dictionary<ulong, float> zobristTable = new Dictionary<ulong, float>();
-    
-    //종한 추가
+
     private static BoardGrid _board = GameManager.Instance.BoardManager.Grid;
 
     public static (int row, int col) GetBestMove()
@@ -59,24 +58,29 @@ public static class OmokAIController
     private static float DoMinimax(int depth, bool isMaximizing, float alpha, float beta)
     {
         ulong hash = ComputeHash();
-        if (zobristTable.ContainsKey(hash)) return zobristTable[hash];
+        if (zobristTable.TryGetValue(hash, out float cachedScore)) return cachedScore;
 
         if (CheckWin(Turn.PLAYER1)) return -1000 + depth;
         if (CheckWin(Turn.PLAYER2)) return 1000 - depth;
         if (depth == 0 || IsBoardFull()) return EvaluateBoard();
 
         float bestScore = isMaximizing ? float.MinValue : float.MaxValue;
-        foreach (var (row, col) in GetCandidateMoves())
+        List<(int, int)> candidates = GetCandidateMoves();
+
+        candidates.Sort((move1, move2) =>
         {
-            //기존 코드
-            //_board[row, col] = isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1;
-            
-            //종한 수정
-            if(isMaximizing)
+            float score1 = EvaluateMove(move1, isMaximizing);
+            float score2 = EvaluateMove(move2, isMaximizing);
+            return score2.CompareTo(score1);
+        });
+
+        foreach (var (row, col) in candidates)
+        {
+            if (isMaximizing)
                 _board.MarkingTurnOnCell((row, col), Turn.PLAYER2);
             else
                 _board.MarkingTurnOnCell((row, col), Turn.PLAYER1);
-            
+
             float score = DoMinimax(depth - 1, !isMaximizing, alpha, beta);
             _board.MarkingTurnOnCell((row, col), Turn.NONE);
 
@@ -105,7 +109,7 @@ public static class OmokAIController
                     for (int i = 1; i < 5; i++)
                     {
                         int newRow = row + dx * i, newCol = col + dy * i;
-                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE / 2 || newCol < 0 || newCol >= Constants.BOARD_SIZE / 2 || _board[newRow, newCol].CellOwner != player)
+                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE || _board[newRow, newCol].CellOwner != player)
                             break;
                         count++;
                     }
@@ -128,8 +132,8 @@ public static class OmokAIController
                 foreach (var (dx, dy) in directions)
                 {
                     int newRow = row + dx, newCol = col + dy;
-                    
-                    if (newRow >= 0 && newRow < Constants.BOARD_SIZE / 2 && newCol >= 0 && newCol < Constants.BOARD_SIZE / 2 && _board[newRow, newCol].CellOwner != Turn.NONE)
+
+                    if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 && newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 && _board[newRow, newCol].CellOwner != Turn.NONE)
                     {
                         moves.Add((row, col));
                         break;
@@ -165,7 +169,7 @@ public static class OmokAIController
                     for (int i = 0; i < 5; i++)
                     {
                         int newRow = row + dx * i, newCol = col + dy * i;
-                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE / 2 || newCol < 0 || newCol >= Constants.BOARD_SIZE / 2)
+                        if (newRow < 0 || newRow >= Constants.BOARD_SIZE || newCol < 0 || newCol >= Constants.BOARD_SIZE)
                         {
                             isBlocked = true;
                             break;
@@ -193,7 +197,7 @@ public static class OmokAIController
         ulong hash = 0;
         foreach (var cell in _board)
         {
-            hash = hash * 31 + (ulong)cell.CellOwner;
+            hash ^= (ulong)((cell._coordinate.Item1 * Constants.BOARD_SIZE + cell._coordinate.Item2) * (int)cell.CellOwner);
         }
         return hash;
     }
@@ -205,5 +209,123 @@ public static class OmokAIController
             if (cell.CellOwner != Turn.NONE) return false;
         }
         return true;
+    }
+
+    private static float EvaluateMove((int row, int col) move, bool isMaximizing)
+    {
+        float score = 0f;
+
+        _board.MarkingTurnOnCell(move, isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
+
+        if (isMaximizing)
+        {
+            if (CheckImmediateWinOrBlock(Turn.PLAYER1) != (-1, -1)) score -= 1000; // 방어 우선
+        }
+        else
+        {
+            if (CheckImmediateWinOrBlock(Turn.PLAYER2) != (-1, -1)) score += 1000; // 공격 우선
+        }
+
+        score += EvaluateDefense(move, isMaximizing);
+        score += EvaluateAttack(move, isMaximizing);
+
+        _board.MarkingTurnOnCell(move, Turn.NONE);  // 이동 취소
+
+        return score;
+    }
+
+    private static int EvaluateDefense((int row, int col) move, bool isMaximizing)
+    {
+        int score = 0;
+        Turn opponent = isMaximizing ? Turn.PLAYER1 : Turn.PLAYER2;
+
+        foreach (var (dx, dy) in directions)
+        {
+            int count = 0;
+            bool isBlockedStart = false;
+            bool isBlockedEnd = false;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row + dx * i, newCol = move.col + dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 || newCol < -7 || newCol >= Constants.BOARD_SIZE - 7)
+                {
+                    isBlockedEnd = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2)
+                {
+                    isBlockedEnd = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER1) count++;
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row - dx * i, newCol = move.col - dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 || newCol < -7 || newCol >= Constants.BOARD_SIZE - 7)
+                {
+                    isBlockedStart = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2)
+                {
+                    isBlockedStart = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER1) count++;
+            }
+
+            if (!isBlockedStart && !isBlockedEnd)
+            {
+                if (count == 3) score += 500;  // 상대가 3목을 만들면 방어할 점수
+                if (count == 4) score += 1000; // 상대가 4목을 만들면 방어할 점수
+            }
+        }
+
+        return score;
+    }
+
+    private static int EvaluateAttack((int row, int col) move, bool isMaximizing)
+    {
+        int score = 0;
+        Turn player = isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1;
+
+        foreach (var (dx, dy) in directions)
+        {
+            int count = 1;
+            bool isBlockedStart = false;
+            bool isBlockedEnd = false;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row + dx * i, newCol = move.col + dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 || newCol < -7 || newCol >= Constants.BOARD_SIZE - 7 || _board[newRow, newCol].CellOwner == Turn.PLAYER1)
+                {
+                    isBlockedEnd = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2) count++;
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = move.row - dx * i, newCol = move.col - dy * i;
+                if (newRow < -7 || newRow >= Constants.BOARD_SIZE - 7 || newCol < -7 || newCol >= Constants.BOARD_SIZE - 7 || _board[newRow, newCol].CellOwner == Turn.PLAYER1)
+                {
+                    isBlockedStart = true;
+                    break;
+                }
+                if (_board[newRow, newCol].CellOwner == Turn.PLAYER2) count++;
+            }
+
+            if (!isBlockedStart && !isBlockedEnd && count >= 5)
+            {
+                score += 1000;  // 공격이 승리를 만들 수 있으면 점수 증가
+            }
+        }
+
+        return score;
     }
 }
