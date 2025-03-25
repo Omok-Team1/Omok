@@ -5,7 +5,7 @@ using System.Collections;
 
 public class TimerController : MonoBehaviour
 {
-    private float turnTimeLimit = 30f; // 30초 제한시간
+    private float turnTimeLimit = 15f; // 30초 제한시간
     
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
@@ -90,7 +90,7 @@ public class TimerController : MonoBehaviour
         }
         
         // 유예시간 추가 (예: 1초)
-        StartCoroutine(WaitForNextTurn(1f)); // 1초 유예시간 추가
+        StartCoroutine(WaitForNextTurn(3f)); // 1초 유예시간 추가
     }
 
     // 코루틴을 사용하여 유예시간 후 턴을 넘기는 함수
@@ -98,6 +98,15 @@ public class TimerController : MonoBehaviour
     {
         // 유예시간 동안 기다림
         yield return new WaitForSeconds(delayTime);
+        
+        // 사운드 멈추기
+        if (warningAudioSource.isPlaying)
+        {
+            warningAudioSource.Stop(); // 사운드 멈추기
+        }
+
+        // 사운드 초기화
+        hasPlayedWarningSound = false;
 
         // 턴을 넘기고 다음 플레이어의 턴 시작
         isPlayer1Turn = !isPlayer1Turn;

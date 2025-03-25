@@ -282,6 +282,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1816819703 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 7843065920704103993, guid: 8d7d995721a960a47b1a2423261afced, type: 3}
+  m_PrefabInstance: {fileID: 1086749037053813516}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2120041285
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,6 +469,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2261852609847962960, guid: 8d7d995721a960a47b1a2423261afced, type: 3}
+      propertyPath: warningSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 63ab94da113cd2c498d6db0374859bd4, type: 3}
+    - target: {fileID: 2261852609847962960, guid: 8d7d995721a960a47b1a2423261afced, type: 3}
+      propertyPath: warningAudioSource
+      value: 
+      objectReference: {fileID: 1816819703}
     - target: {fileID: 6208388406680229103, guid: 8d7d995721a960a47b1a2423261afced, type: 3}
       propertyPath: m_Name
       value: Timer02
