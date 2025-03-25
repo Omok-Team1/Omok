@@ -6,7 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="744218b4-3b4c-4d48-add0-6fddc6013976" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Omok/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Omok/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01.Scripts/Game/EventManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01.Scripts/Game/EventManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController2.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/01.Scripts/Game/TimerController2.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02.Prefabs/Timer01.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02.Prefabs/Timer01.prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02.Prefabs/Timer03.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/02.Prefabs/Timer03.prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer01BG.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer01BG.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer01Gauge.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer01Gauge.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer03BG.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/Timer03BG.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/TimerBG.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/03.Sprites/TimerBG.png.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,6 +114,7 @@
       <workItem from="1742256890210" duration="7331000" />
       <workItem from="1742516278126" duration="5604000" />
       <workItem from="1742774403308" duration="949000" />
+      <workItem from="1742879630620" duration="2234000" />
     </task>
     <servers />
   </component>

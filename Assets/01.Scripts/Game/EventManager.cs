@@ -1,37 +1,56 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EventManager : MonoBehaviour
 {
-    public static EventManager Instance { get; private set; }
-
-    private void Awake()
+    private static EventManager _instance;
+    public static EventManager Instance
     {
-        // 싱글턴 패턴을 사용하여 인스턴스를 하나만 유지
-        if (Instance == null)
+        get
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject); // 중복 인스턴스가 생성되지 않도록 처리
+            if (_instance == null)
+            {
+                _instance = new GameObject("EventManager").AddComponent<EventManager>();
+            }
+            return _instance;
         }
     }
 
-    // 게임 종료 이벤트 처리
-    public void PublishMessageQueue()
+    private Queue<EventMessage> eventQueue = new Queue<EventMessage>();
+
+    public void PushEventMessageEvent(EventMessage message)
     {
-        // 이벤트 처리 코드 추가: 예를 들어 패배 처리나 승리 처리 등의 메시지를 출력할 수 있습니다.
-        Debug.Log("Publishing event: A player lost due to time limit.");
-        
-        // 이곳에서 다른 이벤트를 발행하거나, UI 업데이트를 할 수도 있습니다.
-        NotifyGameOver();
+        eventQueue.Enqueue(message);
+        Debug.Log("Event Added: " + message.Message);
     }
 
-    private void NotifyGameOver()
+    public EventMessage PopEventMessageEvent()
     {
-        // 예시로 게임 오버 상태를 UI로 업데이트하거나, 적절한 이벤트를 발생시킬 수 있습니다.
-        Debug.Log("Game over due to time limit. A player lost.");
-        // 추가적으로 UI 갱신이나 승패 처리 등을 할 수 있습니다.
+        if (eventQueue.Count > 0)
+        {
+            return eventQueue.Dequeue();
+        }
+        return null;
+    }
+
+    public void ProcessEvents()
+    {
+        while (eventQueue.Count > 0)
+        {
+            EventMessage message = PopEventMessageEvent();
+            // 이벤트 처리 로직
+            Debug.Log("Processing Event: " + message.Message);
+        }
+    }
+}
+
+public class EventMessage
+{
+    public string Message { get; private set; }
+
+    public EventMessage(string message)
+    {
+        Message = message;
     }
 }
