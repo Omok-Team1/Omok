@@ -5,26 +5,27 @@ using UnityEngine;
 
 public class PushEndGameEventCommand : ICommand
 {
+    private readonly BoardManager _boardManager = GameManager.Instance.BoardManager;
+
     public bool Execute()
     {
         var message = new EventMessage("EndGame");
 
-        //승자 정보
+        // 기존 이벤트 메시지 생성 로직
         message.AddParameter<Turn>(_boardManager.GameData.winner);
-        
-        //승자 급수에 따른 승점 정보
-        //TODO: 일단은 테스트를 위해 10으로 설정, 후에 급수에 따라 점수를 주는 로직이 구현되어야한다.
         message.AddParameter<int>(10);
-        
-        //리플레이 기능을 위해 이번 대국의 착수 정보
         message.AddParameter<Stack<Cell>>(_boardManager.MatchRecord.Reverse());
-        
+
+        // 리플레이 자동 저장
+        ReplayManager.Instance.SaveReplay(
+            _boardManager,  // BoardManager 객체를 직접 전달
+            _boardManager.GameData.winner,
+            10
+        );
+
         EventManager.Instance.PushEventMessageEvent(message);
-        
         EventManager.Instance.PublishMessageQueue();
-        
+
         return true;
     }
-    
-    private readonly BoardManager _boardManager = GameManager.Instance.BoardManager;
 }
