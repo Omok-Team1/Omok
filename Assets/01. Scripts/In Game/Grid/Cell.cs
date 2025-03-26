@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Cell : MonoBehaviour
@@ -11,18 +9,23 @@ public class Cell : MonoBehaviour
         _cellSprite = GetComponent<SpriteRenderer>();
         
         _cellOwner = Turn.NONE;
+        emptyMarker = emptySprite;
         Marker = emptySprite;
     }
 
-    public void EraseMarker(Sprite emptySprite)
+    public void EraseMarker()
     {
         Debug.Log("Erasing marker!!");
-        Marker = emptySprite;
+        Marker = emptyMarker;
     }
 
     public (int, int) _coordinate { get; private set; }
 
+    public int Row => _coordinate.Item1; // Row 추가
+    public int Col => _coordinate.Item2; // Col 추가
+
     private SpriteRenderer _cellSprite;
+    private Sprite emptyMarker;
     private Turn _cellOwner;
     
     public Sprite Marker

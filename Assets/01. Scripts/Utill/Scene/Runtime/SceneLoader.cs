@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public static class SceneLoader
 {
     public static event Action OnAnySceneLoadedStarts;
+    public static event Action OnAnySceneLoadedFinished;
     public static event Action<SceneId> OnSceneLoadingStarts;
     public static event Action<SceneId> OnSceneLoadingFinished;
     
@@ -18,6 +19,7 @@ public static class SceneLoader
         SceneId sceneId = BI.NAME_TO_ID[scene.name];
         
         OnSceneLoadingFinished?.Invoke(sceneId);
+        OnAnySceneLoadedFinished?.Invoke();
 
         if (CurrentLoadingScene is not SceneId.Unknown && sceneId == CurrentLoadingScene)
         {

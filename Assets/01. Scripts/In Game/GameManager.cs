@@ -13,7 +13,10 @@ public class GameManager : Singleton<GameManager>
         Instance = this;
         
         _stateMachine = GetComponent<StateMachine>();
+    }
 
+    void Start()
+    {
         _stateMachine.Run();
     }
     
@@ -27,12 +30,15 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public void Surrender()
+    {
+        _stateMachine.ChangeState<EndGameState>();
+    }
+
     private StateMachine _stateMachine;
     private BoardManager _boardManager;
     private OpponentController _opponentController;
-    
     private TimerController _timerController;
-    private TimerController2 _timerController2;
     
     // Scene을 변경하고 다시 InGame으로 돌아왔을 때 BoardManager가 대한 참조가 변경되어
     // MissingReferenceException가 발생했던 문제를 그냥 BoardManager가 필요할 때마다 FindObjectOfType으로 찾아 반환하는 방식으로 해결
@@ -41,8 +47,7 @@ public class GameManager : Singleton<GameManager>
     private static IDictionary<string, bool> _isDirty = new Dictionary<string, bool>()
     {
         {nameof(BoardManager), true}, {nameof(OpponentController), true},
-        {nameof(StateMachine), true}, {nameof(TimerController), true},
-        {nameof(TimerController2), true}
+        {nameof(StateMachine), true}, {nameof(TimerController), true}
     };
     
     public BoardManager BoardManager
@@ -95,19 +100,6 @@ public class GameManager : Singleton<GameManager>
             }
             
             return _timerController;
-        }
-    }
-    public TimerController2 TimerController2
-    {
-        get
-        {
-            if (_isDirty[nameof(TimerController2)] is true)
-            {
-                _timerController2 = FindObjectOfType<TimerController2>();
-                _isDirty[nameof(TimerController2)] = false;
-            }
-            
-            return _timerController2;
         }
     }
 }

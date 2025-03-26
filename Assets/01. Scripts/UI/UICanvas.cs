@@ -9,19 +9,23 @@ public abstract class UICanvas : MonoBehaviour, IUIComponent
 {
     public virtual void Init()
     {
-        _children = GetComponentsInChildren<IUIComponent>().
-            Where(c => !ReferenceEquals(c, this)).ToList();
+        _children = GetComponentsInChildren<IUIComponent>(true)
+            .Where(c => c != (IUIComponent)this)
+            .ToList();
 
         if(String.IsNullOrEmpty(eventName) is false && uiEvent is not null)
             EventManager.Instance.AddListener(eventName, uiEvent, gameObject);
         
         foreach (var child in _children)
         {
-            child.Init();
+            if (child is MonoBehaviour childMono && childMono.gameObject.activeInHierarchy)
+            {
+                child.Init();
+            }
         }
     }
-    
-    public void Show()
+
+    public virtual void Show()
     {
         gameObject.SetActive(true);
         
@@ -31,7 +35,7 @@ public abstract class UICanvas : MonoBehaviour, IUIComponent
         }
     }
 
-    public void Hide()
+    public virtual void Hide()
     {
         foreach (var child in _children)
         {
@@ -47,7 +51,7 @@ public abstract class UICanvas : MonoBehaviour, IUIComponent
     }
     
     protected List<IUIComponent> _children = new();
-
+    
     [SerializeField] private string eventName;
     [SerializeField] private IOnEventSO uiEvent;
 }

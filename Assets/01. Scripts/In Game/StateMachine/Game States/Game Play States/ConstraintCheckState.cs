@@ -8,8 +8,8 @@ public class ConstraintCheckState : IState
     {
         StateMachine = stateMachine;
         
-        //TODO: 이전에는 쌍삼 자리였지만, 이번 턴에는 쌍삼 자리가 아니게 되었을 때 x 마커를 지워주는 커맨드가 필요
         _actions.AddCommand(new CheckDoubleThree());
+        _actions.AddCommand(new CheckDoubleFour());
     }
     
     public void EnterState()
@@ -25,16 +25,19 @@ public class ConstraintCheckState : IState
         
         bool branchFlag = _actions.ExecuteCommand(new BranchPlayerOpponent());
 
+        //TODO: 테스트를 위해 잠시 주석처리
         //true : Player 상태로 전환
         //false : Opponent 상태로 전환
-        if (branchFlag is true)
-        {
-            StateMachine.ChangeState<PlayerState>();
-        }
-        else
-        {
-            StateMachine.ChangeState<OpponentState>();
-        }
+        // if (branchFlag is true)
+        // {
+        //     StateMachine.ChangeState<PlayerState>();
+        // }
+        // else
+        // {
+        //     StateMachine.ChangeState<OpponentState>();
+        // }
+        
+        StateMachine.ChangeState<PlayerState>();
     }
 
     public void UpdateState()

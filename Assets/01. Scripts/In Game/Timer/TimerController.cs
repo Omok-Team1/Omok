@@ -7,7 +7,7 @@ public class TimerController : MonoBehaviour
 {
     //수정
     //테스트를 위해 30초 -> 11초로 변경함, 10초 카운트 다운도 확인해야하기 때문에 11초로 함
-    private float turnTimeLimit = 11f; // 30초 제한시간
+    private float turnTimeLimit = 30f; // 30초 제한시간
     
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
