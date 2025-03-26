@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Linq;
+using System.Collections;
 
 public class ReplayListUIController : MonoBehaviour
 {
@@ -11,51 +11,48 @@ public class ReplayListUIController : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Transform contentParent;
     [SerializeField] private ScrollRect scrollRect;
+    [SerializeField] private float scrollWheelSensitivity = 0.1f; // 휠 감도 조절
 
     private void Start()
     {
-        Debug.Log("ReplayListUIController Starting...");
-        PopulateReplayList();
+        StartCoroutine(PopulateReplayList());
     }
 
-    private void PopulateReplayList()
+    private IEnumerator PopulateReplayList()
     {
-        // 기존 자식 오브젝트 제거
+        // 기존 자식 제거
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
-    
+        yield return null;
+
+        // 리플레이 데이터 로드
         var replays = ReplayManager.Instance.GetReplays();
-    
-        Debug.Log($"Total Replays to Display: {replays.Count}");
-    
+        
+        // 버튼 생성
         foreach (var replay in replays)
         {
-            // 전체 프리팹 인스턴스화 (버튼과 텍스트 전체 구조 유지)
-            GameObject replayButton = Instantiate(replayButtonPrefab, contentParent);
-            
-            // 텍스트 컴포넌트 찾기 (Explicit references)
-            ReplayButtonController replayButtonController = replayButton.GetComponent<ReplayButtonController>();
-            
-            if (replayButtonController != null)
-            {
-                // Use the existing SetReplayData method
-                replayButtonController.SetReplayData(replay);
-                
-                Debug.Log($"Created Replay Button - No.{replay.ReplayNumber}, " +
-                          $"Date: {replay.GameDate}, " +
-                          $"Winner: {replay.Winner}, " +
-                          $"Turns: {replay.TotalTurns}");
-            }
-            else
-            {
-                Debug.LogError("ReplayButtonController not found on instantiated prefab!");
-            }
+            Instantiate(replayButtonPrefab, contentParent)
+                .GetComponent<ReplayButtonController>()?
+                .SetReplayData(replay);
         }
-    
-        // 강제 캔버스 업데이트
+
+        // 레이아웃 강제 갱신
         Canvas.ForceUpdateCanvases();
-        scrollRect.verticalNormalizedPosition = 1f; 
+        yield return null;
+
+        // 초기 위치를 상단으로 설정 (최신 항목 노출)
+        scrollRect.verticalNormalizedPosition = 1f;
+    }
+
+    private void Update()
+    {
+        // 마우스 휠 입력 처리
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0)
+        {
+            scrollRect.velocity = new Vector2(0, scroll * 1000 * scrollWheelSensitivity);
+        }
     }
 }

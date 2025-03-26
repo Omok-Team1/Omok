@@ -18,9 +18,10 @@ public class ReplayButtonController : MonoBehaviour
         associatedReplayData = replayData;
 
         replayNumberText.text = $"Replay No.{replayData.ReplayNumber}";
-        dateText.text = $"Date: {replayData.GameDate:yyyy-MM-dd HH:mm}";
-        winnerText.text = $"Winner: {replayData.Winner}";
-        turnsText.text = $"Turns: {replayData.TotalTurns}";
+        dateText.text = $"{replayData.GameDate:yyyy-MM-dd HH:mm}";
+        winnerText.text = replayData.Winner == Turn.PLAYER1 ? "흑 승" : 
+            (replayData.Winner == Turn.PLAYER2 ? "백 승" : "무승부");
+        turnsText.text = $"{replayData.TotalTurns}턴";
     }
 
     private void Start()

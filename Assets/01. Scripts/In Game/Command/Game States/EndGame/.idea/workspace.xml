@@ -20,6 +20,7 @@
     <setting file="file://$PROJECT_DIR$/../../../Replay/ReplayListUIController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../Replay/ReplayManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../Replay/ReplaySceneManager.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../Replay/ReplayViewController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/USER/Documents/Omok/Assets/CoinData.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/USER/Documents/Omok/Assets/CoinData.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock://C:/Users/USER/Documents/Omok/Assets/Resources.meta" root0="SKIP_HIGHLIGHTING" />
@@ -66,7 +67,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1742969959895</updated>
-      <workItem from="1742969961514" duration="3204000" />
+      <workItem from="1742969961514" duration="9932000" />
     </task>
     <servers />
   </component>

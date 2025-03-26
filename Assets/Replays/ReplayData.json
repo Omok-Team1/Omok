@@ -1,142 +1,13 @@
 {
     "target": [
         {
-            "ReplayId": "d462c9c5-72e8-4959-aba8-6a5370436472",
-            "GameDateString": "2025-03-26 16:08:40",
-            "Winner": 1,
-            "TotalTurns": 9,
-            "GameMoves": [
-                {
-                    "row": 0,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": 0,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": 0,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": 1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": 1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": 2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": 2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": 3,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                }
-            ],
-            "ReplayNumber": 1
-        },
-        {
-            "ReplayId": "ba4d3f89-cb3f-4560-8bdb-b16d78441647",
-            "GameDateString": "2025-03-26 16:08:56",
+            "ReplayId": "941ba179-1c20-4026-b6ab-86339b0334a1",
+            "GameDateString": "2025-03-26 18:14:44",
             "Winner": 2,
             "TotalTurns": 10,
             "GameMoves": [
                 {
                     "row": 0,
-                    "col": -3,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -3,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
                     "col": 0,
                     "markerSprite": {
                         "instanceID": 45428
@@ -144,15 +15,15 @@
                     "cellOwner": 1
                 },
                 {
-                    "row": -1,
-                    "col": 0,
+                    "row": 0,
+                    "col": 1,
                     "markerSprite": {
                         "instanceID": 45430
                     },
                     "cellOwner": 2
                 },
                 {
-                    "row": 1,
+                    "row": -1,
                     "col": 0,
                     "markerSprite": {
                         "instanceID": 45428
@@ -166,188 +37,34 @@
                         "instanceID": 45430
                     },
                     "cellOwner": 2
-                }
-            ],
-            "ReplayNumber": 2
-        },
-        {
-            "ReplayId": "0fd43ffc-90b6-44cc-860b-2f16722df142",
-            "GameDateString": "2025-03-26 16:09:19",
-            "Winner": 1,
-            "TotalTurns": 11,
-            "GameMoves": [
-                {
-                    "row": -3,
-                    "col": -3,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -3,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": -3,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -3,
-                    "col": 0,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": -2,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -2,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": -1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": 0,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                }
-            ],
-            "ReplayNumber": 3
-        },
-        {
-            "ReplayId": "e215c742-017b-4ba6-b357-a6cb0f84fc4d",
-            "GameDateString": "2025-03-26 16:09:46",
-            "Winner": 1,
-            "TotalTurns": 11,
-            "GameMoves": [
-                {
-                    "row": -2,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -2,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": -1,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": -1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 0,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": 0,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
-                },
-                {
-                    "row": 1,
-                    "col": -2,
-                    "markerSprite": {
-                        "instanceID": 45428
-                    },
-                    "cellOwner": 1
-                },
-                {
-                    "row": 1,
-                    "col": -1,
-                    "markerSprite": {
-                        "instanceID": 45430
-                    },
-                    "cellOwner": 2
                 },
                 {
                     "row": 2,
-                    "col": -1,
+                    "col": 5,
                     "markerSprite": {
                         "instanceID": 45428
                     },
                     "cellOwner": 1
                 },
                 {
-                    "row": 2,
-                    "col": -2,
+                    "row": -2,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": 4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -3,
+                    "col": 1,
                     "markerSprite": {
                         "instanceID": 45430
                     },
@@ -355,20 +72,109 @@
                 },
                 {
                     "row": -3,
-                    "col": -2,
+                    "col": 4,
                     "markerSprite": {
                         "instanceID": 45428
                     },
                     "cellOwner": 1
+                },
+                {
+                    "row": -4,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
                 }
             ],
             "ReplayNumber": 4
         },
         {
-            "ReplayId": "0321aae6-9c09-4d9f-b9db-df5e266a94e1",
-            "GameDateString": "2025-03-26 16:10:23",
+            "ReplayId": "4af36206-226c-4fc0-8a5c-06299ce951e4",
+            "GameDateString": "2025-03-26 18:14:57",
             "Winner": 1,
             "TotalTurns": 9,
+            "GameMoves": [
+                {
+                    "row": 2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 2,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                }
+            ],
+            "ReplayNumber": 5
+        },
+        {
+            "ReplayId": "80abd334-0d31-4c56-b7c9-c5b07ab8f4a6",
+            "GameDateString": "2025-03-26 18:15:12",
+            "Winner": 2,
+            "TotalTurns": 12,
             "GameMoves": [
                 {
                     "row": 0,
@@ -379,8 +185,8 @@
                     "cellOwner": 1
                 },
                 {
-                    "row": -1,
-                    "col": -1,
+                    "row": 0,
+                    "col": 0,
                     "markerSprite": {
                         "instanceID": 45430
                     },
@@ -388,14 +194,30 @@
                 },
                 {
                     "row": -1,
-                    "col": 0,
+                    "col": 2,
                     "markerSprite": {
                         "instanceID": 45428
                     },
                     "cellOwner": 1
                 },
                 {
-                    "row": -2,
+                    "row": -1,
+                    "col": 3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": 4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
                     "col": 1,
                     "markerSprite": {
                         "instanceID": 45430
@@ -403,7 +225,39 @@
                     "cellOwner": 2
                 },
                 {
+                    "row": 2,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
                     "row": 1,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -3,
+                    "col": 5,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 3,
                     "col": -2,
                     "markerSprite": {
                         "instanceID": 45428
@@ -411,7 +265,48 @@
                     "cellOwner": 1
                 },
                 {
+                    "row": 2,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                }
+            ],
+            "ReplayNumber": 6
+        },
+        {
+            "ReplayId": "8144446c-1de1-4088-bc2c-5a6a58bcdc39",
+            "GameDateString": "2025-03-26 18:15:24",
+            "Winner": 1,
+            "TotalTurns": 13,
+            "GameMoves": [
+                {
+                    "row": 2,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
                     "row": 0,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
                     "col": -2,
                     "markerSprite": {
                         "instanceID": 45430
@@ -419,8 +314,105 @@
                     "cellOwner": 2
                 },
                 {
+                    "row": -3,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -3,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -4,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -4,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -5,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -5,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -6,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -6,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -7,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                }
+            ],
+            "ReplayNumber": 7
+        },
+        {
+            "ReplayId": "42534016-d673-462a-a436-2544f2ee08d5",
+            "GameDateString": "2025-03-26 18:15:37",
+            "Winner": 2,
+            "TotalTurns": 10,
+            "GameMoves": [
+                {
                     "row": 2,
-                    "col": -3,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 2,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": -1,
                     "markerSprite": {
                         "instanceID": 45428
                     },
@@ -428,7 +420,80 @@
                 },
                 {
                     "row": 1,
-                    "col": -3,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -2,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                }
+            ],
+            "ReplayNumber": 8
+        },
+        {
+            "ReplayId": "eefb7082-46c9-425c-bbc0-8496506bfd05",
+            "GameDateString": "2025-03-26 18:15:49",
+            "Winner": 1,
+            "TotalTurns": 11,
+            "GameMoves": [
+                {
+                    "row": 6,
+                    "col": 4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 4,
+                    "col": 2,
                     "markerSprite": {
                         "instanceID": 45430
                     },
@@ -441,9 +506,501 @@
                         "instanceID": 45428
                     },
                     "cellOwner": 1
+                },
+                {
+                    "row": 3,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 2,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
                 }
             ],
-            "ReplayNumber": 5
+            "ReplayNumber": 9
+        },
+        {
+            "ReplayId": "caf4f28f-605a-474a-b078-5b30ebc1f718",
+            "GameDateString": "2025-03-26 18:16:02",
+            "Winner": 1,
+            "TotalTurns": 11,
+            "GameMoves": [
+                {
+                    "row": 1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -3,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": 3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -3,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                }
+            ],
+            "ReplayNumber": 10
+        },
+        {
+            "ReplayId": "370a2534-5c72-4b56-88f6-33d37a87b795",
+            "GameDateString": "2025-03-26 18:16:19",
+            "Winner": 1,
+            "TotalTurns": 9,
+            "GameMoves": [
+                {
+                    "row": 1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -3,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -3,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                }
+            ],
+            "ReplayNumber": 1
+        },
+        {
+            "ReplayId": "22b540bc-dfd1-4093-bfa3-5d643a71e9f7",
+            "GameDateString": "2025-03-26 18:16:38",
+            "Winner": 2,
+            "TotalTurns": 14,
+            "GameMoves": [
+                {
+                    "row": 5,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 5,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 4,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 4,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 3,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 2,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 4,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 3,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": 0,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": 3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": 3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": 4,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                }
+            ],
+            "ReplayNumber": 2
+        },
+        {
+            "ReplayId": "670dafe3-b578-49e5-a5ce-397afe178b34",
+            "GameDateString": "2025-03-26 18:16:57",
+            "Winner": 1,
+            "TotalTurns": 15,
+            "GameMoves": [
+                {
+                    "row": -2,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": 3,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 1,
+                    "col": 1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -2,
+                    "col": 2,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 0,
+                    "col": -1,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -1,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 0,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": 3,
+                    "col": -2,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": 1,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                },
+                {
+                    "row": -2,
+                    "col": -4,
+                    "markerSprite": {
+                        "instanceID": 45430
+                    },
+                    "cellOwner": 2
+                },
+                {
+                    "row": -3,
+                    "col": -3,
+                    "markerSprite": {
+                        "instanceID": 45428
+                    },
+                    "cellOwner": 1
+                }
+            ],
+            "ReplayNumber": 3
         }
     ]
 }

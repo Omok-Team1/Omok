@@ -24,6 +24,12 @@ public class ReplayViewController : MonoBehaviour
         _replayMoves = new List<CellData>(replayData.GameMoves);
         _currentTurnIndex = 0;
         _isPlaying = false;
+        string winnerText = replayData.Winner == Turn.PLAYER1 ? "흑 승" : 
+            (replayData.Winner == Turn.PLAYER2 ? "백 승" : "무승부");
+    
+        turnInfoText.text = $"대전 일시: {replayData.GameDate:yyyy-MM-dd HH:mm}\n" +
+                            $"승자: {winnerText}\n" +
+                            $"총 턴: {replayData.TotalTurns}";
 
         UpdateTurnInfoText(replayData);
         SetupButtons();

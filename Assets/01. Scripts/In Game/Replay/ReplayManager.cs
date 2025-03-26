@@ -80,7 +80,7 @@ public class ReplayManager : MonoBehaviour
 
     public void SaveReplay(BoardManager boardManager, Turn winner)
     {
-        
+
         string gameDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         // 리플레이 개수가 최대치를 초과하면 가장 오래된 리플레이 삭제
         if (_replays.Count >= MAX_REPLAY_STORAGE)
@@ -89,12 +89,30 @@ public class ReplayManager : MonoBehaviour
             var oldestReplay = _replays.OrderBy(r => r.GameDate).First();
             _replays.Remove(oldestReplay);
         }
+
+        var usedNumbers = _replays.Select(r => r.ReplayNumber).ToList();
+        int nextNumber = 1;
+        
+        for (int i = 1; i <= MAX_REPLAY_STORAGE; i++)
+        {
+            if (!usedNumbers.Contains(i))
+            {
+                nextNumber = i;
+                break;
+            }
+        }
+        
+        if (usedNumbers.Count >= MAX_REPLAY_STORAGE)
+        {
+            nextNumber = _replays.OrderBy(r => r.GameDate).First().ReplayNumber;
+        }
+
         int totalTurns = boardManager.MatchRecord.Count;
         var moves = boardManager.MatchRecord;
         var newReplay = new ReplayData
         {
             ReplayId = Guid.NewGuid().ToString(),
-            ReplayNumber = _currentReplayNumber,
+            ReplayNumber = nextNumber,
             GameDateString = gameDate, // 문자열로 저장
             Winner = winner,
             TotalTurns = totalTurns
@@ -112,14 +130,12 @@ public class ReplayManager : MonoBehaviour
         }
 
         _replays.Add(newReplay);
-        _currentReplayNumber = _replays.Count > 0 
-            ? (_replays.Max(r => r.ReplayNumber) % MAX_REPLAY_STORAGE) + 1 
-            : 1;
-        
+        _currentReplayNumber = nextNumber;
+
         Debug.Log($"SaveReplay Method Called - Winner: {winner}, Turns: {totalTurns}");
         Debug.Log($"Match Record Count: {boardManager.MatchRecord.Count}");
         SaveToJson();
-    
+
 #if UNITY_EDITOR
     UnityEditor.AssetDatabase.Refresh();
 #endif
@@ -128,7 +144,7 @@ public class ReplayManager : MonoBehaviour
     private void SaveToJson()
     {
         string fullPath = Path.Combine(Application.dataPath, REPLAY_FOLDER);
-    
+
         if (!Directory.Exists(fullPath))
             Directory.CreateDirectory(fullPath);
 
@@ -140,7 +156,7 @@ public class ReplayManager : MonoBehaviour
 
         string fileName = "ReplayData.json";
         string filePath = Path.Combine(fullPath, fileName);
-        
+
         string jsonData = JsonUtility.ToJson(new Serialization<ReplayData>(uniqueReplays), true);
         File.WriteAllText(filePath, jsonData);
 
@@ -152,7 +168,7 @@ public class ReplayManager : MonoBehaviour
     private void LoadReplays()
     {
         string fullPath = Path.Combine(Application.dataPath, REPLAY_FOLDER);
-    
+
         // 디렉토리 존재 확인 및 생성
         if (!Directory.Exists(fullPath))
             Directory.CreateDirectory(fullPath);
@@ -167,7 +183,7 @@ public class ReplayManager : MonoBehaviour
             {
                 string jsonData = File.ReadAllText(filePath);
                 var loadedReplays = JsonUtility.FromJson<Serialization<ReplayData>>(jsonData);
-                
+
                 // 로드된 리플레이 추가
                 if (loadedReplays?.target != null)
                 {
@@ -175,10 +191,10 @@ public class ReplayManager : MonoBehaviour
                 }
             }
         }
-        
+
         if (_replays.Count > 0)
         {
-            _currentReplayNumber = _replays.Max(r => r.ReplayNumber) % MAX_REPLAY_STORAGE+1;
+            _currentReplayNumber = _replays.Max(r => r.ReplayNumber);
         }
         else
         {
@@ -186,9 +202,10 @@ public class ReplayManager : MonoBehaviour
         }
 
         Debug.Log($"Loaded {_replays.Count} replays from {replayFiles.Length} files");
+
     }
 
-    public List<ReplayData> GetReplays() 
+    public List<ReplayData> GetReplays()
     {
         return _replays
             .Where(r => r.GameDate != DateTime.MinValue)
@@ -196,9 +213,9 @@ public class ReplayManager : MonoBehaviour
             .ThenByDescending(r => r.ReplayNumber) // 동일 시간일 경우 번호로 추가 정렬
             .Take(MAX_REPLAY_STORAGE)
             .ToList();
-        
+
         return _replays
-            .OrderByDescending(r => r.GameDate.Ticks)  // Ticks로 더 정밀한 정렬
+            .OrderByDescending(r => r.GameDate.Ticks) // Ticks로 더 정밀한 정렬
             .Take(MAX_REPLAY_STORAGE)
             .ToList();
     }
@@ -215,7 +232,9 @@ public class ReplayManager : MonoBehaviour
 
         public List<T> ToList() => target;
     }
+
 }
+
 
 
 
