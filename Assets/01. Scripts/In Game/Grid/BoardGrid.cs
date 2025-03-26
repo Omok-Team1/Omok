@@ -28,6 +28,13 @@ public class BoardGrid : MonoBehaviour
                 return _grid[(row, col)];
         }
     }
+
+    public Cell GetCell(int row, int col)
+    {
+        if (_grid.TryGetValue((row, col), out Cell cell))
+            return cell;
+        return null;  // 안전한 null 체크를 위해 따로 함수로 분리
+    }
     
     //Iterator
     public IEnumerator<Cell> GetEnumerator()
@@ -107,7 +114,7 @@ public class BoardGrid : MonoBehaviour
         {
             for (int col = -7; col < GridSize - 7; col++)
             {
-                _grid[(row, col)].EraseMarker(_gameData.emptySprite);
+                _grid[(row, col)].EraseMarker();
             }
         }
     }

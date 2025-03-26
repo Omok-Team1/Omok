@@ -228,6 +228,137 @@ public class BoardManager : MonoBehaviour
         return ConstraintsCheckRecursive(row + dy, col + dx, dy, dx, count + 1, isAppearNone, ref isOpenFour);
     }
     
+    public List<Cell> CheckDoubleFour()
+    {
+        var currentTurnCells = _matchRecord.Where(c => c.CellOwner == _gameData.currentTurn).ToList();
+        
+        List<Cell> cells = new List<Cell>();
+        
+        //clock-wise (n -> ne -> e -> se)
+        //row
+        int[] dy = { 1, 1, 0, -1, -1, -1, 0, 1};
+        //col
+        int[] dx = { 0, 1, 1, 1, 0, -1, -1, -1};
+        
+        /*
+         * 현재 놓여져 있는 돌들에 대해, 8 방향에 빈 칸이 존재하는지 확인한 후
+         * 빈칸이 존재한다면, 해당 방향으로 2칸을 가상의 돌을 놓아가면서 재귀적으로 3-3 조건을 탐색한다.
+         */
+        foreach (var currentTurnCell in currentTurnCells)
+        {
+            int curr = currentTurnCell._coordinate.Item1;
+            int curc = currentTurnCell._coordinate.Item2;
+            
+            for (int dir = 0; dir < dy.Length; dir++)
+            {
+                for (int step = 1; step <= 2; step++)
+                {
+                    int nr = curr + dy[dir] * step;
+                    int nc = curc + dx[dir] * step;
+                    
+                    if (_grid[nr, nc] is null) break;
+                
+                    if (_grid[nr, nc].CellOwner != _gameData.currentTurn &&
+                        _grid[nr, nc].CellOwner != Turn.NONE)
+                    {
+                        break;
+                    }
+
+                    if (_grid[nr, nc].CellOwner == _gameData.currentTurn)
+                        break;
+                    
+                    int doubleFourCounter = 0;
+
+                    for (int virtualDir = 0; virtualDir < 4; virtualDir++)
+                    {
+                        int counter = 0;
+                        int counterOppositeDir = 0;
+                        int duplicateNoneCnt = 0;
+                        
+                        bool isAppearNone = false;
+                        bool isAppearNoneOppositeDir = false;
+                    
+                        _grid[nr, nc].CellOwner = _gameData.currentTurn;
+
+                        counter = CheckDoubleFourRecursive(nr, nc, dy[virtualDir], dx[virtualDir], 0, ref isAppearNone, ref duplicateNoneCnt);
+
+                        counterOppositeDir = CheckDoubleFourRecursive(nr, nc, -dy[virtualDir], -dx[virtualDir], 0, ref isAppearNoneOppositeDir, ref duplicateNoneCnt) - 1;
+                        
+                        _grid[nr, nc].CellOwner = Turn.NONE;
+                        
+                        //서로 다른 방향의 4-4를 체크, (ex. n와 ne 방향으로의 4-4 체크)
+                        if (counter + counterOppositeDir == 4 && duplicateNoneCnt <= 1)
+                        {
+                            doubleFourCounter++;
+                        }
+                        //서로 반대 방향의 4-4를 체크, (ex. n와 s 방향으로의 4-4 체크)
+                        //이 경우 직선으로 양 방향이 4-4 형태가 된다.
+                        else if (counter + counterOppositeDir > 4 &&
+                                 counter > 1 && counterOppositeDir + 1 > 1 &&
+                                 isAppearNone is true && isAppearNoneOppositeDir is true)
+                        {
+                            cells.Add(_grid[nr, nc]);
+                            break;
+                        }
+                        
+                        if (doubleFourCounter == 2)
+                        {
+                            cells.Add(_grid[nr, nc]);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (cells.Count > 0)
+            return cells;
+        else
+            return null;
+    }
+
+    private int CheckDoubleFourRecursive(int row, int col, int dy, int dx, int count, ref bool isAppearNone, ref int duplicateNoneCnt)
+    {
+        //Base Condition
+        //현재 보는 칸이 보드 밖이라면
+        if (_grid[row, col] is null)
+            return count;
+        
+        //Base Condition
+        //현재 보는 칸이 상대방의 돌이라면 해당 방향은 더 이상 볼 필요가 없다.
+        if (_grid[row, col].CellOwner != _gameData.currentTurn &&
+            _grid[row, col].CellOwner != Turn.NONE)
+            return count;
+
+        // 빈 칸을 처음 만나면 계속 탐색
+        if (_grid[row, col].CellOwner == Turn.NONE)
+        {
+            if (isAppearNone is false)
+            {
+                isAppearNone = true;
+                
+                int cnt = CheckDoubleFourRecursive(row + dy, col + dx, dy, dx, count, ref isAppearNone, ref duplicateNoneCnt);
+
+                duplicateNoneCnt++;
+                
+                return cnt;
+            }
+            //Base Condition
+            else
+            {
+                //연속으로 None이 두 번 나온 경우
+                if (_grid[row - dy, col - dx].CellOwner == Turn.NONE)
+                {
+                    duplicateNoneCnt--;
+                }
+                
+                return count;
+            }
+        }
+
+        return CheckDoubleFourRecursive(row + dy, col + dx, dy, dx, count + 1, ref isAppearNone, ref duplicateNoneCnt);
+    }
+    
     private BoardGrid _grid;
     public BoardGrid Grid => _grid;
 

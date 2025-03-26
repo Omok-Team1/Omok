@@ -41,7 +41,7 @@ public class EventMessage
     public T GetParameter<T>()
     {
         if(Parameters.TryGetValue(typeof(T), out object value)) return (T)value;
-        else throw new KeyNotFoundException("Invalid parameter type");
+        else throw new KeyNotFoundException(typeof(T).Name + " is Invalid parameter type");
     }
 
     private IDictionary<Type, object> Parameters;
