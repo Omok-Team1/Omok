@@ -14,21 +14,27 @@ public class StartState : IState
     public StartState(StateMachine stateMachine)
     {
         StateMachine = stateMachine;
+        
+        _actions.AddCommand(new PushStartEventCommand());
     }
     
     public void EnterState()
     {
+        GameManager.Instance.BoardManager.GameData.currentTurn = Turn.PLAYER1;
+
+        _actions.ExecuteCommands();
         
+        StateMachine.ChangeState<PlayerState>();
     }
 
     public void UpdateState()
     {
-        StateMachine.ChangeState<PlayerState>();
+        //StateMachine.ChangeState<PlayerState>();
     }
 
     public void ExitState()
     {
-
+        //StateMachine.ChangeState<PlayerState>();
     }
 
     private readonly Invoker _actions = new();

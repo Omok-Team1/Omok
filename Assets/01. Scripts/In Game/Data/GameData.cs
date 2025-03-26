@@ -5,6 +5,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameData", menuName = "Data/Game Data", order = 1)]
 public class GameData : ScriptableObject
 {
+    //player Info
+    public string player1Name;
+    public Sprite player1Sprite;
+    
+    public string player2Name;
+    public Sprite player2Sprite;
+    
     //Marker Sprite & Cell Prefab Data
     public Sprite player1Marker;
     public Sprite player2Marker;
@@ -20,16 +27,19 @@ public class GameData : ScriptableObject
     public int player1WinPoint;
     public int player2WinPoint;
 
+    public int victoryPoint = 10;
+    
     public delegate void OnChangedTurn(GameData gameData);
     public event OnChangedTurn onChangedTurn;
 
     public delegate void OnChangedPlayersPoint(GameData gameData);
     public event OnChangedPlayersPoint onChangedPlayersPoint;
 
-    private void ChangePlayersPoint()
+    private void ChangePlayersPoint(int score)
     {
-        _ = (winner == Turn.PLAYER1) ? player1WinPoint++ : player2WinPoint++;
-        onChangedPlayersPoint?.Invoke(this);
+        player1WinPoint += score;
+        //_ = (winner == Turn.PLAYER1) ? player1WinPoint += victoryPoint : player2WinPoint += victoryPoint;
+        //onChangedPlayersPoint?.Invoke(this);
     }
 
     public void ChangeTurn()
@@ -41,6 +51,6 @@ public class GameData : ScriptableObject
     public void SetWinner()
     {
         winner = currentTurn;
-        ChangePlayersPoint();
+        //ChangePlayersPoint();
     }
 }

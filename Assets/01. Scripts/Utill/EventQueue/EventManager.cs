@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,6 +52,8 @@ public class EventManager : Singleton<EventManager>
         {
             foreach (var (listener, listenerObj) in eventListener)
             {
+                if (listener is null)
+                    throw new Exception(listenerObj.name + "'s IOnEventSO is null!!!");
                 //같은 이벤트를 기다리는 게임 오브젝트들이 여러개 일 때 값(게임 오브젝트)를 덮어 쓴다.
                 eventMessage.AddParameter<GameObject>(listenerObj);
                 

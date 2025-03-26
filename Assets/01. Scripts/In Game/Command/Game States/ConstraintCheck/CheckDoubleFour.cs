@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CheckDoubleThree : ICommand
+public class CheckDoubleFour : ICommand
 {
     public bool Execute()
     {
@@ -16,7 +16,7 @@ public class CheckDoubleThree : ICommand
             _constraintCoordinates = null;
         }
         
-        _constraintCoordinates = _boardManager.ConstraintsCheck();
+        _constraintCoordinates = _boardManager.CheckDoubleFour();
         
         if (_constraintCoordinates is not null)
         {
@@ -31,7 +31,7 @@ public class CheckDoubleThree : ICommand
             return false;
         }
     }
-    
+
     private List<Cell> _constraintCoordinates;
     private readonly BoardManager _boardManager = GameManager.Instance.BoardManager;
 }
