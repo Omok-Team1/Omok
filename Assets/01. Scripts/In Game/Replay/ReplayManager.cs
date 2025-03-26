@@ -31,13 +31,12 @@ public class ReplayData
                 "yyyy-MM-dd HH:mm:ss",      // 초 포함 형식
                 "yyyy-MM-dd HH:mm"          // 기존 형식
             };
-
-            // TryParseExact를 사용해 안전하게 날짜 파싱
+            
             if (DateTime.TryParseExact(
                     GameDateString, 
                     dateFormats, 
                     System.Globalization.CultureInfo.InvariantCulture, 
-                    System.Globalization.DateTimeStyles.None, 
+                    System.Globalization.DateTimeStyles.AssumeLocal, 
                     out DateTime parsedDate))
             {
                 return parsedDate;
@@ -45,7 +44,7 @@ public class ReplayData
 
             // 파싱 실패 시 현재 날짜/시간 반환 (디버깅용)
             Debug.LogWarning($"Failed to parse date: {GameDateString}");
-            return DateTime.Now;
+            return DateTime.MinValue;
         }
     }
     public Turn Winner;
@@ -82,7 +81,7 @@ public class ReplayManager : MonoBehaviour
     public void SaveReplay(BoardManager boardManager, Turn winner)
     {
         
-        string gameDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        string gameDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         // 리플레이 개수가 최대치를 초과하면 가장 오래된 리플레이 삭제
         if (_replays.Count >= MAX_REPLAY_STORAGE)
         {
@@ -192,8 +191,9 @@ public class ReplayManager : MonoBehaviour
     public List<ReplayData> GetReplays() 
     {
         return _replays
-            .Where(r => !string.IsNullOrEmpty(r.GameDateString)) // 빈 날짜 필터링
-            .OrderByDescending(r => r.GameDate.Ticks)
+            .Where(r => r.GameDate != DateTime.MinValue)
+            .OrderByDescending(r => r.GameDate) // DateTime 전체 비교
+            .ThenByDescending(r => r.ReplayNumber) // 동일 시간일 경우 번호로 추가 정렬
             .Take(MAX_REPLAY_STORAGE)
             .ToList();
         

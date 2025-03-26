@@ -56,5 +56,6 @@ public class ReplayListUIController : MonoBehaviour
     
         // 강제 캔버스 업데이트
         Canvas.ForceUpdateCanvases();
+        scrollRect.verticalNormalizedPosition = 1f; 
     }
 }

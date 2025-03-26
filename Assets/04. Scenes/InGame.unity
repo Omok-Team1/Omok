@@ -4161,8 +4161,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timerText: {fileID: 833349044}
   FillImage: {fileID: 626817373}
-  countdownAudioSource: {fileID: 1571813070}
-  countdownSound: {fileID: 8300000, guid: 63ab94da113cd2c498d6db0374859bd4, type: 3}
+  warningAudioSource: {fileID: 1571813070}
+  warningSound: {fileID: 8300000, guid: 63ab94da113cd2c498d6db0374859bd4, type: 3}
 --- !u!1 &1735626060
 GameObject:
   m_ObjectHideFlags: 0
