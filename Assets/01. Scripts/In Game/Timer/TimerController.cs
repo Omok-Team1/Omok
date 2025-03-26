@@ -5,9 +5,7 @@ using System.Collections;
 
 public class TimerController : MonoBehaviour
 {
-    //수정
-    //테스트를 위해 30초 -> 11초로 변경함, 10초 카운트 다운도 확인해야하기 때문에 11초로 함
-    private float turnTimeLimit = 30f; // 30초 제한시간
+    private float turnTimeLimit = 15f; // 30초 제한시간
     
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
@@ -16,10 +14,10 @@ public class TimerController : MonoBehaviour
     public TextMeshProUGUI timerText;    // 텍스트 UI
     public Image FillImage;        // Radial fill 이미지
     
-    public AudioSource countdownAudioSource; // 카운트다운 사운드를 위한 AudioSource
-    public AudioClip countdownSound;         // 카운트다운 소리 (오디오 클립)
+    public AudioSource warningAudioSource; // 경고 사운드를 위한 AudioSource
+    public AudioClip warningSound;         // 경고 사운드 (오디오 클립)
 
-    private bool hasPlayedCountdownSound = false; // 10초에서 한 번만 카운트다운 사운드를 재생하기 위한 변수
+    private bool hasPlayedWarningSound = false; // 경고 사운드를 한 번만 재생하도록 설정
 
     private void Start()
     {
@@ -38,7 +36,6 @@ public class TimerController : MonoBehaviour
                 Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
 
                 // 제한시간 초과 시 이벤트 메시지를 큐에 추가
-                // 추가
                 EventMessage message;
                 
                 if (isPlayer1Turn is false)
@@ -48,28 +45,30 @@ public class TimerController : MonoBehaviour
                 
                 EventManager.Instance.PushEventMessageEvent(message);
                 
-                // 추가 끝
-                EventManager.Instance.PublishMessageQueue();
-
                 // 제한시간 초과 시 상대 턴으로 전환
                 EndTurn(true);
             }
+            
+            PlayWarningSound();
 
             // UI 업데이트
             UpdateUI();
-            
-            if (currentTurnTime >= turnTimeLimit - 8f && !hasPlayedCountdownSound)
-            {
-                PlayCountdownSound();
-                hasPlayedCountdownSound = true; // 사운드를 한 번만 재생하도록 설정
-            }
         }
     }
-    private void PlayCountdownSound()
+    
+    // 경고 사운드를 처리하는 함수
+    private void PlayWarningSound()
     {
-        if (countdownAudioSource != null && countdownSound != null)
+        float remainingTime = turnTimeLimit - currentTurnTime;
+
+        if (remainingTime <= 9f && !hasPlayedWarningSound)
         {
-            countdownAudioSource.PlayOneShot(countdownSound); // 카운트다운 소리를 한 번 재생
+            // 8초일 때 경고 사운드를 한 번만 재생
+            if (warningAudioSource != null && warningSound != null)
+            {
+                warningAudioSource.PlayOneShot(warningSound); // 경고 소리 재생
+            }
+            hasPlayedWarningSound = true; // 사운드를 한 번만 재생하도록 설정
         }
     }
     
@@ -89,7 +88,7 @@ public class TimerController : MonoBehaviour
             // 시간 초과로 인해 상대 턴으로 전환
             Debug.Log("Turn ended due to time limit.");
         }
-
+        
         // 유예시간 추가 (예: 1초)
         StartCoroutine(WaitForNextTurn(1f)); // 1초 유예시간 추가
     }
@@ -99,6 +98,15 @@ public class TimerController : MonoBehaviour
     {
         // 유예시간 동안 기다림
         yield return new WaitForSeconds(delayTime);
+        
+        // 사운드 멈추기
+        if (warningAudioSource.isPlaying)
+        {
+            warningAudioSource.Stop(); // 사운드 멈추기
+        }
+
+        // 사운드 초기화
+        hasPlayedWarningSound = false;
 
         // 턴을 넘기고 다음 플레이어의 턴 시작
         isPlayer1Turn = !isPlayer1Turn;
@@ -110,6 +118,15 @@ public class TimerController : MonoBehaviour
     {
         if (isTurnRunning)
         {
+            // 사운드 멈추기
+            if (warningAudioSource.isPlaying)
+            {
+                warningAudioSource.Stop(); // 사운드 멈추기
+            }
+
+            // 사운드 초기화
+            hasPlayedWarningSound = false;
+            
             isTurnRunning = false;
             EndTurn();
         }
@@ -120,6 +137,8 @@ public class TimerController : MonoBehaviour
     {
         // 남은 시간 계산
         float remainingTime = turnTimeLimit - currentTurnTime;
+        
+        remainingTime = Mathf.Max(remainingTime, 0f);
         
         // 남은 시간이 0일 때 0으로 표시하도록 수정
         timerText.text = Mathf.Floor(remainingTime).ToString("F0"); // 소수점 없이 표시
