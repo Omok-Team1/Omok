@@ -9,17 +9,20 @@ using UnityEngine;
 public class Select : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
+    
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
     void OnMouseEnter()
     {
+        spriteRenderer.enabled = true;
         spriteRenderer.color = Color.green;
     }
 
     void OnMouseExit()
     {
+        spriteRenderer.enabled = false;
         spriteRenderer.color = Color.white;
     }
 }

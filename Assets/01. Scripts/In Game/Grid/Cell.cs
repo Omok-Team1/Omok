@@ -7,16 +7,26 @@ public class Cell : MonoBehaviour
     {
         _coordinate = coordinate;
         _cellSprite = GetComponent<SpriteRenderer>();
+        _select = GetComponent<Select>();
         
         _cellOwner = Turn.NONE;
         emptyMarker = emptySprite;
         Marker = emptySprite;
+        
+        _cellSprite.enabled = false;
     }
 
     public void EraseMarker()
     {
         Debug.Log("Erasing marker!!");
         Marker = emptyMarker;
+    }
+
+    public void SelectedCell()
+    {
+        _cellSprite.enabled = true;
+        _cellSprite.color = Color.white;
+        Destroy(_select);
     }
 
     public (int, int) _coordinate { get; private set; }
@@ -26,6 +36,7 @@ public class Cell : MonoBehaviour
 
     private SpriteRenderer _cellSprite;
     private Sprite emptyMarker;
+    private Select _select;
     private Turn _cellOwner;
     
     public Sprite Marker

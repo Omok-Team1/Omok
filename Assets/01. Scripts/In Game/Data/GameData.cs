@@ -8,9 +8,11 @@ public class GameData : ScriptableObject
     //player Info
     public string player1Name;
     public Sprite player1Sprite;
+    public int player1Rank;
     
     public string player2Name;
     public Sprite player2Sprite;
+    public int player2Rank;
     
     //Marker Sprite & Cell Prefab Data
     public Sprite player1Marker;
@@ -24,33 +26,30 @@ public class GameData : ScriptableObject
     public Turn currentTurn;
     public Turn winner;
     
-    public int player1WinPoint;
-    public int player2WinPoint;
-
-    public int victoryPoint = 10;
-    
-    public delegate void OnChangedTurn(GameData gameData);
-    public event OnChangedTurn onChangedTurn;
+    public int playerWinCount;
+    public int playerLoseCount;
 
     public delegate void OnChangedPlayersPoint(GameData gameData);
+    
+    //네트워크 매니저는 여기에 이벤트를 등록해서, 게임이 끝날 때 데이터를 전달 받는다.
     public event OnChangedPlayersPoint onChangedPlayersPoint;
 
-    private void ChangePlayersPoint(int score)
+    private void ChangePlayersPoint()
     {
-        player1WinPoint += score;
-        //_ = (winner == Turn.PLAYER1) ? player1WinPoint += victoryPoint : player2WinPoint += victoryPoint;
-        //onChangedPlayersPoint?.Invoke(this);
+        _ = (winner == Turn.PLAYER1) ? playerWinCount++ : playerLoseCount++;
+        onChangedPlayersPoint?.Invoke(this);
     }
 
     public void ChangeTurn()
     {
         currentTurn = currentTurn != Turn.PLAYER1 ? Turn.PLAYER1 : Turn.PLAYER2;
-        onChangedTurn?.Invoke(this);
     }
 
     public void SetWinner()
     {
+        //현재 플레이어가 돌을 둔 후 턴이 바뀌기 전에 승리 조건을 검사하니, 이 함수가 호출될 때는
+        //현재 플레이어가 승리자가 된다.
         winner = currentTurn;
-        //ChangePlayersPoint();
+        ChangePlayersPoint();
     }
 }

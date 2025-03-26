@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public static class OmokAIController
@@ -10,7 +11,8 @@ public static class OmokAIController
 
     private static BoardGrid _board = GameManager.Instance.BoardManager.Grid;
 
-    public static (int row, int col) GetBestMove()
+    //종한 수정
+    public static (int row, int col) GetBestMove(CancellationToken token)
     {
         if (IsBoardEmpty())
         {
@@ -37,6 +39,9 @@ public static class OmokAIController
                 bestMove = (row, col);
             }
         }
+        //종한 수정
+        token.ThrowIfCancellationRequested();
+        
         return bestMove;
     }
 

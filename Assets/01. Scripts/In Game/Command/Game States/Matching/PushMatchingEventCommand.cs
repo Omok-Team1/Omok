@@ -10,6 +10,8 @@ public class PushMatchingEventCommand : ICommand
         
         //TODO: 상대방 이름, 프로필 사진 설정해주기. 여기서는 임시로 고정된 값으로 설정함
         message.AddParameter<string>("Omok is Love");
+        _boardManager.GameData.player1Name = "Omok is Love";
+        
         //_boardManager.GameData.player1Sprite = ;
         message.AddParameter<Sprite>(null);
 
