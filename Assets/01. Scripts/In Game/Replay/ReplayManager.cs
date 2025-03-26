@@ -21,7 +21,33 @@ public class ReplayData
 {
     public string ReplayId;
     public string GameDateString;
-    public DateTime GameDate => DateTime.Parse(GameDateString);
+    public DateTime GameDate 
+    {
+        get 
+        {
+            // 여러 형식의 날짜 파싱 시도
+            string[] dateFormats = {
+                "yyyy-MM-dd HH:mm:ss.fff",  // 밀리초 포함 형식
+                "yyyy-MM-dd HH:mm:ss",      // 초 포함 형식
+                "yyyy-MM-dd HH:mm"          // 기존 형식
+            };
+
+            // TryParseExact를 사용해 안전하게 날짜 파싱
+            if (DateTime.TryParseExact(
+                    GameDateString, 
+                    dateFormats, 
+                    System.Globalization.CultureInfo.InvariantCulture, 
+                    System.Globalization.DateTimeStyles.None, 
+                    out DateTime parsedDate))
+            {
+                return parsedDate;
+            }
+
+            // 파싱 실패 시 현재 날짜/시간 반환 (디버깅용)
+            Debug.LogWarning($"Failed to parse date: {GameDateString}");
+            return DateTime.Now;
+        }
+    }
     public Turn Winner;
     public int TotalTurns;
     public List<CellData> GameMoves = new List<CellData>();
@@ -56,7 +82,7 @@ public class ReplayManager : MonoBehaviour
     public void SaveReplay(BoardManager boardManager, Turn winner)
     {
         
-
+        string gameDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
         // 리플레이 개수가 최대치를 초과하면 가장 오래된 리플레이 삭제
         if (_replays.Count >= MAX_REPLAY_STORAGE)
         {
@@ -70,7 +96,7 @@ public class ReplayManager : MonoBehaviour
         {
             ReplayId = Guid.NewGuid().ToString(),
             ReplayNumber = _currentReplayNumber,
-            GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), // 문자열로 저장
+            GameDateString = gameDate, // 문자열로 저장
             Winner = winner,
             TotalTurns = totalTurns
         };
@@ -87,8 +113,10 @@ public class ReplayManager : MonoBehaviour
         }
 
         _replays.Add(newReplay);
-        _currentReplayNumber = _replays.Count + 1; // 저장된 리플레이 개수 기반 번호 할당
-        newReplay.ReplayNumber = _currentReplayNumber;
+        _currentReplayNumber = _replays.Count > 0 
+            ? (_replays.Max(r => r.ReplayNumber) % MAX_REPLAY_STORAGE) + 1 
+            : 1;
+        
         Debug.Log($"SaveReplay Method Called - Winner: {winner}, Turns: {totalTurns}");
         Debug.Log($"Match Record Count: {boardManager.MatchRecord.Count}");
         SaveToJson();
@@ -100,15 +128,6 @@ public class ReplayManager : MonoBehaviour
 
     private void SaveToJson()
     {
-        
-        foreach (var replay in _replays)
-        {
-            Debug.Log($"Saving Replay - ID: {replay.ReplayId}, " +
-                      $"Number: {replay.ReplayNumber}, " +
-                      $"Date: {replay.GameDateString}, " +
-                      $"Winner: {replay.Winner}, " +
-                      $"Turns: {replay.TotalTurns}");
-        }
         string fullPath = Path.Combine(Application.dataPath, REPLAY_FOLDER);
     
         if (!Directory.Exists(fullPath))
@@ -116,22 +135,18 @@ public class ReplayManager : MonoBehaviour
 
         // 중복 제거
         var uniqueReplays = _replays
-            .GroupBy(r => new { r.ReplayId, r.TotalTurns, r.Winner })
-            .Select(g => g.First())
+            .GroupBy(r => r.ReplayId) // ReplayId로 중복 제거
+            .Select(g => g.Last())
             .ToList();
 
-        string fileName = $"Replay_{DateTime.Now:yyyyMMdd_HHmmss}.json";
+        string fileName = "ReplayData.json";
         string filePath = Path.Combine(fullPath, fileName);
-
+        
         string jsonData = JsonUtility.ToJson(new Serialization<ReplayData>(uniqueReplays), true);
         File.WriteAllText(filePath, jsonData);
 
         // 저장된 리플레이 목록 업데이트
         _replays = uniqueReplays;
-
-#if UNITY_EDITOR
-    UnityEditor.AssetDatabase.Refresh();
-#endif
     }
 
 
@@ -161,31 +176,31 @@ public class ReplayManager : MonoBehaviour
                 }
             }
         }
+        
+        if (_replays.Count > 0)
+        {
+            _currentReplayNumber = _replays.Max(r => r.ReplayNumber) % MAX_REPLAY_STORAGE+1;
+        }
+        else
+        {
+            _currentReplayNumber = 1;
+        }
 
         Debug.Log($"Loaded {_replays.Count} replays from {replayFiles.Length} files");
     }
 
     public List<ReplayData> GetReplays() 
     {
-        // 날짜 기준 최신순으로 정렬 및 중복 제거
-        List<ReplayData> validReplays = _replays
-            .GroupBy(r => new { r.ReplayId, r.TotalTurns, r.Winner })
-            .Select(g => g.OrderByDescending(r => r.GameDate).First())
-            .OrderByDescending(r => r.GameDate)
+        return _replays
+            .Where(r => !string.IsNullOrEmpty(r.GameDateString)) // 빈 날짜 필터링
+            .OrderByDescending(r => r.GameDate.Ticks)
+            .Take(MAX_REPLAY_STORAGE)
             .ToList();
-
-        Debug.Log($"Valid Replays After Deduplication: {validReplays.Count}");
-        foreach (var replay in validReplays)
-        {
-            Debug.Log($"Replay Details: " +
-                      $"No.{replay.ReplayNumber}, " +
-                      $"Date: {replay.GameDate}, " +
-                      $"Winner: {replay.Winner}, " +
-                      $"Turns: {replay.TotalTurns}, " +
-                      $"Moves: {replay.GameMoves.Count}");
-        }
-
-        return validReplays;
+        
+        return _replays
+            .OrderByDescending(r => r.GameDate.Ticks)  // Ticks로 더 정밀한 정렬
+            .Take(MAX_REPLAY_STORAGE)
+            .ToList();
     }
 
     [Serializable]
