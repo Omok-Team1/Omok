@@ -16,13 +16,10 @@ public class PushEndGameEventCommand : ICommand
         message.AddParameter<int>(10);
         message.AddParameter<Stack<Cell>>(_boardManager.MatchRecord.Reverse());
 
-        // 리플레이 자동 저장
         ReplayManager.Instance.SaveReplay(
-            _boardManager,  // BoardManager 객체를 직접 전달
-            _boardManager.GameData.winner,
-            10
+            _boardManager, 
+            _boardManager.GameData.winner
         );
-
         EventManager.Instance.PushEventMessageEvent(message);
         EventManager.Instance.PublishMessageQueue();
 

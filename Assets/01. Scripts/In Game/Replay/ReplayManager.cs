@@ -20,7 +20,8 @@ public class CellData
 public class ReplayData
 {
     public string ReplayId;
-    public DateTime GameDate;
+    public string GameDateString;
+    public DateTime GameDate => DateTime.Parse(GameDateString);
     public Turn Winner;
     public int TotalTurns;
     public List<CellData> GameMoves = new List<CellData>();
@@ -52,10 +53,9 @@ public class ReplayManager : MonoBehaviour
         }
     }
 
-    public void SaveReplay(BoardManager boardManager, Turn winner, int totalTurns)
+    public void SaveReplay(BoardManager boardManager, Turn winner)
     {
-        Debug.Log($"SaveReplay Method Called - Winner: {winner}, Turns: {totalTurns}");
-        Debug.Log($"Match Record Count: {boardManager.MatchRecord.Count}");
+        
 
         // 리플레이 개수가 최대치를 초과하면 가장 오래된 리플레이 삭제
         if (_replays.Count >= MAX_REPLAY_STORAGE)
@@ -64,14 +64,13 @@ public class ReplayManager : MonoBehaviour
             var oldestReplay = _replays.OrderBy(r => r.GameDate).First();
             _replays.Remove(oldestReplay);
         }
-    
+        int totalTurns = boardManager.MatchRecord.Count;
         var moves = boardManager.MatchRecord;
         var newReplay = new ReplayData
         {
             ReplayId = Guid.NewGuid().ToString(),
             ReplayNumber = _currentReplayNumber,
-            // 명시적으로 현재 날짜/시간 사용 
-            GameDate = DateTime.Now, // 이 부분을 명확히 수정
+            GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"), // 문자열로 저장
             Winner = winner,
             TotalTurns = totalTurns
         };
@@ -88,8 +87,10 @@ public class ReplayManager : MonoBehaviour
         }
 
         _replays.Add(newReplay);
-        _currentReplayNumber = _currentReplayNumber % MAX_REPLAY_STORAGE + 1;
-
+        _currentReplayNumber = _replays.Count + 1; // 저장된 리플레이 개수 기반 번호 할당
+        newReplay.ReplayNumber = _currentReplayNumber;
+        Debug.Log($"SaveReplay Method Called - Winner: {winner}, Turns: {totalTurns}");
+        Debug.Log($"Match Record Count: {boardManager.MatchRecord.Count}");
         SaveToJson();
     
 #if UNITY_EDITOR
@@ -99,6 +100,15 @@ public class ReplayManager : MonoBehaviour
 
     private void SaveToJson()
     {
+        
+        foreach (var replay in _replays)
+        {
+            Debug.Log($"Saving Replay - ID: {replay.ReplayId}, " +
+                      $"Number: {replay.ReplayNumber}, " +
+                      $"Date: {replay.GameDateString}, " +
+                      $"Winner: {replay.Winner}, " +
+                      $"Turns: {replay.TotalTurns}");
+        }
         string fullPath = Path.Combine(Application.dataPath, REPLAY_FOLDER);
     
         if (!Directory.Exists(fullPath))

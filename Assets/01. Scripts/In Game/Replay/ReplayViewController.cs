@@ -60,7 +60,7 @@ public class ReplayViewController : MonoBehaviour
             _boardManager.OnDropMarker((move.row, move.col), move.markerSprite);
             _currentTurnIndex++;
             UpdateTurnInfoText(new ReplayData { 
-                GameDate = DateTime.Now, 
+                GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                 Winner = Turn.NONE, 
                 TotalTurns = _replayMoves.Count 
             });
@@ -81,7 +81,7 @@ public class ReplayViewController : MonoBehaviour
             }
 
             UpdateTurnInfoText(new ReplayData { 
-                GameDate = DateTime.Now, 
+                GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
                 Winner = Turn.NONE, 
                 TotalTurns = _replayMoves.Count 
             });
