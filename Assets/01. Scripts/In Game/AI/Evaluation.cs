@@ -91,12 +91,30 @@ public static class Evaluation
     public static float EvaluateMove(BoardGrid board, (int row, int col) move, bool isMaximizing)
     {
         float score = 0f;
+        float proximityBonus = 0f; // 가까운 수에 보너스
+
         foreach (var (dx, dy) in directions)
         {
             score += GetPatternScoreWithMove(board, move.row, move.col, dx, dy, isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
         }
-        return score;
+
+        // 중앙에서 너무 치우치지 않도록 보너스 부여
+        float centerBonus = 1.0f + 0.1f * (7 - Math.Abs(move.row - Constants.BOARD_SIZE / 2)) +
+                            0.1f * (7 - Math.Abs(move.col - Constants.BOARD_SIZE / 2));
+
+        // 가까운 수에 대한 보너스 (상대 돌과 가까울수록 가산점)
+        foreach (var (dx, dy) in directions)
+        {
+            int newRow = move.row + dx, newCol = move.col + dy;
+            if (IsValid(newRow, newCol) && board[newRow, newCol]?.CellOwner != Turn.NONE)
+            {
+                proximityBonus += 10f;
+            }
+        }
+
+        return (score * centerBonus) + proximityBonus;
     }
+
 
     private static float GetPatternScoreWithMove(BoardGrid board, int row, int col, int dx, int dy, Turn player)
     {

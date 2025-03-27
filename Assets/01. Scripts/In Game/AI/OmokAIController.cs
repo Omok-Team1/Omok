@@ -51,15 +51,105 @@ public static class OmokAIController
         foreach (var (row, col) in GetCandidateMoves())
         {
             _board.MarkingTurnOnCell((row, col), opponent);
+            
+            // 5목 체크 (즉시 승리 or 방어)
             if (CheckWin(opponent))
             {
                 _board.MarkingTurnOnCell((row, col), Turn.NONE);
                 return (row, col);
             }
+
+            // 4목(한 수 두면 승리) 체크
+            if (CanMakeFive(opponent, row, col))
+            {
+                _board.MarkingTurnOnCell((row, col), Turn.NONE);
+                return (row, col);
+            }
+
             _board.MarkingTurnOnCell((row, col), Turn.NONE);
         }
         return (-1, -1);
     }
+
+
+    private static bool IsThreateningMove(int row, int col, Turn player)
+    {
+        foreach (var (dx, dy) in directions)
+        {
+            int count = 1;
+            bool isBlockedStart = false, isBlockedEnd = false;
+
+            // 한쪽 방향 체크
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = row + dx * i, newCol = col + dy * i;
+                if (!IsWithinBounds(newRow, newCol)) break; // 수정된 부분
+
+                var cell = _board[newRow, newCol];
+                if (cell.CellOwner == Turn.NONE) break;
+                if (cell.CellOwner != player) { isBlockedEnd = true; break; }
+
+                count++;
+            }
+
+            // 반대 방향 체크
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = row - dx * i, newCol = col - dy * i;
+                if (!IsWithinBounds(newRow, newCol)) break; // 수정된 부분
+
+                var cell = _board[newRow, newCol];
+                if (cell.CellOwner == Turn.NONE) break;
+                if (cell.CellOwner != player) { isBlockedStart = true; break; }
+
+                count++;
+            }
+
+            // 4목 이상이면 무조건 방어
+            if (count >= 4) return true;
+
+            // 열린 3목 (양쪽이 막히지 않음)도 방어해야 함
+            if (count == 3 && !(isBlockedStart && isBlockedEnd)) return true;
+        }
+
+        return false;
+    }
+    private static bool IsWithinBounds(int row, int col)
+    {
+        return row >= -7 && row < Constants.BOARD_SIZE - 7 &&
+            col >= -7 && col < Constants.BOARD_SIZE - 7;
+    }
+
+    private static bool CanMakeFive(Turn player, int row, int col)
+    {
+        foreach (var (dx, dy) in directions)
+        {
+            int count = 1;
+            int emptySpots = 0;
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = row + dx * i, newCol = col + dy * i;
+                if (!IsWithinBounds(newRow, newCol)) break;
+                if (_board[newRow, newCol].CellOwner == player) count++;
+                else if (_board[newRow, newCol].CellOwner == Turn.NONE) emptySpots++;
+                else break;
+            }
+
+            for (int i = 1; i < 5; i++)
+            {
+                int newRow = row - dx * i, newCol = col - dy * i;
+                if (!IsWithinBounds(newRow, newCol)) break;
+                if (_board[newRow, newCol].CellOwner == player) count++;
+                else if (_board[newRow, newCol].CellOwner == Turn.NONE) emptySpots++;
+                else break;
+            }
+
+            if (count == 4 && emptySpots > 0) return true; // 4목 체크
+        }
+        return false;
+    }
+
 
     private static float DoMinimax(int depth, bool isMaximizing, float alpha, float beta)
     {
@@ -145,17 +235,15 @@ public static class OmokAIController
 
                 foreach (var (dx, dy) in directions)
                 {
-                    for (int d = 1; d <= 2; d++) // 기존 1칸 탐색 → 2칸까지 확장
-                    {
-                        int newRow = row + dx * d, newCol = col + dy * d;
+                    int newRow = row + dx, newCol = col + dy;
 
-                        if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 &&
-                            newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 &&
-                            _board[newRow, newCol].CellOwner != Turn.NONE)
-                        {
-                            uniqueMoves.Add((row, col));
-                            break;
-                        }
+                    // 🔥 기존 2칸까지 탐색하던 로직을 제거하여 1칸 거리 내 후보만 선택
+                    if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 &&
+                        newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 &&
+                        _board[newRow, newCol].CellOwner != Turn.NONE)
+                    {
+                        uniqueMoves.Add((row, col));
+                        break;
                     }
                 }
             }
@@ -165,6 +253,7 @@ public static class OmokAIController
         sortedMoves.Sort((a, b) => Evaluation.EvaluateMove(_board, b, true).CompareTo(Evaluation.EvaluateMove(_board, a, true))); 
         return sortedMoves;
     }
+
 
     private static bool IsBoardFull()
     {
@@ -211,15 +300,10 @@ public static class OmokAIController
         }
     }
 
-
-
     public static void InitializeAI()
     {
         InitializeZobristKeys(); // 해시 키 초기화
     }
-
-
-    
 
     private static bool IsBoardEmpty()
     {
