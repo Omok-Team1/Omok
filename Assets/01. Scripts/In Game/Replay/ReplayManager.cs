@@ -66,16 +66,14 @@ public class ReplayManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            LoadReplays();
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        LoadReplays();
     }
 
     public void SaveReplay(BoardManager boardManager, Turn winner)
@@ -234,7 +232,3 @@ public class ReplayManager : MonoBehaviour
     }
 
 }
-
-
-
-

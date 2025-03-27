@@ -14,7 +14,8 @@ public enum SceneId
 
         Login = 0,
         Title = 1,
-        InGame = 2
+        InGame = 2,
+        ReplayScene = 3
 }
 
 
@@ -24,7 +25,8 @@ public static class BI
     {
                (SceneId.Login, "Login"),
         (SceneId.Title, "Title"),
-        (SceneId.InGame, "InGame")
+        (SceneId.InGame, "InGame"),
+        (SceneId.ReplayScene, "ReplayScene")
     };
 
     public static readonly Dictionary<SceneId, string> ID_TO_NAME;

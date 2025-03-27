@@ -22,26 +22,71 @@ public class ReplayViewController : MonoBehaviour
     private int _currentTurn = 0;
     private bool _isPlaying;
 
-    private void Start()
+	void Awake()
     {
-        // 버튼 이벤트 연결
-        _playButton.onClick.AddListener(PlayAll);
-        _pauseButton.onClick.AddListener(Pause);
-        _rewindButton.onClick.AddListener(ResetReplay);
-        _nextTurnButton.onClick.AddListener(NextTurn);
-        _previousTurnButton.onClick.AddListener(PreviousTurn);
+        Debug.Log("[ReplayViewController] Awake method called");
     }
+
+	void OnEnable()
+    {
+        Debug.Log("[ReplayViewController] OnEnable method called");
+        Debug.Log($"[ReplayViewController] CurrentReplayData is {(ReplaySceneManager.CurrentReplayData != null ? "NOT NULL" : "NULL")}");
+
+        if (ReplaySceneManager.CurrentReplayData != null)
+        {
+            Initialize(ReplaySceneManager.CurrentReplayData);
+        }
+    }
+	
+	public void ForceFullInitialization(ReplayData replay)
+    {
+        _stoneManager.ClearAllStones();
+        Initialize(replay);
+        _currentTurn = 0;
+        UpdateUI();
+    }
+
+   private IEnumerator Start()
+{
+    // 버튼 이벤트 연결
+    _playButton.onClick.AddListener(PlayAll);
+    _pauseButton.onClick.AddListener(Pause);
+    _rewindButton.onClick.AddListener(ResetReplay);
+    _nextTurnButton.onClick.AddListener(NextTurn);
+    _previousTurnButton.onClick.AddListener(PreviousTurn);
+
+    // 1프레임 대기 (씬 로드 완료 보장)
+    yield return null; 
+
+    // 명시적 초기화
+    if (ReplaySceneManager.CurrentReplayData != null)
+    {
+        Initialize(ReplaySceneManager.CurrentReplayData);
+    }
+    else
+    {
+        Debug.LogError("CurrentReplayData is null on Start!");
+    }
+}
 
     public void Initialize(ReplayData replay)
     {
+        Debug.Log("[ReplayViewController] Initialize method called");
+        
         if (replay == null || replay.GameMoves == null)
         {
-            Debug.LogError("리플레이 데이터가 유효하지 않습니다.");
+            Debug.LogError("[ReplayViewController] 리플레이 데이터가 유효하지 않습니다.");
             return;
         }
 
+        Debug.Log($"[ReplayViewController] GameMoves Count: {replay.GameMoves.Count}");
+
         _currentReplay = replay;
-        ResetReplay();
+        _stoneManager.ClearAllStones();
+        _currentTurn = 0;
+        _isPlaying = false;
+
+        UpdateUI();
     }
 
     private void ResetReplay()
@@ -56,6 +101,8 @@ public class ReplayViewController : MonoBehaviour
     if (_currentTurn >= _currentReplay.GameMoves.Count) return;
 
     var move = _currentReplay.GameMoves[_currentTurn];
+    Debug.Log($"NextTurn: Move - Row: {move.row}, Col: {move.col}, CellOwner: {move.cellOwner}");
+    
     // 변환 없이 원본 좌표 바로 전달 (-7~7)
     _stoneManager.PlaceStone(move.row, move.col, (int)move.cellOwner);
     _currentTurn++;
