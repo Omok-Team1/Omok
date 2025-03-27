@@ -15,6 +15,8 @@ public class GameManager : Singleton<GameManager>
         _stateMachine = GetComponent<StateMachine>();
 
         _stateMachine.Run();
+
+        OmokAIController.InitializeAI(); // AI 초기화
     }
     
     void OnDestroy()
