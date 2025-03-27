@@ -165,7 +165,7 @@ public class ReplayManager : MonoBehaviour
     }
 
 
-    private void LoadReplays()
+    public void LoadReplays()
     {
         string fullPath = Path.Combine(Application.dataPath, REPLAY_FOLDER);
 

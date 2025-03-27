@@ -1,137 +1,121 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class ReplayViewController : MonoBehaviour
 {
-    [SerializeField] private BoardManager _boardManager;
-    [SerializeField] private TMP_Text turnInfoText;
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button pauseButton;
-    [SerializeField] private Button rewindButton;
-    [SerializeField] private Button nextTurnButton;
-    [SerializeField] private Button previousTurnButton;
-    private List<CellData> _replayMoves;
-    private int _currentTurnIndex = 0;
-    private bool _isPlaying = false;
-
-    public void LoadReplay(ReplayData replayData)
-    {
-        _boardManager.Grid.Clear();
-        _replayMoves = new List<CellData>(replayData.GameMoves);
-        _currentTurnIndex = 0;
-        _isPlaying = false;
-        string winnerText = replayData.Winner == Turn.PLAYER1 ? "흑 승" : 
-            (replayData.Winner == Turn.PLAYER2 ? "백 승" : "무승부");
+    [Header("스톤 관리")]
+    [SerializeField] private ReplayStoneManager _stoneManager;
     
-        turnInfoText.text = $"대전 일시: {replayData.GameDate:yyyy-MM-dd HH:mm}\n" +
-                            $"승자: {winnerText}\n" +
-                            $"총 턴: {replayData.TotalTurns}";
-
-        UpdateTurnInfoText(replayData);
-        SetupButtons();
-    }
-
-    private void UpdateTurnInfoText(ReplayData replayData)
-    {
-        turnInfoText.text = $"Replay: {replayData.GameDate}\n" +
-                            $"Winner: {replayData.Winner}\n" +
-                            $"Current Turn: {_currentTurnIndex}/{_replayMoves.Count}\n" +
-                            $"Total Turns: {replayData.TotalTurns}";
-    }
-
-    private void SetupButtons()
-    {
-        playButton.onClick.RemoveAllListeners();
-        pauseButton.onClick.RemoveAllListeners();
-        rewindButton.onClick.RemoveAllListeners();
-        nextTurnButton.onClick.RemoveAllListeners();
-        previousTurnButton.onClick.RemoveAllListeners();
-
-        playButton.onClick.AddListener(PlayReplay);
-        pauseButton.onClick.AddListener(PauseReplay);
-        rewindButton.onClick.AddListener(RewindReplay);
-        nextTurnButton.onClick.AddListener(NextTurn);
-        previousTurnButton.onClick.AddListener(PreviousTurn);
-    }
+    [Header("UI 텍스트")]
+    [SerializeField] private TMP_Text _turnText;
     
-    public void NextTurn()
+    [Header("컨트롤 버튼")]
+    [SerializeField] private Button _playButton;
+    [SerializeField] private Button _pauseButton;
+    [SerializeField] private Button _rewindButton;
+    [SerializeField] private Button _nextTurnButton;
+    [SerializeField] private Button _previousTurnButton;
+
+    private ReplayData _currentReplay;
+    private int _currentTurn = 0;
+    private bool _isPlaying;
+
+    private void Start()
     {
-        if (_currentTurnIndex < _replayMoves.Count)
+        // 버튼 이벤트 연결
+        _playButton.onClick.AddListener(PlayAll);
+        _pauseButton.onClick.AddListener(Pause);
+        _rewindButton.onClick.AddListener(ResetReplay);
+        _nextTurnButton.onClick.AddListener(NextTurn);
+        _previousTurnButton.onClick.AddListener(PreviousTurn);
+    }
+
+    public void Initialize(ReplayData replay)
+    {
+        if (replay == null || replay.GameMoves == null)
         {
-            var move = _replayMoves[_currentTurnIndex];
-            _boardManager.OnDropMarker((move.row, move.col), move.markerSprite);
-            _currentTurnIndex++;
-            UpdateTurnInfoText(new ReplayData { 
-                GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                Winner = Turn.NONE, 
-                TotalTurns = _replayMoves.Count 
-            });
+            Debug.LogError("리플레이 데이터가 유효하지 않습니다.");
+            return;
         }
+
+        _currentReplay = replay;
+        ResetReplay();
     }
-    
+
+    private void ResetReplay()
+    {
+        _stoneManager.ClearAllStones();
+        _currentTurn = 0;
+        UpdateUI();
+    }
+
+    public void NextTurn()
+{
+    if (_currentTurn >= _currentReplay.GameMoves.Count) return;
+
+    var move = _currentReplay.GameMoves[_currentTurn];
+    // 변환 없이 원본 좌표 바로 전달 (-7~7)
+    _stoneManager.PlaceStone(move.row, move.col, (int)move.cellOwner);
+    _currentTurn++;
+    UpdateUI();
+}
+
+private (int, int) AdjustCoordinates(int row, int col)
+{
+    return (row + 7, col + 7); // 15x15 전용 단순화
+}
+
     public void PreviousTurn()
     {
-        if (_currentTurnIndex > 0)
-        {
-            _currentTurnIndex--;
-            _boardManager.Grid.Clear();
-            
-            for (int i = 0; i < _currentTurnIndex; i++)
-            {
-                var move = _replayMoves[i];
-                _boardManager.OnDropMarker((move.row, move.col), move.markerSprite);
-            }
+        if (_currentTurn <= 0) return;
 
-            UpdateTurnInfoText(new ReplayData { 
-                GameDateString = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
-                Winner = Turn.NONE, 
-                TotalTurns = _replayMoves.Count 
-            });
+        _stoneManager.ClearAllStones();
+        _currentTurn--;
+        
+        for (int i = 0; i < _currentTurn; i++)
+        {
+            var move = _currentReplay.GameMoves[i];
+            _stoneManager.PlaceStone(move.row, move.col, (int)move.cellOwner);
         }
+        
+        UpdateUI();
     }
 
-    public void PlayReplay()
+    public void PlayAll()
     {
-        if (!_isPlaying)
+        if (!_isPlaying && _currentTurn < _currentReplay.GameMoves.Count)
         {
             _isPlaying = true;
-            StartCoroutine(PlayReplayCoroutine());
+            StartCoroutine(PlayRoutine());
         }
     }
 
-    private IEnumerator PlayReplayCoroutine()
+    private IEnumerator PlayRoutine()
     {
-        while (_currentTurnIndex < _replayMoves.Count && _isPlaying)
+        while (_currentTurn < _currentReplay.GameMoves.Count && _isPlaying)
         {
-            PlayNextTurn();
-            yield return new WaitForSeconds(1f);
+            NextTurn();
+            yield return new WaitForSeconds(0.5f);
         }
         _isPlaying = false;
     }
 
-    private void PlayNextTurn()
-    {
-        if (_currentTurnIndex < _replayMoves.Count)
-        {
-            var move = _replayMoves[_currentTurnIndex];
-            _boardManager.OnDropMarker((move.row, move.col), move.markerSprite);
-            _currentTurnIndex++;
-        }
-    }
-
-    public void PauseReplay()
+    public void Pause()
     {
         _isPlaying = false;
         StopAllCoroutines();
     }
 
-    public void RewindReplay()
+    private void UpdateUI()
     {
-        _boardManager.Grid.Clear();
-        _currentTurnIndex = 0;
+        _turnText.text = $"{_currentTurn}";
+        
+        // 버튼 상태 업데이트
+        _nextTurnButton.interactable = _currentTurn < _currentReplay.GameMoves.Count;
+        _previousTurnButton.interactable = _currentTurn > 0;
+        _playButton.interactable = !_isPlaying && _currentTurn < _currentReplay.GameMoves.Count;
+        _pauseButton.interactable = _isPlaying;
     }
 }

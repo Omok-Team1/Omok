@@ -138,4 +138,8 @@ public class BoardGrid : MonoBehaviour
     private float _cameraOffsetY;
     private GameData _gameData;
     private IDictionary<(int, int), Cell> _grid;
+    
+    
+    
+    
 }
