@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class ReplaySceneManager : MonoBehaviour
@@ -8,31 +7,26 @@ public class ReplaySceneManager : MonoBehaviour
 
     public static void LoadReplayScene(ReplayData replayData)
     {
-        Debug.Log("[ReplaySceneManager] LoadReplayScene called");
-        Debug.Log($"[ReplaySceneManager] Replay Data: Moves Count = {replayData?.GameMoves?.Count ?? 0}");
-        
         CurrentReplayData = replayData;
         SceneManager.LoadScene("ReplayScene");
     }
 
     void Start()
-{
-    StartCoroutine(InitializeAfterSceneLoad());
-}
-
-private IEnumerator InitializeAfterSceneLoad()
-{
-    yield return null; // 씬 로드 완료 대기
-    var viewController = FindObjectOfType<ReplayViewController>();
-    if (viewController != null && CurrentReplayData != null)
     {
-        viewController.Initialize(CurrentReplayData);
+        var viewController = FindObjectOfType<ReplayViewController>();
+        if (viewController != null && ReplaySceneManager.CurrentReplayData != null)
+        {
+            viewController.Initialize(ReplaySceneManager.CurrentReplayData);
+        }
+        else
+        {
+            Debug.LogError("ViewController 또는 ReplayData가 없습니다!");
+        }
     }
-}
 
-    public static void UnloadReplayScene()
-    {
-        
-        SceneManager.LoadScene("Title");
-    }
+	public static void UnloadReplayScene()
+{
+    CurrentReplayData = null;
+    SceneManager.LoadScene("Title");
+}
 }

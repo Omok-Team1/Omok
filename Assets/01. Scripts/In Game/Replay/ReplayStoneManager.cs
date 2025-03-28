@@ -33,9 +33,6 @@ public class ReplayStoneManager : MonoBehaviour
     /// </summary>
     public void PlaceStone(int row, int col, int cellOwner)
     {
-        
-        Debug.Log($"PlaceStone called: row={row}, col={col}, cellOwner={cellOwner}");
-
         // 해당 좌표의 셀 확인
         Cell targetCell = boardGrid.GetCell(row, col);
         if (targetCell == null)
@@ -74,8 +71,6 @@ public class ReplayStoneManager : MonoBehaviour
     /// </summary>
     public void ClearAllStones()
     {
-        
-        Debug.Log("ClearAllStones called");
         // 모든 생성된 돌 제거
         foreach (GameObject stone in placedStones)
         {
