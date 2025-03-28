@@ -71,21 +71,22 @@ public static class Evaluation
     }
 
 
-  private static float CalculateScore(int count, bool isBlockedStart, bool isBlockedEnd, bool isAI)
+    private static float CalculateScore(int count, bool isBlockedStart, bool isBlockedEnd, bool isAI)
     {
         float baseScore = count switch
         {
-            5 => 100000,  // 오목 완성 (최고 점수)
-            4 when !isBlockedStart && !isBlockedEnd => 5000,  // 열린 4
-            4 => 500,  // 막힌 4
-            3 when !isBlockedStart && !isBlockedEnd => 300,  // 열린 3
-            3 => 30,  // 막힌 3
-            2 when !isBlockedStart && !isBlockedEnd => 10,  // 열린 2
-            _ => 1 // 나머지
+            5 => 100000,  // 오목 완성
+            4 when !isBlockedStart && !isBlockedEnd => 7000,  // 열린 4
+            4 => 1000,  // 막힌 4 (상향 조정)
+            3 when !isBlockedStart && !isBlockedEnd => 500,  // 열린 3
+            3 => 100,  // 막힌 3 (상향 조정)
+            2 when !isBlockedStart && !isBlockedEnd => 50,  // 열린 2
+            _ => 1
         };
 
-        return isAI ? baseScore * 1.2f : baseScore;  // AI 가중치 적용
+        return isAI ? baseScore * 1.2f : baseScore;
     }
+
 
 
     public static float EvaluateMove(BoardGrid board, (int row, int col) move, bool isMaximizing)

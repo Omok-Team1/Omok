@@ -17,19 +17,27 @@ public class BoardManager : MonoBehaviour
     
     public bool OnDropMarker()
     {
+        if (_matchRecord.Count == 0)
+        {
+            Debug.LogError("_matchRecord가 비어있음 정상적인 실행인지 확인 필요!");
+            return false;
+        }
+
         var selected = _matchRecord.Peek()._coordinate;
 
-        if (_matchRecord.Peek() is not null && _grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
-            return _grid.TryMarkingOnCell(selected);
-        //for debug
-        else if (_grid[selected.Item1, selected.Item2].Marker != _gameData.emptySprite)
+        // // 🔍 디버깅 추가: 선택된 좌표 로그 출력
+        // Debug.Log($"🔍 OnDropMarker - 선택된 좌표: ({selected.Item1}, {selected.Item2})");
+
+        if (_grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
         {
-            Debug.LogError("해당 좌표에 이미 돌이 놓여져 있습니다.");
-            //TODO: AI 알고리즘 수정이 필요함
-            //throw new Exception("Duplicated Marker found.");
+            return _grid.TryMarkingOnCell(selected);
         }
-        
-        return false;
+        else
+        {
+            // 🔍 디버깅 추가: 해당 좌표에 어떤 마커가 있는지 확인
+            Debug.LogError($"⚠️ 중복 돌 감지! 좌표: ({selected.Item1}, {selected.Item2}), 기존 마커: {_grid[selected.Item1, selected.Item2].Marker}");
+            return false;
+        }
     }
     
     public bool OnDropMarker((int, int) coordi, Sprite marker = null)
@@ -93,17 +101,43 @@ public class BoardManager : MonoBehaviour
     public void RecordDrop(Cell data)
     {
         if (data is null)
+        {
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
-        else
-            _matchRecord.Push(data);
+        }
+
+        // 🔍 디버깅 추가: 기록 전에 중복 체크
+        if (_matchRecord.Count > 0 && _matchRecord.Peek()._coordinate == data._coordinate)
+        {
+            Debug.LogError($"🚨 중복 기록 방지: 이미 기록된 좌표 ({data._coordinate.Item1}, {data._coordinate.Item2})");
+            return;
+        }
+
+        _matchRecord.Push(data);
+
+        // // 🔍 디버깅 추가: 스택에 값이 정상적으로 기록되는지 확인
+        // Debug.Log($"📌 RecordDrop - 기록된 좌표: ({data._coordinate.Item1}, {data._coordinate.Item2})");
     }
     
     public void RecordDrop((int, int)? data)
     {
         if (data is null)
+        {
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
-        else
-            _matchRecord.Push(_grid[data.Value.Item1, data.Value.Item2]);
+        }
+
+        var cell = _grid[data.Value.Item1, data.Value.Item2];
+
+        // 🔍 디버깅 추가: 기록 전에 중복 체크
+        if (_matchRecord.Count > 0 && _matchRecord.Peek()._coordinate == cell._coordinate)
+        {
+            Debug.LogError($"🚨 중복 기록 방지: 이미 기록된 좌표 ({cell._coordinate.Item1}, {cell._coordinate.Item2})");
+            return;
+        }
+
+        _matchRecord.Push(cell);
+
+        // // 🔍 디버깅 추가: 스택에 값이 정상적으로 기록되는지 확인
+        // Debug.Log($"📌 RecordDrop - 기록된 좌표: ({cell._coordinate.Item1}, {cell._coordinate.Item2})");
     }
 
     public Cell GetRecentOnDrop()

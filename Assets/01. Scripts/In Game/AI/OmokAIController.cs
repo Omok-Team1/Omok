@@ -16,7 +16,7 @@ public static class OmokAIController
         if (_board == null)
         {
             Debug.LogError("OmokAIController: _board is null in GetBestMove()");
-            return (-1, -1);  // 기본값 반환
+            return (-1, -1);
         }
         if (IsBoardEmpty())
         {
@@ -33,6 +33,10 @@ public static class OmokAIController
         var candidates = GetCandidateMoves();
         foreach (var (row, col) in candidates)
         {
+            if (_board[row, col].CellOwner != Turn.NONE)
+            {
+                continue; // 이미 돌이 있는 곳이면 건너뜀
+            }
             _board.MarkingTurnOnCell((row, col), Turn.PLAYER2);
             float score = DoMinimax(SEARCH_DEPTH - 1, false, float.MinValue, float.MaxValue);
             _board.MarkingTurnOnCell((row, col), Turn.NONE);
@@ -45,6 +49,7 @@ public static class OmokAIController
         }
         return bestMove;
     }
+
 
     private static (int, int) CheckImmediateWinOrBlock(Turn opponent)
     {
@@ -231,13 +236,12 @@ public static class OmokAIController
         {
             for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
             {
-                if (_board[row, col].CellOwner != Turn.NONE) continue;
+                if (_board[row, col].CellOwner != Turn.NONE) continue;  // ✅ 유효한 좌표인지 체크
 
                 foreach (var (dx, dy) in directions)
                 {
                     int newRow = row + dx, newCol = col + dy;
 
-                    // 🔥 기존 2칸까지 탐색하던 로직을 제거하여 1칸 거리 내 후보만 선택
                     if (newRow >= -7 && newRow < Constants.BOARD_SIZE - 7 &&
                         newCol >= -7 && newCol < Constants.BOARD_SIZE - 7 &&
                         _board[newRow, newCol].CellOwner != Turn.NONE)
@@ -253,6 +257,7 @@ public static class OmokAIController
         sortedMoves.Sort((a, b) => Evaluation.EvaluateMove(_board, b, true).CompareTo(Evaluation.EvaluateMove(_board, a, true))); 
         return sortedMoves;
     }
+
 
 
     private static bool IsBoardFull()
