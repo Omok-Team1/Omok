@@ -14,8 +14,8 @@ public class EndGameText : IOnEventSO
         var text = listenerObj.GetComponent<TextMeshProUGUI>();
         
         var matchPoint = msg.GetParameter<int>();
-
-        text.text = msg.GetParameter<Turn>() + "가 " + text.text;
+        
+        text.text = msg.GetParameter<string>() + "가 " + text.text;
 
         //승리 혹은 무승부
         if (matchPoint >= 0)

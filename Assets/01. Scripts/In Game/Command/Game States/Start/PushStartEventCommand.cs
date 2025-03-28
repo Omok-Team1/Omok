@@ -11,6 +11,8 @@ public class PushStartEventCommand : ICommand
         
         //TODO: 상대방 이름, 프로필 사진 설정해주기. 여기서는 임시로 고정된 값으로 설정함
         profileMsg.AddParameter<string>("Stranger");
+        _boardManager.GameData.player2Name = "Stranger";
+        
         //_boardManager.GameData.player2Sprite = ;
         profileMsg.AddParameter<Sprite>(null);
         

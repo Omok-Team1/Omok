@@ -12,7 +12,7 @@ public class RankScoreUpdateEvent : IOnEventSO
 
         _sliders = listener.GetSlider();
 
-        StaticCoroutine.StartStaticCoroutine(SliderAnimation(10, 30));
+        StaticCoroutine.StartStaticCoroutine(SliderAnimation(-60, 120));
     }
 
     //currentScore = matchScore = -2^31 ~ 2^31-1

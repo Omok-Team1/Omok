@@ -59,8 +59,6 @@ public class ShopManager : MonoBehaviour
         
         // DOTween 초기화
         DOTween.SetTweensCapacity(500, 50);
-        
-        
     }
     
     // 패널 버그 방지 2

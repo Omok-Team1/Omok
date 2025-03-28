@@ -97,7 +97,10 @@ public class BoardManager : MonoBehaviour
         if (data is null)
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
         else
+        {
+            data.SelectedCell();
             _matchRecord.Push(data);
+        }
     }
     
     public void RecordDrop((int, int)? data)
@@ -105,7 +108,10 @@ public class BoardManager : MonoBehaviour
         if (data is null)
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
         else
+        {
+            _grid[data.Value.Item1, data.Value.Item2].SelectedCell();
             _matchRecord.Push(_grid[data.Value.Item1, data.Value.Item2]);
+        }
     }
 
     public Cell GetRecentOnDrop()

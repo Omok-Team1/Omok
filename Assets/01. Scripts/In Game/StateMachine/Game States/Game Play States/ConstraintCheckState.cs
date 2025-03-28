@@ -16,28 +16,25 @@ public class ConstraintCheckState : IState
     {
         if (_actions.ExecuteCommands() is true)
         {
-            Debug.Log("쌍삼이 검출 되었습니다.");
+            Debug.Log("쌍삼 or 쌍사가 검출 되었습니다.");
         }
         else
         {
-            Debug.Log("쌍삼이 검출 되지 않았습니다.");
+            Debug.Log("쌍삼 or 쌍사가 검출 되지 않았습니다.");
         }
         
         bool branchFlag = _actions.ExecuteCommand(new BranchPlayerOpponent());
-
-        //TODO: 테스트를 위해 잠시 주석처리
+        
         //true : Player 상태로 전환
         //false : Opponent 상태로 전환
-        // if (branchFlag is true)
-        // {
-        //     StateMachine.ChangeState<PlayerState>();
-        // }
-        // else
-        // {
-        //     StateMachine.ChangeState<OpponentState>();
-        // }
-        
-        StateMachine.ChangeState<PlayerState>();
+        if (branchFlag is true)
+        {
+            StateMachine.ChangeState<PlayerState>();
+        }
+        else
+        {
+            StateMachine.ChangeState<OpponentState>();
+        }
     }
 
     public void UpdateState()
