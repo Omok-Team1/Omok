@@ -208,6 +208,13 @@ public class CoinManager : MonoBehaviour
         }
     }
     
+    public void ShowReturnToTitlePanel()
+    {
+        // 타이틀 복귀 패널 활성화
+        Debug.Log("코인 부족! 타이틀로 복귀");
+        SceneManager.LoadScene("TitleScene");
+    }
+    
     // 게임 플레이 후 재시작 시 코인 체크
     public bool CoinEnough()
     {

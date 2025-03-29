@@ -37,7 +37,7 @@ public class PushEndGameEventCommand : ICommand
         // 이벤트 푸시 및 발행
         EventManager.Instance.PushEventMessageEvent(message);
         EventManager.Instance.PublishMessageQueue();
-
+        GameEndEventDispatcher.Instance.OnGameEnded.Invoke();
         return true;
     }
 }

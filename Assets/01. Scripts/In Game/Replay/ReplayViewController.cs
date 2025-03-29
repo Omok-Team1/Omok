@@ -158,20 +158,20 @@ public class ReplayViewController : MonoBehaviour
     if (_currentTurn == 0) // 0턴일 때
     {
         _playerTurnText.text = "?";
-        _playerTurnText.color = Color.gray; // 회색으로 표시
+        _playerTurnText.color = new Color(Color.gray.r, Color.gray.g, Color.gray.b, 0.5f); // 회색으로 표시
     }
     else if (_currentTurn <= _currentReplay.GameMoves.Count) // 1턴 이상
     {
         var currentMove = _currentReplay.GameMoves[_currentTurn - 1];
         _playerTurnText.text = currentMove.cellOwner == Turn.PLAYER1 ? "흑" : "백";
         _playerTurnText.color = currentMove.cellOwner == Turn.PLAYER1 
-            ? Color.black 
-            : Color.white;
+            ? new Color(Color.black.r, Color.black.g, Color.black.b, 0.5f)
+            : new Color(Color.white.r, Color.white.g, Color.white.b, 0.5f);
     }
     else // 턴을 초과한 경우
     {
         _playerTurnText.text = "?";
-        _playerTurnText.color = Color.gray;
+        _playerTurnText.color = new Color(Color.gray.r, Color.gray.g, Color.gray.b, 0.5f);
     }
 
     // 버튼 상태 업데이트
