@@ -6,7 +6,7 @@ public static class OmokAIController
 {
     private const int SEARCH_DEPTH = 3;
     private static readonly (int, int)[] directions = { (1, 0), (0, 1), (1, 1), (1, -1) };
-    private static Dictionary<ulong, float> zobristTable = new Dictionary<ulong, float>();
+    private static Dictionary<ulong, (float score, int depth)> zobristTable = new();    
     private static ulong[,,] zobristKeys; // zobrist 해싱키
     private static BoardGrid _board => GameManager.Instance?.BoardManager?.Grid; // null 안전 처리 (?.)
 
@@ -29,16 +29,13 @@ public static class OmokAIController
 
         float bestScore = float.MinValue;
         (int, int) bestMove = (-1, -1);
-
         var candidates = GetCandidateMoves();
+        int dynamicDepth = GetDynamicDepth();
+        
         foreach (var (row, col) in candidates)
         {
-            if (_board[row, col].CellOwner != Turn.NONE)
-            {
-                continue;
-            }
             _board.MarkingTurnOnCell((row, col), Turn.PLAYER2);
-            float score = DoMinimax(SEARCH_DEPTH - 1, false, float.MinValue, float.MaxValue);
+            float score = DoMinimax(dynamicDepth - 1, false, float.MinValue, float.MaxValue);
             _board.MarkingTurnOnCell((row, col), Turn.NONE);
 
             if (score > bestScore)
@@ -111,8 +108,6 @@ public static class OmokAIController
         return false;
     }
 
-
-
     private static bool IsWithinBounds(int row, int col)
     {
         return row >= -7 && row < Constants.BOARD_SIZE - 7 &&
@@ -149,42 +144,57 @@ public static class OmokAIController
         return false;
     }
 
+    private static int GetDynamicDepth()
+    {
+        int stoneCount = 0;
+        foreach (var cell in _board)
+        {
+            if (cell.CellOwner != Turn.NONE) stoneCount++;
+        }
 
+        if (stoneCount < 10) return 3;
+        if (stoneCount < 20) return 3;
+        return 2;
+    }    
+    
     private static float DoMinimax(int depth, bool isMaximizing, float alpha, float beta)
-{
-    ulong hash = ComputeHash();
-    if (zobristTable.TryGetValue(hash, out float cachedScore)) return cachedScore;
-
-    if (CheckWin(Turn.PLAYER1)) return -1000 + depth;
-    if (CheckWin(Turn.PLAYER2)) return 1000 - depth;
-    if (depth == 0 || IsBoardFull()) return Evaluation.EvaluateBoard(_board);
-
-    float bestScore = isMaximizing ? float.MinValue : float.MaxValue;
-    List<(int, int)> candidates = GetCandidateMoves();
-
-    candidates.Sort((move1, move2) =>
     {
-        float score1 = Evaluation.EvaluateMove(_board, move1, isMaximizing);
-        float score2 = Evaluation.EvaluateMove(_board, move2, isMaximizing);
-        return score2.CompareTo(score1);
-    });
+        ulong hash = ComputeHash();
+        if (zobristTable.TryGetValue(hash, out var cached) && cached.depth >= depth)
+        {
+            return cached.score;
+        }
 
-    foreach (var (row, col) in candidates)
-    {
-        _board.MarkingTurnOnCell((row, col), isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
-        float score = DoMinimax(depth - 1, !isMaximizing, alpha, beta);
-        _board.MarkingTurnOnCell((row, col), Turn.NONE);
+        if (CheckWin(Turn.PLAYER1)) return -1000 + depth;
+        if (CheckWin(Turn.PLAYER2)) return 1000 - depth;
+        if (depth == 0 || IsBoardFull()) return Evaluation.EvaluateBoard(_board);
 
-        bestScore = isMaximizing ? Math.Max(bestScore, score) : Math.Min(bestScore, score);
-        if (isMaximizing) alpha = Math.Max(alpha, score);
-        else beta = Math.Min(beta, score);
+        float bestScore = isMaximizing ? float.MinValue : float.MaxValue;
+        List<(int, int)> candidates = GetCandidateMoves();
 
-        if (beta <= alpha) break;
+        foreach (var (row, col) in candidates)
+        {
+            _board.MarkingTurnOnCell((row, col), isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
+            float score = DoMinimax(depth - 1, !isMaximizing, alpha, beta);
+            _board.MarkingTurnOnCell((row, col), Turn.NONE);
+
+            if (isMaximizing)
+            {
+                bestScore = Math.Max(bestScore, score);
+                alpha = Math.Max(alpha, score);
+            }
+            else
+            {
+                bestScore = Math.Min(bestScore, score);
+                beta = Math.Min(beta, score);
+            }
+
+            if (beta <= alpha) break;
+        }
+
+        zobristTable[hash] = (bestScore, depth);
+        return bestScore;
     }
-
-    zobristTable[hash] = bestScore; // 중복 탐색 방지
-    return bestScore;
-}
 
     private static bool CheckWin(Turn player)
     {
@@ -216,41 +226,86 @@ public static class OmokAIController
         return false;
     }
 
-
     private static List<(int, int)> GetCandidateMoves()
-{
-    HashSet<(int, int)> uniqueMoves = new HashSet<(int, int)>();
-    List<(int, int)> sortedMoves = new List<(int, int)>();
-
-    for (int row = -7; row < Constants.BOARD_SIZE - 7; row++)
     {
-        for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
-        {
-            if (_board[row, col].CellOwner != Turn.NONE) continue;
+        HashSet<(int, int)> uniqueMoves = new HashSet<(int, int)>();
+        List<(int, int)> sortedMoves = new List<(int, int)>();
 
-            bool hasNearbyStone = false;
-            foreach (var (dx, dy) in directions)
+        for (int row = -7; row < Constants.BOARD_SIZE - 7; row++)
+        {
+            for (int col = -7; col < Constants.BOARD_SIZE - 7; col++)
             {
-                int newRow = row + dx, newCol = col + dy;
-                if (IsWithinBounds(newRow, newCol) && _board[newRow, newCol].CellOwner != Turn.NONE)
+                if (_board[row, col].CellOwner != Turn.NONE) continue;
+
+                bool hasNearbyStone = false;
+                foreach (var (dx, dy) in directions)
                 {
-                    hasNearbyStone = true;
-                    break;
+                    int newRow = row + dx, newCol = col + dy;
+                    if (IsWithinBounds(newRow, newCol) && _board[newRow, newCol].CellOwner != Turn.NONE)
+                    {
+                        hasNearbyStone = true;
+                        break;
+                    }
+                }
+
+                if (hasNearbyStone)
+                {
+                    uniqueMoves.Add((row, col));
                 }
             }
-
-            if (hasNearbyStone)
-            {
-                uniqueMoves.Add((row, col));
-            }
         }
+
+        sortedMoves.AddRange(uniqueMoves);
+
+        // 정렬 (기존 코드 유지)
+        sortedMoves.Sort((a, b) =>
+        {
+            float scoreA = EvaluateMovePriority(_board, a);
+            float scoreB = EvaluateMovePriority(_board, b);
+            return scoreB.CompareTo(scoreA);
+        });
+
+        // 최대 후보 수 제한 (예: 15개)
+        return sortedMoves.Count > 15 ? sortedMoves.GetRange(0, 15) : sortedMoves;
     }
 
-    sortedMoves.AddRange(uniqueMoves);
-    sortedMoves.Sort((a, b) => Evaluation.EvaluateMove(_board, b, true).CompareTo(Evaluation.EvaluateMove(_board, a, true)));
-    return sortedMoves;
-}
 
+    private static float EvaluateMovePriority(BoardGrid board, (int row, int col) move)
+    {
+        // 즉시 승리 가능 수인지 확인
+        board.MarkingTurnOnCell(move, Turn.PLAYER2);
+        if (CheckWin(Turn.PLAYER2))
+        {
+            board.MarkingTurnOnCell(move, Turn.NONE);
+            return 1_000_000; // 즉시 승리 가능하면 최우선
+        }
+        board.MarkingTurnOnCell(move, Turn.NONE);
+
+        // 즉시 방어해야 하는 수인지 확인
+        board.MarkingTurnOnCell(move, Turn.PLAYER1);
+        if (CheckWin(Turn.PLAYER1))
+        {
+            board.MarkingTurnOnCell(move, Turn.NONE);
+            return 500_000; // 방어 필수 수는 두 번째 우선
+        }
+        board.MarkingTurnOnCell(move, Turn.NONE);
+
+        // 기존 평가 함수 사용 (강한 3목, 4목 고려)
+        float score = Evaluation.EvaluateMove(board, move, true);
+
+        // 상대 돌과의 거리 기반 추가 점수
+        float proximityBonus = 0f;
+        foreach (var (dx, dy) in directions)
+        {
+            int newRow = move.row + dx, newCol = move.col + dy;
+            if (IsWithinBounds(newRow, newCol) && board[newRow, newCol]?.CellOwner != Turn.NONE)
+            {
+                proximityBonus += 20f; // 인접한 돌이 많을수록 더 높은 점수
+            }
+        }
+
+        return score + proximityBonus;
+    }
 
 
     private static bool IsBoardFull()
@@ -269,13 +324,14 @@ public static class OmokAIController
         {
             if (cell.CellOwner != Turn.NONE)
             {
-                int row = cell._coordinate.Item1 + 7; // 좌표 변환
-                int col = cell._coordinate.Item2 + 7; // 좌표 변환
+                int row = cell._coordinate.Item1 + 7;
+                int col = cell._coordinate.Item2 + 7;
                 hash ^= zobristKeys[row, col, (int)cell.CellOwner];
             }
         }
         return hash;
     }
+
     private static void InitializeZobristKeys()
     {
         System.Random random = new System.Random();
