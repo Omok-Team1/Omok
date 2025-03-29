@@ -79,4 +79,13 @@ public class EventManager : Singleton<EventManager>
     
     private readonly IDictionary<string, List<(IOnEvent, GameObject)>> _listeners = new Dictionary<string, List<(IOnEvent, GameObject)>>();
     private Queue<EventMessage> _eventQueue = new Queue<EventMessage>();
+    
+    
+    
+    
+    public void ClearEventQueue()
+    {
+        _eventQueue.Clear();
+        Debug.Log("이벤트 큐가 초기화되었습니다.");
+    }
 }

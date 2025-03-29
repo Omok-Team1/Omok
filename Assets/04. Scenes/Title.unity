@@ -4713,6 +4713,7 @@ GameObject:
   - component: {fileID: 591357428}
   - component: {fileID: 591357427}
   - component: {fileID: 591357426}
+  - component: {fileID: 591357429}
   m_Layer: 0
   m_Name: '[Canvas] For Full Screen'
   m_TagString: Untagged
@@ -4804,6 +4805,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &591357429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591357424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75b7407f65b2fe24c8dfe60832352eaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startButton: {fileID: 1507226172}
+  gameStartManager: {fileID: 1028588652}
 --- !u!1 &600512355
 GameObject:
   m_ObjectHideFlags: 0
@@ -10090,7 +10105,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1822680285}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99524605
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -12790,7 +12805,7 @@ GameObject:
   - component: {fileID: 1585990117}
   m_Layer: 5
   m_Name: '[Button] Start Game'
-  m_TagString: Untagged
+  m_TagString: StartButton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

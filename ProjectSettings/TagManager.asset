@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MainStorePanel
   - ReplayStone
+  - StartButton
   layers:
   - Default
   - TransparentFX
