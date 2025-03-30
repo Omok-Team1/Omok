@@ -19,6 +19,13 @@ public class BoardManager : MonoBehaviour
     {
         var selected = _matchRecord.Peek()._coordinate;
 
+        if (_isTimeOut is true)
+        {
+            //이전 턴의 플레이어가 시간 초과, 돌을 놓지 않고 true를 반환해 ChangeTurnState로 전환한다.
+            _isTimeOut = false;
+            return true;
+        }
+
         if (_matchRecord.Peek() is not null && _grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(selected);
         //for debug
@@ -26,6 +33,8 @@ public class BoardManager : MonoBehaviour
         {
             Debug.LogError("해당 좌표에 이미 돌이 놓여져 있습니다.");
             //TODO: AI 알고리즘 수정이 필요함
+            //TODO: 테스트를 위해 임시로 에러를 무시함
+            return true;
             //throw new Exception("Duplicated Marker found.");
         }
         
@@ -34,9 +43,11 @@ public class BoardManager : MonoBehaviour
     
     public bool OnDropMarker((int, int) coordi, Sprite marker = null)
     {
-        Cell opponentMove = _grid[coordi.Item1, coordi.Item2];
+        Cell selectedCell = _grid[coordi.Item1, coordi.Item2];
         
-        if (opponentMove.Marker == _gameData.emptySprite)
+        selectedCell.SelectedCell();
+        
+        if (selectedCell.Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(coordi, marker);
 
         return false;
@@ -90,24 +101,31 @@ public class BoardManager : MonoBehaviour
         return _grid.RemainCells;
     }
 
+    //Player 용
     public void RecordDrop(Cell data)
     {
         if (data is null)
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
         else
         {
-            data.SelectedCell();
+            data.SelectedCell(true);
             _matchRecord.Push(data);
         }
     }
     
+    //Opponent 용
     public void RecordDrop((int, int)? data)
     {
         if (data is null)
             throw new NullReferenceException("스택에 Null이 기록 되었습니다.");
+        //인공 지능이 제한 시간안에 연산을 끝내지 못하면 -무한대 튜플을 반환한다.
+        else if (data.Value.Item1 == -INF && data.Value.Item2 == -INF)
+        {
+            _isTimeOut = true;
+        }
         else
         {
-            _grid[data.Value.Item1, data.Value.Item2].SelectedCell();
+            _grid[data.Value.Item1, data.Value.Item2].SelectedCell(true);
             _matchRecord.Push(_grid[data.Value.Item1, data.Value.Item2]);
         }
     }
@@ -373,4 +391,8 @@ public class BoardManager : MonoBehaviour
 
     private readonly Stack<Cell> _matchRecord = new();
     public Stack<Cell> MatchRecord => _matchRecord;
+
+    private readonly int INF = (int)1e9;
+    //AI가 시간 안에 연산을 못 끝낼 때 stack에 값을 기록하지 않는다 -> 시간 초과라는 의미이며 아무 것도 하지 않는다를 표현하기 위해
+    private bool _isTimeOut = false;
 }

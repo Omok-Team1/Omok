@@ -47,8 +47,34 @@ public class GameManager : Singleton<GameManager>
     private static IDictionary<string, bool> _isDirty = new Dictionary<string, bool>()
     {
         {nameof(BoardManager), true}, {nameof(OpponentController), true},
-        {nameof(StateMachine), true}, {nameof(TimerController), true}
+        {nameof(StateMachine), true}, {nameof(TimerController), true},
+        {nameof(OmokAIController), true}
     };
+
+    public bool TrySetDirtyBit(string typename, bool setValue)
+    {
+        if (_isDirty.ContainsKey(typename))
+        {
+            _isDirty[typename] = setValue;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool IsThisDirty(string typename)
+    {
+        if (_isDirty.TryGetValue(typename, out bool isContain))
+        {
+            return isContain;
+        }
+        else
+        {
+            return false;
+        }
+    }
     
     public BoardManager BoardManager
     {

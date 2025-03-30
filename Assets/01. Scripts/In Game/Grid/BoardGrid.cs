@@ -122,6 +122,32 @@ public class BoardGrid : MonoBehaviour
     {
         _grid[coordi].CellOwner = player;
     }
+    
+    public BoardGrid CloneInvisibleObj()
+    {
+        if (GameManager.Instance.IsThisDirty(nameof(OmokAIController)) is false && OmokAIController._board is not null)
+        {
+            Destroy(OmokAIController._board.gameObject);
+        }
+        else
+        {
+            GameManager.Instance.TrySetDirtyBit(nameof(OmokAIController), false);
+        }
+        
+        BoardGrid cloneGrid = Instantiate(gameObject).GetComponent<BoardGrid>();
+
+        for (int row = -7; row < GridSize - 7; row++)
+        {
+            for (int col = -7; col < GridSize - 7; col++)
+            {
+                cloneGrid._grid[(row, col)].CellOwner = _grid[(row, col)].CellOwner;
+                cloneGrid._grid[(row, col)].Marker = _grid[(row, col)].Marker;
+            }
+        }
+        
+        cloneGrid.gameObject.SetActive(false);
+        return cloneGrid;
+    }
 
     private int _remainCells = 0;
     public bool RemainCells => _remainCells <= 0;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -44,6 +45,34 @@ public class EventManager : Singleton<EventManager>
     public void PushEventMessageEvent(EventMessage eventMessage)
     {
         _eventQueue.Enqueue(eventMessage);
+    }
+
+    public void PopLastEventMessageEvent()
+    {
+        Queue<EventMessage> messageQueue = new Queue<EventMessage>();
+        
+        if(_eventQueue.Count == 0) return;
+        else
+        {
+            int count = _eventQueue.Count;
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                messageQueue.Enqueue(_eventQueue.Dequeue());
+            }
+
+            _eventQueue.Dequeue();
+            
+            foreach (var eventMessage in _eventQueue)
+            {
+                Debug.LogError(eventMessage.EventName);
+            }
+            
+            for (int i = 0; i < messageQueue.Count; i++)
+            {
+                _eventQueue.Enqueue(messageQueue.Dequeue());
+            }
+        }
     }
 
     public void ProcessEvent(EventMessage eventMessage)

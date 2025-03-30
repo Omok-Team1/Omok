@@ -24,7 +24,7 @@ public class OnDropState : IState
     {
         //OnDrop 효과음 재생
         EventManager.Instance.PublishSingleMessage(new EventMessage("OnDrop"));
-        
+
         if (_actions.ExecuteCommands() is true)
         {
             StateMachine.ChangeState<ChangeTurnState>();

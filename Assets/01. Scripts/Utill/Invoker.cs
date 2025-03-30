@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Invoker
@@ -18,6 +19,11 @@ public class Invoker
     public bool ExecuteCommand(ICommand command)
     {
         return command.Execute();
+    }
+
+    public bool ExecuteCommand<T>()
+    {
+        return _commands.First(c => c is T).Execute();
     }
     
     public void AddCommand(ICommand command)

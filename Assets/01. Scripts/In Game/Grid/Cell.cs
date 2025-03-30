@@ -22,11 +22,13 @@ public class Cell : MonoBehaviour
         Marker = emptyMarker;
     }
 
-    public void SelectedCell()
+    public void SelectedCell(bool isDestory = false)
     {
         _cellSprite.enabled = true;
         _cellSprite.color = Color.white;
-        Destroy(_select);
+        
+        if(isDestory is true)
+            Destroy(_select);
     }
 
     public (int, int) _coordinate { get; private set; }

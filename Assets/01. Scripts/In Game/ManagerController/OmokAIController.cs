@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public static class OmokAIController
@@ -9,19 +10,23 @@ public static class OmokAIController
     private static readonly (int, int)[] directions = { (1, 0), (0, 1), (1, 1), (1, -1) };
     private static Dictionary<ulong, float> zobristTable = new Dictionary<ulong, float>();
 
-    private static BoardGrid _board = GameManager.Instance.BoardManager.Grid;
-
+    //종한 수정 private -> public
+    public static BoardGrid _board;
+    
     //종한 수정
-    public static (int row, int col) GetBestMove(CancellationToken token)
+    //public static async UniTask<(int row, int col)?> GetBestMove(CancellationToken token)
+    public static UniTask<(int, int)> GetBestMove(CancellationToken token)
     {
         if (IsBoardEmpty())
         {
             int center = Constants.BOARD_SIZE / 2;
-            return (center, center);
+            //종한 수정
+            return new UniTask<(int, int)>((center, center));
         }
 
         var blockMove = CheckImmediateWinOrBlock(Turn.PLAYER1);
-        if (blockMove != (-1, -1)) return blockMove;
+        //종한 수정
+        if (blockMove != (-1, -1)) return new UniTask<(int, int)>(blockMove);
 
         float bestScore = float.MinValue;
         (int, int) bestMove = (-1, -1);
@@ -29,6 +34,9 @@ public static class OmokAIController
         var candidates = GetCandidateMoves();
         foreach (var (row, col) in candidates)
         {
+            //종한 수정
+            token.ThrowIfCancellationRequested();
+            
             _board.MarkingTurnOnCell((row, col), Turn.PLAYER2);
             float score = DoMinimax(SEARCH_DEPTH - 1, false, float.MinValue, float.MaxValue);
             _board.MarkingTurnOnCell((row, col), Turn.NONE);
@@ -39,10 +47,9 @@ public static class OmokAIController
                 bestMove = (row, col);
             }
         }
-        //종한 수정
-        token.ThrowIfCancellationRequested();
         
-        return bestMove;
+        //종한 수정
+        return new UniTask<(int, int)>(bestMove);
     }
 
     private static (int, int) CheckImmediateWinOrBlock(Turn opponent)

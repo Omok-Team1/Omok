@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -5,7 +6,7 @@ using System.Collections;
 
 public class TimerController : MonoBehaviour
 {
-    private float turnTimeLimit = 15f; // 30초 제한시간
+    private float turnTimeLimit = 11f; // 30초 제한시간
     
     private float currentTurnTime = 0f;
     private bool isTurnRunning = false;
@@ -32,20 +33,30 @@ public class TimerController : MonoBehaviour
 
             if (currentTurnTime >= turnTimeLimit)
             {
+                //종한 추가
+                //Update 문이 계속 돌면서 메세지를 한 번에 많이 생성해버려서 추가함
+                //isTurnRunning = false;
+                
                 // 제한시간 초과 시 상대 턴으로 넘어감
                 Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
-
-                // 제한시간 초과 시 이벤트 메시지를 큐에 추가
+                
+                // // 제한시간 초과 시 이벤트 메시지를 큐에 추가
                 EventMessage message;
                 
-                if (isPlayer1Turn is false)
-                    message = new EventMessage("Player2TimeOver");
-                else
+                if (isPlayer1Turn is true)
+                {
                     message = new EventMessage("Player1TimeOver");
+                    EventManager.Instance.PushEventMessageEvent(message);
+                }
+                // else
+                // {
+                //     message = new EventMessage("OpponentTimeOut");
+                //     EventManager.Instance.PushEventMessageEvent(message);
+                // }
                 
-                EventManager.Instance.PushEventMessageEvent(message);
+                EventManager.Instance.PublishMessageQueue();
                 
-                // 제한시간 초과 시 상대 턴으로 전환
+                //제한시간 초과 시 상대 턴으로 전환
                 EndTurn(true);
             }
             
@@ -55,7 +66,7 @@ public class TimerController : MonoBehaviour
             UpdateUI();
         }
     }
-    
+
     // 경고 사운드를 처리하는 함수
     private void PlayWarningSound()
     {
@@ -73,7 +84,7 @@ public class TimerController : MonoBehaviour
     }
     
     // 턴 시작
-    private void StartTurn()
+    public void StartTurn()
     {
         currentTurnTime = 0f;
         isTurnRunning = true;
@@ -83,6 +94,8 @@ public class TimerController : MonoBehaviour
     // 턴 종료
     private void EndTurn(bool timeExceeded = false)
     {
+        isTurnRunning = false;
+        
         if (timeExceeded)
         {
             // 시간 초과로 인해 상대 턴으로 전환
@@ -118,6 +131,8 @@ public class TimerController : MonoBehaviour
     {
         if (isTurnRunning)
         {
+            Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + "'s turn OnDrop.");
+            
             // 사운드 멈추기
             if (warningAudioSource.isPlaying)
             {

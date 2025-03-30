@@ -6,15 +6,15 @@ public class CheckDoubleThree : ICommand
 {
     public bool Execute()
     {
-        if (_constraintCoordinates is not null)
-        {
-            foreach (Cell constraintCoordinate in _constraintCoordinates)
-            {
-                constraintCoordinate.EraseMarker();
-            }
-
-            _constraintCoordinates = null;
-        }
+        // if (_constraintCoordinates is not null)
+        // {
+        //     foreach (Cell constraintCoordinate in _constraintCoordinates)
+        //     {
+        //         constraintCoordinate.EraseMarker();
+        //     }
+        //
+        //     _constraintCoordinates = null;
+        // }
         
         _constraintCoordinates = _boardManager.ConstraintsCheck();
         
@@ -22,6 +22,7 @@ public class CheckDoubleThree : ICommand
         {
             foreach (Cell cell in _constraintCoordinates)
             {
+                Debug.Log("3-3 : " + cell._coordinate);
                 _boardManager.OnDropMarker(cell._coordinate, _boardManager.GameData.constraintMarker);
             }
             return true;
@@ -32,6 +33,6 @@ public class CheckDoubleThree : ICommand
         }
     }
     
-    private List<Cell> _constraintCoordinates;
+    private List<Cell> _constraintCoordinates = new();
     private readonly BoardManager _boardManager = GameManager.Instance.BoardManager;
 }
