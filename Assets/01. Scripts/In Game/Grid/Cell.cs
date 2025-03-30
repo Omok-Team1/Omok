@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Cell : MonoBehaviour
 {
+    
+    public Sprite EmptyMarker => emptyMarker;
     public void Init((int, int) coordinate, Sprite emptySprite)
     {
         _coordinate = coordinate;
@@ -51,5 +53,14 @@ public class Cell : MonoBehaviour
     {
         get => _cellOwner;
         set => _cellOwner = value;
+    }
+    public class CellLogger : MonoBehaviour
+    {
+        [SerializeField] private Cell _targetCell;
+    
+        public void SafeEraseMarker()
+        {
+            _targetCell.Marker = _targetCell.emptyMarker;
+        }
     }
 }
