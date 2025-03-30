@@ -54,7 +54,7 @@ public class GameResetManager : MonoBehaviour
         Debug.Log("[GameResetManager] 게임 재시작 완료");
     }
 
-    private void CleanupDontDestroyObjects()
+    public void CleanupDontDestroyObjects()
     {
         // GameEndEventDispatcher, EventManager 등 싱글톤 객체들 초기화
         if (GameEndEventDispatcher.Instance != null)

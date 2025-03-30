@@ -12,6 +12,14 @@ public class UpdateProfileEvent : IOnEventSO
     public override void OnEvent(EventMessage msg)
     {
         var listenerObj = msg.GetParameter<GameObject>();
+        // Null 체크 추가: 파괴된 오브젝트 참조 방지
+        if (listenerObj == null) 
+        {
+            Debug.LogWarning("listenerObj가 null입니다. 이벤트를 건너뜁니다.");
+            return;
+        }
+
+        // 기존 로직 유지
         var nicknameData = msg.GetParameter<string>();
         var spriteData = msg.GetParameter<Sprite>();
 

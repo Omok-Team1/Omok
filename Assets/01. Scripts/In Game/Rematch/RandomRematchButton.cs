@@ -41,45 +41,23 @@ public class RandomRematchButton : MonoBehaviour
 
     public void Confirm()
 {
-    Debug.Log("리매치 확인 버튼 클릭됨");
-    
     if (CoinManager.Instance != null && CoinManager.Instance.SpendCoin(requiredCoins))
     {
-        Debug.Log($"코인 {requiredCoins}개 성공적으로 소모됨");
-        
-        // 이벤트 정리 - 인라인으로 처리
-        if (GameEndEventDispatcher.Instance != null)
-        {
-            GameEndEventDispatcher.Instance.ClearEventListeners();
-            GameEndEventDispatcher.Instance.ResetDispatchState();
-        }
-        
-        if (EventManager.Instance != null)
-        {
-            // 이벤트 큐 클리어 메서드가 있다면 호출
-            if (EventManager.Instance.GetType().GetMethod("ClearEventQueue") != null)
-            {
-                EventManager.Instance.ClearEventQueue();
-            }
-        }
-        
-        // 패널 닫기
+        // 1. 패널 비활성화 (버튼 클릭 직후)
         if (confirmPanel != null)
         {
             confirmPanel.SetActive(false);
         }
-        
-        // 직접 씬 로드 - 지연 없이
-        Debug.Log($"게임 씬 직접 로드: {gameSceneName}");
-        SceneManager.LoadScene(gameSceneName);
-    }
-    else
-    {
-        Debug.LogError("코인 소모 실패");
-        
-        if (confirmPanel != null)
+
+        // 2. 코루틴을 GameManager에서 실행 (활성화된 객체)
+        if (GameManager.Instance != null)
         {
-            confirmPanel.SetActive(false);
+            GameManager.Instance.StartCoroutine(SafeSceneReload());
+        }
+        else
+        {
+            // GameManager가 없을 경우 직접 실행 (비권장)
+            StartCoroutine(SafeSceneReload());
         }
     }
 }
@@ -154,26 +132,30 @@ public class RandomRematchButton : MonoBehaviour
 
 private IEnumerator SafeSceneReload()
 {
-    // 현재 프레임의 모든 작업이 완료될 때까지 대기
-    yield return null;
-    
-    // 조금 더 기다려서 이벤트 처리가 완료되도록 함
+    // 1. 패널 닫기
+    if (confirmPanel != null) confirmPanel.SetActive(false);
+
+    // 2. 이벤트 시스템 초기화 (ReturnToTitle 참조)
+    if (EventManager.Instance != null)
+    {
+        EventManager.Instance.ClearEventQueue();
+        EventManager.Instance.ClearAllListeners(); // 메서드 추가 필요
+    }
+
+    if (GameEndEventDispatcher.Instance != null)
+    {
+        GameEndEventDispatcher.Instance.ClearEventListeners();
+    }
+
+    // 3. DontDestroyOnLoad 객체 정리 (GameResetManager 사용)
+    if (GameResetManager.Instance != null)
+    {
+        GameResetManager.Instance.CleanupDontDestroyObjects();
+    }
+
+    // 4. 짧은 지연 후 씬 로드
     yield return new WaitForSeconds(0.1f);
-    
-    Debug.Log($"게임 씬 이름: {gameSceneName} - 씬 로드 시도");
-    
-    try
-    {
-        // LoadSceneMode.Single로 씬을 완전히 새로 로드
-        SceneManager.LoadScene(gameSceneName, LoadSceneMode.Single);
-        Debug.Log("씬 로드 요청 완료");
-    }
-    catch (System.Exception e)
-    {
-        Debug.LogError($"씬 로드 실패: {e.Message}");
-        // 로드 실패 시 백업 방법으로 비동기 로드 시도
-        StartCoroutine(FallbackLoadScene());
-    }
+    SceneManager.LoadScene(gameSceneName);
 }
 
     // 타이틀로 돌아가는 메소드
