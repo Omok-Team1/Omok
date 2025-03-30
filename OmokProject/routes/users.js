@@ -51,14 +51,19 @@ router.post("/profileImageUpload", upload.single("profile"), function (req, res)
   res.status(200).send('file uploaded');
 });
 
-// 요청 시, 해당 계정의 프로필 이미지 파일 전송
-router.post("/getProfileImage", async (req, res) => {
+// 요청 시, 본인 계정의 프로필 이미지 파일 전송
+router.post("/getMyProfileImage", async (req, res) => {
   // 로그인 중일 경우에만 동작
   if (req.session.isAuthenticated) {
     res.sendFile(path.join(profilePath, req.session.profile));
   } else{
     res.send("로그인 필요");
   }
+});
+
+// 요청 시, 해당 계정의 프로필 이미지 파일 전송
+router.post("/getProfileImage", async (req, res) => {
+  res.sendFile(path.join(profilePath, req.body.filename));
 });
 // =================================================
 
