@@ -16,14 +16,17 @@ public class Invoker
         return true;
     }
 
+    public void InDependentExecuteCommands()
+    {
+        foreach (var command in _commands)
+        {
+            command.Execute();
+        }
+    }
+
     public bool ExecuteCommand(ICommand command)
     {
         return command.Execute();
-    }
-
-    public bool ExecuteCommand<T>()
-    {
-        return _commands.First(c => c is T).Execute();
     }
     
     public void AddCommand(ICommand command)

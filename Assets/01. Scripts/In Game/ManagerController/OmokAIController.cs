@@ -35,7 +35,7 @@ public static class OmokAIController
         foreach (var (row, col) in candidates)
         {
             //종한 수정
-            token.ThrowIfCancellationRequested();
+            //token.ThrowIfCancellationRequested();
             
             _board.MarkingTurnOnCell((row, col), Turn.PLAYER2);
             float score = DoMinimax(SEARCH_DEPTH - 1, false, float.MinValue, float.MaxValue);

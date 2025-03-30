@@ -8,20 +8,13 @@ public class ConstraintCheckState : IState
     {
         StateMachine = stateMachine;
         
-        //_actions.AddCommand(new CheckDoubleThree());
-        //_actions.AddCommand(new CheckDoubleFour());
+        _actions.AddCommand(new CheckDoubleThree());
+        _actions.AddCommand(new CheckDoubleFour());
     }
     
     public void EnterState()
     {
-        if (_actions.ExecuteCommand(new CheckDoubleThree()) is true || _actions.ExecuteCommand(new CheckDoubleFour()) is true)
-        {
-            Debug.Log("쌍삼 or 쌍사가 검출 되었습니다.");
-        }
-        else
-        {
-            Debug.Log("쌍삼 or 쌍사가 검출 되지 않았습니다.");
-        }
+        _actions.InDependentExecuteCommands();
         
         bool branchFlag = _actions.ExecuteCommand(new BranchPlayerOpponent());
 

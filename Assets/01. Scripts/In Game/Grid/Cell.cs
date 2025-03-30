@@ -20,14 +20,17 @@ public class Cell : MonoBehaviour
     {
         Debug.Log("Erasing marker!!");
         Marker = emptyMarker;
+        _select = gameObject.AddComponent<Select>();
+        
+        _cellSprite.enabled = false;
     }
 
-    public void SelectedCell(bool isDestory = false)
+    public void SelectedCell(bool isDestroy = false)
     {
         _cellSprite.enabled = true;
         _cellSprite.color = Color.white;
-        
-        if(isDestory is true)
+
+        if (isDestroy is true)
             Destroy(_select);
     }
 

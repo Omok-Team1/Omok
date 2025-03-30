@@ -45,7 +45,7 @@ public class BoardManager : MonoBehaviour
     {
         Cell selectedCell = _grid[coordi.Item1, coordi.Item2];
         
-        selectedCell.SelectedCell();
+        selectedCell.SelectedCell(true);
         
         if (selectedCell.Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(coordi, marker);

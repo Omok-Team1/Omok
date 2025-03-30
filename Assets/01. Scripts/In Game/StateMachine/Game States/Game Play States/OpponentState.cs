@@ -32,11 +32,11 @@ public class OpponentState : IState
         
         EventManager.Instance.PushEventMessageEvent(message);
         
-        //coordi = ((int)1e9, (int)1e9);
-
-        var task = GameManager.Instance.OpponentController.BeginOpponentTask(cts);
+        GameManager.Instance.TimerController.StartTurn(Turn.PLAYER2);
         
-        coordi = await task;
+        coordi = ((int)1e9, (int)1e9);
+        
+        coordi = await GameManager.Instance.OpponentController.BeginOpponentTask(cts);
 
         //await UniTask.WaitUntil(() => task.Status is UniTaskStatus.Succeeded || task.Status is UniTaskStatus.Canceled);
         
@@ -53,26 +53,46 @@ public class OpponentState : IState
         //     return task.Status is UniTaskStatus.Succeeded || task.Status is UniTaskStatus.Canceled;
         // });
         
-        //값이 전달 되거나, token에 의해 취소 될 때까지 대기
-        GameManager.Instance.BoardManager.RecordDrop(coordi);
-
-        if (cts.IsCancellationRequested)
-        {
-            Debug.Log("Opponent timed out.");
-        }
-        else
-        {
-            Debug.Log("Opponent OnDrop!!!!!!!.");
-            EventManager.Instance.PopLastEventMessageEvent();
-            GameManager.Instance.TimerController.EndPlayerTurn();
-        }
-
-        StateMachine.ChangeState<OnDropState>();
+        // //값이 전달 되거나, token에 의해 취소 될 때까지 대기
+        // GameManager.Instance.BoardManager.RecordDrop(coordi);
+        //
+        // if (cts.IsCancellationRequested)
+        // {
+        //     Debug.Log("Opponent timed out.");
+        // }
+        // else
+        // {
+        //     Debug.Log("Opponent OnDrop!!!!!!!.");
+        //     EventManager.Instance.PopLastEventMessageEvent();
+        //     GameManager.Instance.TimerController.EndPlayerTurn();
+        // }
+        //
+        // StateMachine.ChangeState<OnDropState>();
     }
 
     public void UpdateState()
     {
         //Do nothing at Unity Update Loop...
+        //값이 양의 무한대가 아니라면, 시간 초과이거나, 연산을 완료해서 정상적인 좌표를 가지고 있다.
+        //Timer의 코루틴이 null이면 Timer의 세팅이 끝났다.
+        if (coordi.Item1 != INF || coordi.Item2 != INF)
+        {
+            GameManager.Instance.BoardManager.RecordDrop(coordi);
+        
+            //Time-out case
+            if (coordi.Item1 == -INF || coordi.Item2 == -INF)
+            {
+                Debug.Log("Opponent timed out.");
+            }
+            else
+            {
+                Debug.Log("Opponent OnDrop!!!!!!!.");
+                EventManager.Instance.PopLastEventMessageEvent();
+                GameManager.Instance.TimerController.EndTurn();
+            }
+        
+            StateMachine.ChangeState<OnDropState>();
+        }
     }
 
     public void ExitState()
@@ -80,6 +100,29 @@ public class OpponentState : IState
 
     }
 
+    // private IEnumerator WaitTimerSettingAndRun()
+    // {
+    //     GameManager.Instance.BoardManager.RecordDrop(coordi);
+    //
+    //     //Time-out case
+    //     if (coordi.Item1 == -INF || coordi.Item2 == -INF)
+    //     {
+    //         Debug.Log("Opponent timed out.");
+    //     }
+    //     else
+    //     {
+    //         Debug.Log("Opponent OnDrop!!!!!!!.");
+    //         EventManager.Instance.PopLastEventMessageEvent();
+    //         GameManager.Instance.TimerController.EndPlayerTurn();
+    //     }
+    //
+    //     StateMachine.ChangeState<OnDropState>();
+    //
+    //     yield return null;
+    // }
+
+    private readonly int INF = (int)1e9;
+    
     private (int, int) coordi;
     private readonly IOnEventSO _eventSO;
     private readonly Invoker _actions;

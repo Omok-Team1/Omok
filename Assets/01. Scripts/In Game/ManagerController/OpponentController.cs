@@ -34,13 +34,28 @@ public class OpponentController : MonoBehaviour
     {
         try
         {
-            return await UniTask.RunOnThreadPool(() => _strategy.GetCoordi(cts.Token), cancellationToken: cts.Token);
+            _coordi = await UniTask.RunOnThreadPool(() =>
+            {
+                cts.Token.ThrowIfCancellationRequested();
+                
+                return _strategy.GetCoordi(cts.Token);
+                
+            }, cancellationToken: cts.Token);
+            
+            Debug.Log("시간 안에 AI 연산을 완료했습니다.");
         }
-        catch (Exception e)
+        catch (OperationCanceledException)
         {
-            Console.WriteLine(e);
-            throw;
+            Debug.LogError("시간 초과로 AI 연산 중 취소합니다.");
+            
+            _coordi = (-INF, -INF);
         }
+        finally
+        {
+            await UniTask.SwitchToMainThread();
+        }
+        
+        return _coordi;
     }
     
     private (int, int) _coordi;

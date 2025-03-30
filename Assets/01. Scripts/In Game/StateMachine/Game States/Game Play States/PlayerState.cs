@@ -20,7 +20,7 @@ public class PlayerState : IState
     
     public void EnterState()
     {
-
+        GameManager.Instance.TimerController.StartTurn(Turn.PLAYER1);
     }
 
     public void UpdateState()
