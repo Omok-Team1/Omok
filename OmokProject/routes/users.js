@@ -6,6 +6,63 @@ var bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
 var saltrounds = 10;
 
+// ================= 업로드 처리 ==================
+// 이미지 업로드/전송을 위한 multer 모듈 
+const multer = require('multer');
+
+// 프로필 이미지를 위한 경로 설정
+var path = require('path');
+const profilePath = path.join(__dirname, 'profiles');
+router.use(express.static(profilePath));
+
+// 프로필 이미지 업로드 설정
+var storage = multer.diskStorage({
+  // 이미지 파일 저장되는 위치
+  destination: function(req, file, cb){
+    cb(null, profilePath);
+  },
+  // 파일 이름 + 업로드 일시
+  filename: function(req, file, cb){
+    const ext = path.extname(file.originalname);
+    const basename = path.basename(file.originalname, ext);
+    cb(null, basename
+            + '-' + Date.now() 
+            + ext
+    ); 
+  },
+  // 파일 type 제한
+  fileFilter: function(req, file, callback){
+    var ext = path.extname(file.originalname);
+    if(ext!==".png" && ext!==".jpg" && ext !== ".jpeg"){
+      return callback(new Error("PNG, JPG만 업로드 가능합니다"));
+    }
+    callback(null, true);
+  },
+  // 사이즈 제한
+  limits: {
+    filesize: 1024*1024, 
+  },
+});
+
+const upload = multer({storage: storage});
+
+// 프로필 이미지 파일 업로드
+router.post("/profileImageUpload", upload.single("profile"), function (req, res) {
+  res.status(200).send('file uploaded');
+});
+
+// 요청 시, 해당 계정의 프로필 이미지 파일 전송
+router.post("/getProfileImage", async (req, res) => {
+  // 로그인 중일 경우에만 동작
+  if (req.session.isAuthenticated) {
+    res.sendFile(path.join(profilePath, req.session.profile));
+  } else{
+    res.send("로그인 필요");
+  }
+});
+// =================================================
+
+//로그인 요청에 대한 응답 종류
 var ResponseType = {
   INVALID_LOGIN: 0,
   SUCCESS: 1,
@@ -18,6 +75,7 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+// 랜덤 문자열 생성 함수
 function MakeRandomString(length) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -36,6 +94,7 @@ router.post('/signup', async function(req,res,next){
     var username = req.body.username;
     var password = req.body.password;
     var nickname = req.body.nickname;
+    var profile  = req.body.profile; // 프로필 이미지 파일 이름
 
     // 모든 입력이 완료되었는지 체크
     if(!username || !password || !nickname){
@@ -66,6 +125,7 @@ router.post('/signup', async function(req,res,next){
       username: username,
       password: hash,
       nickname: nickname,
+      profile:  profile, //프로필 이미지 이름
       rating: 250,
       win: 0,
       lose: 0,
@@ -130,6 +190,7 @@ router.post("/signin", async function(req, res, next) {
               req.session.userId = existingUser._id.toString();
               req.session.username = existingUser.username;
               req.session.nickname = existingUser.nickname;
+              req.session.profile = existingUser.profile;
               res.json({ result: ResponseType.SUCCESS });
             }
           } else {
