@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 
 public class TimerController : MonoBehaviour
 {
@@ -19,52 +20,93 @@ public class TimerController : MonoBehaviour
     public AudioClip warningSound;         // 경고 사운드 (오디오 클립)
 
     private bool hasPlayedWarningSound = false; // 경고 사운드를 한 번만 재생하도록 설정
+    
+    //종한 추가
+    public Coroutine TimerStartCoroutine = null;
 
-    private void Start()
-    {
-        StartTurn();
-    }
+    // private void Start()
+    // {
+    //     StartTurn();
+    // }
 
-    private void Update()
+    // private void Update()
+    // {
+    //     if (isTurnRunning)
+    //     {
+    //         currentTurnTime += Time.deltaTime;
+    //
+    //         if (currentTurnTime >= turnTimeLimit)
+    //         {
+    //             //종한 추가
+    //             //Update 문이 계속 돌면서 메세지를 한 번에 많이 생성해버려서 추가함
+    //             //isTurnRunning = false;
+    //             
+    //             // 제한시간 초과 시 상대 턴으로 넘어감
+    //             Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
+    //             
+    //             // // 제한시간 초과 시 이벤트 메시지를 큐에 추가
+    //             EventMessage message;
+    //             
+    //             if (isPlayer1Turn is true)
+    //             {
+    //                 message = new EventMessage("Player1TimeOver");
+    //                 EventManager.Instance.PushEventMessageEvent(message);
+    //             }
+    //             // else
+    //             // {
+    //             //     message = new EventMessage("OpponentTimeOut");
+    //             //     EventManager.Instance.PushEventMessageEvent(message);
+    //             // }
+    //             
+    //             EventManager.Instance.PublishMessageQueue();
+    //             
+    //             //제한시간 초과 시 상대 턴으로 전환
+    //             EndTurn(true);
+    //         }
+    //         
+    //         PlayWarningSound();
+    //
+    //         // UI 업데이트
+    //         UpdateUI();
+    //     }
+    // }
+    
+    //종한 수정
+    private IEnumerator StartTimer()
     {
-        if (isTurnRunning)
+        while (currentTurnTime < turnTimeLimit)
         {
             currentTurnTime += Time.deltaTime;
-
-            if (currentTurnTime >= turnTimeLimit)
-            {
-                //종한 추가
-                //Update 문이 계속 돌면서 메세지를 한 번에 많이 생성해버려서 추가함
-                //isTurnRunning = false;
-                
-                // 제한시간 초과 시 상대 턴으로 넘어감
-                Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
-                
-                // // 제한시간 초과 시 이벤트 메시지를 큐에 추가
-                EventMessage message;
-                
-                if (isPlayer1Turn is true)
-                {
-                    message = new EventMessage("Player1TimeOver");
-                    EventManager.Instance.PushEventMessageEvent(message);
-                }
-                // else
-                // {
-                //     message = new EventMessage("OpponentTimeOut");
-                //     EventManager.Instance.PushEventMessageEvent(message);
-                // }
-                
-                EventManager.Instance.PublishMessageQueue();
-                
-                //제한시간 초과 시 상대 턴으로 전환
-                EndTurn(true);
-            }
             
             PlayWarningSound();
 
             // UI 업데이트
             UpdateUI();
+            
+            yield return null;
         }
+        
+        // 제한시간 초과 시 상대 턴으로 넘어감
+        Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + " lost due to time limit.");
+
+        // // 제한시간 초과 시 이벤트 메시지를 큐에 추가
+        EventMessage message;
+
+        if (isPlayer1Turn is true)
+        {
+            message = new EventMessage("Player1TimeOver");
+            EventManager.Instance.PushEventMessageEvent(message);
+        }
+        // else
+        // {
+        //     message = new EventMessage("OpponentTimeOut");
+        //     EventManager.Instance.PushEventMessageEvent(message);
+        // }
+
+        EventManager.Instance.PublishMessageQueue();
+        
+        //제한시간 초과 시 상대 턴으로 전환
+        //EndTurn(true);
     }
 
     // 경고 사운드를 처리하는 함수
@@ -84,17 +126,28 @@ public class TimerController : MonoBehaviour
     }
     
     // 턴 시작
-    public void StartTurn()
+    public void StartTurn(Turn who)
     {
         currentTurnTime = 0f;
         isTurnRunning = true;
+        hasPlayedWarningSound = false;
+        
+        isPlayer1Turn = who == Turn.PLAYER1 ? true : false;
+        
         Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + "'s turn started. Time limit: " + turnTimeLimit + " seconds.");
+        
+        //종한 수정
+        if(TimerStartCoroutine is not null)
+            StopCoroutine(TimerStartCoroutine);
+        
+        TimerStartCoroutine = StartCoroutine(StartTimer());
     }
 
+    //종한 수정 (private -> public으로 변경)
     // 턴 종료
-    private void EndTurn(bool timeExceeded = false)
+    public void EndTurn(bool timeExceeded = false)
     {
-        isTurnRunning = false;
+        //isTurnRunning = false;
         
         if (timeExceeded)
         {
@@ -102,16 +155,17 @@ public class TimerController : MonoBehaviour
             Debug.Log("Turn ended due to time limit.");
         }
         
+        //종한 수정
+        if(TimerStartCoroutine is not null)
+            StopCoroutine(TimerStartCoroutine);
+        
         // 유예시간 추가 (예: 1초)
-        StartCoroutine(WaitForNextTurn(1f)); // 1초 유예시간 추가
+        StartCoroutine(WaitForNextTurn(2f)); // 1초 유예시간 추가
     }
-
+    
     // 코루틴을 사용하여 유예시간 후 턴을 넘기는 함수
     private IEnumerator WaitForNextTurn(float delayTime)
     {
-        // 유예시간 동안 기다림
-        yield return new WaitForSeconds(delayTime);
-        
         // 사운드 멈추기
         if (warningAudioSource.isPlaying)
         {
@@ -122,13 +176,19 @@ public class TimerController : MonoBehaviour
         hasPlayedWarningSound = false;
 
         // 턴을 넘기고 다음 플레이어의 턴 시작
-        isPlayer1Turn = !isPlayer1Turn;
-        StartTurn();
+        //isPlayer1Turn = !isPlayer1Turn;
+        
+        // 유예시간 동안 기다림
+        yield return new WaitForSeconds(delayTime);
+        
+        //StartTurn();
     }
 
     // 플레이어가 턴을 마쳤을 때 호출되는 함수
     public void EndPlayerTurn()
     {
+        Debug.Log("is turn running? : " + isTurnRunning);
+        
         if (isTurnRunning)
         {
             Debug.Log((isPlayer1Turn ? "Player 1" : "Player 2") + "'s turn OnDrop.");

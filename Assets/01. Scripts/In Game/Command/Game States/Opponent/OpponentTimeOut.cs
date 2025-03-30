@@ -11,8 +11,11 @@ public class OpponentTimeOutOnEvent : IOnEventSO
 
         try
         {
-            if(token.IsCancellationRequested is not true)
+            if (token.IsCancellationRequested is not true)
+            {
                 token.Cancel();
+                token.Dispose();
+            }
         }
         catch (Exception e)
         {
