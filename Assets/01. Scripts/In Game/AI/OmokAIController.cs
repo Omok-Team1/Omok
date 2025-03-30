@@ -268,7 +268,7 @@ public static class OmokAIController
     private static float EvaluateMovePriority(BoardGrid board, (int row, int col) move)
     {
         board.MarkingTurnOnCell(move, Turn.PLAYER2);
-        if (CheckWin(Turn.PLAYER2))
+        if (CheckWin(Turn.PLAYER2)) 
         {
             board.MarkingTurnOnCell(move, Turn.NONE);
             return 1_500_000;
@@ -276,7 +276,7 @@ public static class OmokAIController
         board.MarkingTurnOnCell(move, Turn.NONE);
 
         board.MarkingTurnOnCell(move, Turn.PLAYER1);
-        if (CheckWin(Turn.PLAYER1))
+        if (CheckWin(Turn.PLAYER1) || CanMakeFive(Turn.PLAYER1, move.row, move.col)) 
         {
             board.MarkingTurnOnCell(move, Turn.NONE);
             return 1_000_000;

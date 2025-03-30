@@ -71,26 +71,27 @@ public static class Evaluation
 
     private static float CalculateScore(int count, bool isBlockedStart, bool isBlockedEnd, bool isAI)
     {
-        if (count == 5) return 100000; // 오목 완성
+        if (count >= 5) return 1000000; // 오목 완성 (AI가 이길 수 있는 경우)
 
         if (count == 4)
         {
-            if (!isBlockedStart && !isBlockedEnd) return 7000;  // 열린 4 (OOOO_)
-            if (isBlockedStart != isBlockedEnd) return 20000;   // 한쪽만 막힌 4
+            if (!isBlockedStart && !isBlockedEnd) return 100000;  // 열린 4 (OOOO_)
+            if (isBlockedStart != isBlockedEnd) return 9000;   // 한쪽만 막힌 4 (XOOOO_)
         }
 
         if (count == 3)
         {
-            if (!isBlockedStart && !isBlockedEnd) return 500;   // 열린 3 (OOO__)
-            if (isBlockedStart != isBlockedEnd) return 100;     // 한쪽만 막힌 3
+            if (!isBlockedStart && !isBlockedEnd) return 5000;  // 열린 3 (OOO__)
+            if (isBlockedStart != isBlockedEnd) return 700;    // 한쪽만 막힌 3 (XOOO_)
         }
 
         if (count == 2)
         {
-            if (!isBlockedStart && !isBlockedEnd) return 50;   // 열린 2 (OO__)
+            if (!isBlockedStart && !isBlockedEnd) return 200;   // 열린 2 (OO__)
+            if (isBlockedStart != isBlockedEnd) return 50;     // 한쪽 막힌 2
         }
 
-        return 1; // 기타 경우 (1목 등)
+        return 10; // 기타 경우 (1목 등)
     }
 
     public static float EvaluateMove(BoardGrid board, (int row, int col) move, bool isMaximizing)
@@ -100,9 +101,11 @@ public static class Evaluation
 
         foreach (var (dx, dy) in directions)
         {
-            score += GetPatternScoreWithMove(board, move.row, move.col, dx, dy, isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
+            score += GetPatternScoreWithMove(board, move.row, move.col, dx, dy, 
+                                            isMaximizing ? Turn.PLAYER2 : Turn.PLAYER1);
         }
 
+        // 주변에 돌이 많을수록 가중치를 추가
         foreach (var (dx, dy) in directions)
         {
             int newRow = move.row + dx, newCol = move.col + dy;
