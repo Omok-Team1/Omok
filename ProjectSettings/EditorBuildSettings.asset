@@ -14,5 +14,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/04. Scenes/InGame.unity
     guid: 74be1c34bb26ac24b9d9a7e28792c11c
+  - enabled: 1
+    path: Assets/04. Scenes/ReplayScene.unity
+    guid: dff21bdb8f38c2940a6b133a59cbcd2d
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 00b5d17063db15747a1aff8d1cbfa1a9, type: 2}

@@ -383,6 +383,45 @@ public class BoardManager : MonoBehaviour
         return CheckDoubleFourRecursive(row + dy, col + dx, dy, dx, count + 1, ref isAppearNone, ref duplicateNoneCnt);
     }
     
+    // 두 번째 코드에서 추가된 리셋 기능들
+    public void SafeReset()
+    {
+        // 그리드 경계값 탐색 (예: -7 ~ 7)
+        for (int row = -7; row < 8; row++) 
+        {
+            for (int col = -7; col < 8; col++)
+            {
+                if (_grid[row, col] != null) // null 체크로 유효 좌표 확인
+                {
+                    _grid.TryUnmarkingOnCell((row, col));
+                }
+            }
+        }
+    }
+    
+    public void ResetBoardForReplay()
+    {
+        if (_grid == null) return;
+
+        // MatchRecord에 저장된 좌표만 초기화 (최적화)
+        foreach (var cell in _matchRecord)
+        {
+            _grid.TryUnmarkingOnCell(cell._coordinate);
+        }
+        _matchRecord.Clear();
+
+        if (_matchRecord.Count == 0)
+        {
+            for (int row = -7; row < 8; row++) // 15x15 그리드 가정
+            {
+                for (int col = -7; col < 8; col++)
+                {
+                    _grid.TryUnmarkingOnCell((row, col));
+                }
+            }
+        }
+    }
+    
     private BoardGrid _grid;
     public BoardGrid Grid => _grid;
 

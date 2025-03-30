@@ -9,6 +9,13 @@ public class GameStartManager : MonoBehaviour
     [SerializeField] private int gameCost = 100; // 게임 시작에 필요한 코인
     [SerializeField] private SceneId targetScene; // 로드할 게임 씬 ID
     
+    
+    public void TriggerStartButton()
+    {
+        // 기존 OnStartButtonClicked() 메서드 호출
+        OnStartButtonClicked();
+    }
+    
     private void Awake()
     {
         // 확인 패널과 코인 부족 패널은 시작시 비활성화
@@ -118,6 +125,28 @@ public class GameStartManager : MonoBehaviour
         if (lowCoinPanel != null)
         {
             lowCoinPanel.SetActive(false);
+        }
+    }
+    
+    public void ResetState()
+    {
+        // 확인 패널과 코인 부족 패널 비활성화
+        if (confirmStartGamePanel != null)
+        {
+            confirmStartGamePanel.SetActive(false);
+        }
+    
+        if (lowCoinPanel != null)
+        {
+            lowCoinPanel.SetActive(false);
+        }
+    
+        // 시작 버튼 이벤트 재등록
+        if (startButton != null)
+        {
+            startButton.onClick.RemoveAllListeners();
+            startButton.onClick.AddListener(OnStartButtonClicked);
+            Debug.Log("GameStartManager: 버튼 이벤트 재등록 완료");
         }
     }
 }
