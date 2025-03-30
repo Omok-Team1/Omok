@@ -226,7 +226,7 @@ public static class OmokAIController
         return false;
     }
 
-    private static List<(int, int)> GetCandidateMoves()
+     private static List<(int, int)> GetCandidateMoves()
     {
         HashSet<(int, int)> uniqueMoves = new HashSet<(int, int)>();
         List<(int, int)> sortedMoves = new List<(int, int)>();
@@ -257,7 +257,6 @@ public static class OmokAIController
 
         sortedMoves.AddRange(uniqueMoves);
 
-        // 정렬 (기존 코드 유지)
         sortedMoves.Sort((a, b) =>
         {
             float scoreA = EvaluateMovePriority(_board, a);
@@ -265,48 +264,42 @@ public static class OmokAIController
             return scoreB.CompareTo(scoreA);
         });
 
-        // 최대 후보 수 제한 (예: 15개)
         return sortedMoves.Count > 15 ? sortedMoves.GetRange(0, 15) : sortedMoves;
     }
 
 
     private static float EvaluateMovePriority(BoardGrid board, (int row, int col) move)
     {
-        // 즉시 승리 가능 수인지 확인
         board.MarkingTurnOnCell(move, Turn.PLAYER2);
         if (CheckWin(Turn.PLAYER2))
         {
             board.MarkingTurnOnCell(move, Turn.NONE);
-            return 1_000_000; // 즉시 승리 가능하면 최우선
+            return 1_500_000;
         }
         board.MarkingTurnOnCell(move, Turn.NONE);
 
-        // 즉시 방어해야 하는 수인지 확인
         board.MarkingTurnOnCell(move, Turn.PLAYER1);
         if (CheckWin(Turn.PLAYER1))
         {
             board.MarkingTurnOnCell(move, Turn.NONE);
-            return 500_000; // 방어 필수 수는 두 번째 우선
+            return 1_000_000;
         }
         board.MarkingTurnOnCell(move, Turn.NONE);
 
-        // 기존 평가 함수 사용 (강한 3목, 4목 고려)
         float score = Evaluation.EvaluateMove(board, move, true);
 
-        // 상대 돌과의 거리 기반 추가 점수
         float proximityBonus = 0f;
         foreach (var (dx, dy) in directions)
         {
             int newRow = move.row + dx, newCol = move.col + dy;
             if (IsWithinBounds(newRow, newCol) && board[newRow, newCol]?.CellOwner != Turn.NONE)
             {
-                proximityBonus += 20f; // 인접한 돌이 많을수록 더 높은 점수
+                proximityBonus += 25f;
             }
         }
 
         return score + proximityBonus;
     }
-
 
     private static bool IsBoardFull()
     {
