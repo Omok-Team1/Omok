@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class OmokAIController
 {
-    private const int SEARCH_DEPTH = 3;
+    // private const int SEARCH_DEPTH = 3;
     private static readonly (int, int)[] directions = { (1, 0), (0, 1), (1, 1), (1, -1) };
     private static Dictionary<ulong, (float score, int depth)> zobristTable = new();    
     private static ulong[,,] zobristKeys; // zobrist 해싱키
@@ -30,7 +30,7 @@ public static class OmokAIController
         float bestScore = float.MinValue;
         (int, int) bestMove = (-1, -1);
         var candidates = GetCandidateMoves();
-        int dynamicDepth = GetDynamicDepth();
+        int dynamicDepth = GetDynamicDepth(candidates.Count);
         
         foreach (var (row, col) in candidates)
         {
@@ -46,7 +46,6 @@ public static class OmokAIController
         }
         return bestMove;
     }
-
 
    private static (int, int) CheckImmediateWinOrBlock(Turn opponent)
     {
@@ -144,7 +143,7 @@ public static class OmokAIController
         return false;
     }
 
-    private static int GetDynamicDepth()
+    private static int GetDynamicDepth(int candidateCount)
     {
         int stoneCount = 0;
         foreach (var cell in _board)
@@ -153,7 +152,7 @@ public static class OmokAIController
         }
 
         if (stoneCount < 10) return 3;
-        if (stoneCount < 20) return 3;
+        if (stoneCount < 20) return candidateCount > 10 ? 2 : 3;
         return 2;
     }    
     
@@ -226,7 +225,7 @@ public static class OmokAIController
         return false;
     }
 
-     private static List<(int, int)> GetCandidateMoves()
+    private static List<(int, int)> GetCandidateMoves()
     {
         HashSet<(int, int)> uniqueMoves = new HashSet<(int, int)>();
         List<(int, int)> sortedMoves = new List<(int, int)>();
@@ -237,18 +236,17 @@ public static class OmokAIController
             {
                 if (_board[row, col].CellOwner != Turn.NONE) continue;
 
-                bool hasNearbyStone = false;
+                int surroundingStones = 0;
                 foreach (var (dx, dy) in directions)
                 {
                     int newRow = row + dx, newCol = col + dy;
                     if (IsWithinBounds(newRow, newCol) && _board[newRow, newCol].CellOwner != Turn.NONE)
                     {
-                        hasNearbyStone = true;
-                        break;
+                        surroundingStones++;
                     }
                 }
 
-                if (hasNearbyStone)
+                if (surroundingStones > 0)
                 {
                     uniqueMoves.Add((row, col));
                 }
@@ -264,9 +262,8 @@ public static class OmokAIController
             return scoreB.CompareTo(scoreA);
         });
 
-        return sortedMoves.Count > 15 ? sortedMoves.GetRange(0, 15) : sortedMoves;
+        return sortedMoves.Count > 12 ? sortedMoves.GetRange(0, 12) : sortedMoves;
     }
-
 
     private static float EvaluateMovePriority(BoardGrid board, (int row, int col) move)
     {
@@ -287,14 +284,13 @@ public static class OmokAIController
         board.MarkingTurnOnCell(move, Turn.NONE);
 
         float score = Evaluation.EvaluateMove(board, move, true);
-
         float proximityBonus = 0f;
         foreach (var (dx, dy) in directions)
         {
             int newRow = move.row + dx, newCol = move.col + dy;
             if (IsWithinBounds(newRow, newCol) && board[newRow, newCol]?.CellOwner != Turn.NONE)
             {
-                proximityBonus += 25f;
+                proximityBonus += 30f;
             }
         }
 
