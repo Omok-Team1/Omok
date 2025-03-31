@@ -2510,7 +2510,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cancle
+  m_text: Cancel
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3079,6 +3079,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logInEvent: {fileID: 11400000, guid: be41357b7845e324fa40513f23374d8d, type: 2}
   signupEvent: {fileID: 11400000, guid: 75b7d26c5f0f06d4397951f94960fb70, type: 2}
+  profileChangedEvent: {fileID: 0}
 --- !u!4 &1219407557
 Transform:
   m_ObjectHideFlags: 0
@@ -4390,7 +4391,7 @@ GameObject:
   - component: {fileID: 1557155980}
   - component: {fileID: 1557155984}
   m_Layer: 5
-  m_Name: '[Button] Cancle'
+  m_Name: '[Button] Cancel'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
