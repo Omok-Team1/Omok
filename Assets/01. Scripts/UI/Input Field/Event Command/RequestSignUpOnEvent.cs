@@ -16,7 +16,6 @@ public class RequestSignUpOnEvent : IOnEventSO
         {
             _inputFieldsDatas.Add(inputField.text);
         }
-        
         message.AddParameter<List<string>>(_inputFieldsDatas);
         
         EventManager.Instance.PushEventMessageEvent(message);

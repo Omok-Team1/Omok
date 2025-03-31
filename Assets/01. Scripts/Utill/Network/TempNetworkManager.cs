@@ -4,6 +4,7 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Rendering.Universal;
 
 public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
 {
@@ -12,15 +13,13 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
     //TEMP CODE
     [SerializeField] private IOnEventSO signupEvent;
 
-    [SerializeField] private IOnEventSO fileUploadEvent;
-    [SerializeField] private IOnEventSO requestFileEvent;
+    [SerializeField] private IOnEventSO profileChangedEvent;
 
     void Start()
     {
         EventManager.Instance.AddListener("RequestLogIn", logInEvent ,gameObject);
         EventManager.Instance.AddListener("RequestSignUp", signupEvent ,gameObject);
-        EventManager.Instance.AddListener("FileUpload", fileUploadEvent, gameObject);
-        EventManager.Instance.AddListener("RequestFile", requestFileEvent, gameObject);
+        EventManager.Instance.AddListener("ProfileChanged", profileChangedEvent, gameObject);
     }
 
     // 파일 업로드
@@ -30,39 +29,34 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
     }
     public IEnumerator Fileupload(string filePath)
     {
-        //Server에 올릴 이미지 데이터
+        WWWForm form = new WWWForm();
         byte[] bytes = File.ReadAllBytes(filePath);
+        string fileName = Path.GetFileName(filePath);
 
-        // 서버에 이미지 파일 업로드 요청
-        using (UnityWebRequest www =
-            new UnityWebRequest(Constants.SERVER_URL + "/users/profileImageUpload", UnityWebRequest.kHttpVerbPOST))
+        form.AddBinaryData("profile", bytes, fileName, "image/jpeg");
+
+        using (UnityWebRequest www = 
+            UnityWebRequest.Post(Constants.SERVER_URL + "/users/profileImageUpload", form))
         {
-            www.uploadHandler = new UploadHandlerRaw(bytes);
-            www.downloadHandler = new DownloadHandlerBuffer();
-            www.SetRequestHeader("Content-Type", "multipart/form-data");
-
             yield return www.SendWebRequest();
 
-            if (www.result == UnityWebRequest.Result.ConnectionError ||
-                www.result == UnityWebRequest.Result.ProtocolError)
+            if (www.result == UnityWebRequest.Result.ConnectionError 
+                || www.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log("Error : " + www.error);
+                Debug.Log("Response: " + www.downloadHandler.text);
             }
             else
             {
-                var message = new EventMessage("ImageUploaded");
-
+                var message = new EventMessage("ProfileChanged");
                 var filename = www.downloadHandler.text;
-                Debug.Log("Result: " + filename);
 
                 message.AddParameter<string>(filename);
-
                 EventManager.Instance.PushEventMessageEvent(message);
                 EventManager.Instance.PublishMessageQueue();
             }
         }
     }
-
     // 프로필 이미지 파일 요청
     public void RequestProfilePic(string filename)
     {
@@ -75,7 +69,7 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
 
         // 서버에 이미지 파일 요청
         using (UnityWebRequest www =
-            new UnityWebRequest(Constants.SERVER_URL + "/users/profileImageUpload", UnityWebRequest.kHttpVerbPOST))
+            new UnityWebRequest(Constants.SERVER_URL + "/users/getProfileImage", UnityWebRequest.kHttpVerbPOST))
         {
             www.uploadHandler = new UploadHandlerRaw(bodyRaw);
             www.downloadHandler = new DownloadHandlerBuffer();
@@ -91,9 +85,10 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
             else
             {
                 var message = new EventMessage("ImageLoaded");
-                message.AddParameter<string>(filename);
 
-                byte[] result = www.downloadHandler.data;
+                byte[] image = www.downloadHandler.data;
+                message.AddParameter<byte[]>(image);
+                message.AddParameter<string>(filename);
 
                 EventManager.Instance.PushEventMessageEvent(message);
                 EventManager.Instance.PublishMessageQueue();
@@ -115,6 +110,7 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
     {
         string jsonString = JsonUtility.ToJson(data);
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonString);
+        
 
         using (UnityWebRequest www = 
             new UnityWebRequest(Constants.SERVER_URL + "/users/signup", UnityWebRequest.kHttpVerbPOST))
@@ -126,7 +122,7 @@ public class TempNetworkManager : Singleton<TempNetworkManager>, INetworkManager
             yield return www.SendWebRequest();
 
             var message = new EventMessage("ResponseSignUp");
-
+            
             if (www.result == UnityWebRequest.Result.ConnectionError ||
                 www.result == UnityWebRequest.Result.ProtocolError)
             {

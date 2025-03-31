@@ -25,27 +25,6 @@ public class FileExplorerOnEvent : IOnEventSO
             Debug.Log("선택한 파일 경로: " + filePath);
             
             TempNetworkManager.Instance.FileUpload(filePath);
-
-            //var uiImage = msg.GetParameter<GameObject>().GetComponentInChildren<Image>();
-
-            ////일반적으로 최소 사이즈(2,2)로 설정, 실제로는 실제 이미지 크기에 맞게 리사이즈 된다.
-            //Texture2D texture2D = new Texture2D(2, 2);
-
-            //if (texture2D.LoadImage(bytes) is true)
-            //{
-            //    uiImage.sprite = Sprite.Create(texture2D, new Rect(0, 0, texture2D.width, texture2D.height), Vector2.zero);
-
-            //    if (_aspectFitter is not null)
-            //    {
-            //        _aspectFitter.aspectRatio = (float)texture2D.width / texture2D.height;
-            //    }
-            //}
-            //else
-            //{
-            //    throw new Exception("Invalid image format");
-            //}
         }
     }
-
-    private AspectRatioFitter _aspectFitter;
 }
