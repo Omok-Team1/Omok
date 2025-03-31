@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -9,11 +10,16 @@ public class BoardGrid : MonoBehaviour
 {
     void Awake()
     {
-        _gameData = Addressables.LoadAssetAsync<GameData>("Assets/02. Prefabs/GameData/GameData.asset").WaitForCompletion();
+        Debug.Log(gameObject.name);
         
-        _cameraOffsetY = gameObject.transform.position.y;
+        //if (_grid is null)
+        //{
+            //_gameData = Addressables.LoadAssetAsync<GameData>("Assets/02. Prefabs/GameData/GameData.asset").WaitForCompletion();
         
-        Init(_gameData);
+            _cameraOffsetY = gameObject.transform.position.y;
+        
+            //Init(_gameData);
+        //}
     }
     
     //operator '[]' overloading
@@ -129,28 +135,35 @@ public class BoardGrid : MonoBehaviour
     {
         _grid[coordi].CellOwner = player;
     }
-    
+
+    private static int debug = 0;
     public BoardGrid CloneInvisibleObj()
     {
         if (GameManager.Instance.IsThisDirty(nameof(OmokAIController)) is false && OmokAIController._board is not null)
         {
             Destroy(OmokAIController._board.gameObject);
+            OmokAIController._board = null;
         }
         else
         {
             GameManager.Instance.TrySetDirtyBit(nameof(OmokAIController), false);
         }
-        
-        BoardGrid cloneGrid = Instantiate(gameObject).GetComponent<BoardGrid>();
 
-        for (int row = -7; row < GridSize - 7; row++)
+        debug++;
+        BoardGrid cloneGrid = Instantiate(gameObject).GetComponent<BoardGrid>();
+        
+        cloneGrid.gameObject.name = nameof(BoardGrid) + " Clone";
+        
+        cloneGrid.Init(_gameData);
+        
+        foreach(var (key, value) in _grid.Where((c) => c.Value.CellOwner != Turn.NONE))
         {
-            for (int col = -7; col < GridSize - 7; col++)
-            {
-                cloneGrid._grid[(row, col)].CellOwner = _grid[(row, col)].CellOwner;
-                cloneGrid._grid[(row, col)].Marker = _grid[(row, col)].Marker;
-            }
+            cloneGrid._grid[(key.Item1, key.Item2)].CellOwner = value.CellOwner;
+            cloneGrid._grid[(key.Item1, key.Item2)].Marker = value.Marker;
         }
+        
+        if(debug == 2)
+            Debug.Log(cloneGrid);
         
         cloneGrid.gameObject.SetActive(false);
         return cloneGrid;

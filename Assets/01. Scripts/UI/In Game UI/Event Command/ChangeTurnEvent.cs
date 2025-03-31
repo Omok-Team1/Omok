@@ -11,15 +11,20 @@ public class ChangeTurnEvent : IOnEventSO
     {
         var listenerObj = msg.GetParameter<GameObject>();
 
+        var currentAnim = listenerObj.transform.GetChild(0).gameObject;
+
+        if (currentAnim is null)
+            throw new Exception("Invalid Child");
+        
         if (listenerObj.TryGetComponent(out _rectTransform) is false)
         {
             throw new Exception("RectTransform Component is not found");
         }
         else
         {
+            currentAnim.SetActive(true);
             StaticCoroutine.StartStaticCoroutine(PlayAnimation());
         }
-        
     }
     
     IEnumerator PlayAnimation()
@@ -32,9 +37,9 @@ public class ChangeTurnEvent : IOnEventSO
         }
     }
     
-    private const float amplitude = 20f;
+    private const float amplitude = 10f;
     private const float frequency = 50f;
     
     private RectTransform _rectTransform;
-    private readonly Vector2 _startPosition;
+    private Vector2 _startPosition;
 }

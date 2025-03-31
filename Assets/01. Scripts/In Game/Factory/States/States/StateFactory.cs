@@ -11,6 +11,7 @@ public class StateFactory : IConcreteFactory
 
         StateMachine stateMachine = GameManager.Instance.GetComponent<StateMachine>();
         
+        states.Add(typeof(InitState), new InitState(stateMachine));
         states.Add(typeof(MatchingState), new MatchingState(stateMachine));
         states.Add(typeof(StartState), new StartState(stateMachine));
         states.Add(typeof(PlayerState), new PlayerState(stateMachine));

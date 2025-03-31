@@ -13,18 +13,20 @@ public class BoardManager : MonoBehaviour
         _gameData = Addressables.LoadAssetAsync<GameData>("Assets/02. Prefabs/GameData/GameData.asset").WaitForCompletion();
         
         _grid ??= FindObjectOfType<BoardGrid>();
+        
+        _grid.Init(_gameData);
     }
     
     public bool OnDropMarker()
     {
-        var selected = _matchRecord.Peek()._coordinate;
-
         if (_isTimeOut is true)
         {
             //이전 턴의 플레이어가 시간 초과, 돌을 놓지 않고 true를 반환해 ChangeTurnState로 전환한다.
             _isTimeOut = false;
             return true;
         }
+        
+        var selected = _matchRecord.Peek()._coordinate;
 
         if (_matchRecord.Peek() is not null && _grid[selected.Item1, selected.Item2].Marker == _gameData.emptySprite)
             return _grid.TryMarkingOnCell(selected);
@@ -60,6 +62,12 @@ public class BoardManager : MonoBehaviour
     
     public bool CheckForWin()
     {
+        //첫 수에 플레이어가 돌을 놓지 않으면 승리 검사를 하지 않는다.
+        if (_matchRecord.Count <= 0)
+        {
+            return false;
+        }
+        
         //clock-wise (n -> ne -> e -> se)
         //row
         int[] dy = { 1, 1, 0, -1};
