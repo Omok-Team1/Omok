@@ -3838,6 +3838,7 @@ MonoBehaviour:
   listenerObjectsToClear: []
   listenerEventsToClear: []
   clearAllListeners: 0
+  inGameInitializer: {fileID: 1595502133}
 --- !u!1001 &996684060
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5806,13 +5807,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0134acd27df92ba41bb35b3a71a315da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  autoCollectOnAwake: 1
-  includeInactiveObjects: 1
-  exclusionList:
-  - targetObject: {fileID: 216443058}
-    eventName: '""'
-    excludeObject: 1
-    excludeEvent: 1
+  listenerObjectsToClear: []
+  listenerEventsToClear: []
   clearAllListeners: 1
 --- !u!1 &1604231790
 GameObject:
@@ -7295,6 +7291,7 @@ MonoBehaviour:
   listenerObjectsToClear: []
   listenerEventsToClear: []
   clearAllListeners: 0
+  inGameInitializer: {fileID: 1595502133}
 --- !u!1 &1933149897
 GameObject:
   m_ObjectHideFlags: 0
@@ -8338,6 +8335,7 @@ MonoBehaviour:
   listenerObjectsToClear: []
   listenerEventsToClear: []
   clearAllListeners: 0
+  inGameInitializer: {fileID: 0}
 --- !u!1 &2120105030
 GameObject:
   m_ObjectHideFlags: 0
