@@ -27,6 +27,4 @@ public class SubUICanvas : UICanvas
 
         Hide(); // 추가: UI가 초기화될 때 숨겨지도록 함
     }
-
-
 }

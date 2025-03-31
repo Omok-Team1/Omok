@@ -66,6 +66,7 @@ public class ReplayManager : MonoBehaviour
 
     private void Awake()
     {
+        //Title 씬을 거쳐가지 않으면 NullReferenceException 발생!
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);

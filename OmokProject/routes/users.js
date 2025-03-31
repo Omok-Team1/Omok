@@ -48,7 +48,13 @@ const upload = multer({storage: storage});
 
 // 프로필 이미지 파일 업로드
 router.post("/profileImageUpload", upload.single("profile"), function (req, res) {
-  res.json({ fileName: req.file.filename});
+  res.send(req.file.filename);
+});
+
+// 요청 시, 해당 경로의 프로필 이미지 파일 전송
+router.post("/getProfileImage", async (req, res) => {
+  console.log(req.body.filename);
+  res.sendFile(path.join(profilePath, req.body.filename));
 });
 
 // 요청 시, 본인 계정의 프로필 이미지 파일 전송
@@ -59,11 +65,6 @@ router.post("/getMyProfileImage", async (req, res) => {
   } else{
     res.send("로그인 필요");
   }
-});
-
-// 요청 시, 해당 경로의 프로필 이미지 파일 전송
-router.post("/getProfileImage", async (req, res) => {
-  res.sendFile(path.join(profilePath, req.body.filename));
 });
 // =================================================
 
@@ -96,10 +97,10 @@ function MakeRandomString(length) {
 // 회원가입
 router.post('/signup', async function(req,res,next){
   try {
-    var username = req.body.username;
-    var password = req.body.password;
-    var nickname = req.body.nickname;
-    var profile  = req.body.profile; // 프로필 이미지 파일 이름
+    var username = req.body.username.replace(/[\u200B-\u200D\uFEFF]/g, '');;
+    var password = req.body.password.replace(/[\u200B-\u200D\uFEFF]/g, '');;
+    var nickname = req.body.nickname.replace(/[\u200B-\u200D\uFEFF]/g, '');;
+    var profile  = req.body.imageFilename.replace(/[\u200B-\u200D\uFEFF]/g, '');; // 프로필 이미지 파일 이름
 
     // 모든 입력이 완료되었는지 체크
     if(!username || !password || !nickname){
@@ -150,19 +151,28 @@ router.post('/signup', async function(req,res,next){
   }
 });
 
+// 요청 시, 본인 계정의 유저이름 전송
+router.post("/getMyNickname", async (req, res) => {
+  // 로그인 중일 경우에만 동작
+  if (req.session.isAuthenticated) {
+    res.send(req.session.nickname);
+  } else{
+    res.status(400).send("로그인 필요");
+  }
+});
+
 // 로그인
 router.post("/signin", async function(req, res, next) {
   try {
     // 현재 로그인되지 않은 상태일 경우에만 동작
     if (!req.session.isAuthenticated) {
-      var username = req.body.username;
-      var password = req.body.password;
+      var username = req.body.username.replace(/[\u200B-\u200D\uFEFF]/g, '');;
+      var password = req.body.password.replace(/[\u200B-\u200D\uFEFF]/g, '');;
   
       // 모든 입력이 완료되었는지 체크
       if (!username || !password) {
         return res.status(400).send("모든 필드를 입력해주세요.");
       }
-  
       // DB값과 비교
       var database = req.app.get('database');
       var users = database.collection('users');
@@ -226,7 +236,8 @@ router.post("/signin", async function(req, res, next) {
       }
     }
     else{
-      res.send("이미 로그인 중입니다");
+      res.json({result:ResponseType.SUCCESS});
+      console.log("이미 로그인 중입니다");
     }
   } catch (err) {
     console.error("로그인 중 오류 발생.", err);

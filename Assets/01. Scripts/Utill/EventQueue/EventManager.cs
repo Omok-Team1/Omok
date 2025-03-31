@@ -114,9 +114,6 @@ public class EventManager : Singleton<EventManager>
     private readonly IDictionary<string, List<(IOnEvent, GameObject)>> _listeners = new Dictionary<string, List<(IOnEvent, GameObject)>>();
     private Queue<EventMessage> _eventQueue = new Queue<EventMessage>();
     
-    
-    
-    
     public void ClearEventQueue()
     {
         _eventQueue.Clear();

@@ -1,8 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
+using Assembly = System.Reflection.Assembly;
 
 public static class Factory
 {
@@ -21,8 +22,8 @@ public static class Factory
     {
         _factories = new Dictionary<Type, IConcreteFactory>();
         
-        var factoryTypes = Assembly.GetExecutingAssembly().GetTypes()
-            .Where(types => typeof(IConcreteFactory).IsAssignableFrom(types) && !types.IsAbstract && !types.IsInterface);
+        var factoryTypes = Assembly.GetExecutingAssembly().GetTypes().
+            Where(types => typeof(IConcreteFactory).IsAssignableFrom(types) && !types.IsAbstract && !types.IsInterface);
 
         foreach (var factoryType in factoryTypes)
         {

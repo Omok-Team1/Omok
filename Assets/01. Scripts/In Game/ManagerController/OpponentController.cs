@@ -34,14 +34,16 @@ public class OpponentController : MonoBehaviour
     {
         try
         {
+            OmokAIController._board = GameManager.Instance.BoardManager.Grid.CloneInvisibleObj();
+            
             _coordi = await UniTask.RunOnThreadPool(() =>
             {
                 cts.Token.ThrowIfCancellationRequested();
-                
+
                 return _strategy.GetCoordi(cts.Token);
-                
+
             }, cancellationToken: cts.Token);
-            
+
             Debug.Log("시간 안에 AI 연산을 완료했습니다.");
         }
         catch (OperationCanceledException)
@@ -60,8 +62,6 @@ public class OpponentController : MonoBehaviour
     
     private (int, int) _coordi;
     private IOpponentStrategy _strategy;
-    
-    private readonly TaskQueue _taskQueue = new();
 
     private readonly int INF = (int)1e9;
 }
