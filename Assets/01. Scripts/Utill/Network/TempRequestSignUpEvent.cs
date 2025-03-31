@@ -1,7 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
+using System.Collections.Generic; 
 
 [CreateAssetMenu(fileName = "TempRequestSignUpEvent", menuName = "IOnEventSO/TempRequestSignUpEvent")]
 public class TempRequestSignUpEvent : IOnEventSO
@@ -10,24 +9,29 @@ public class TempRequestSignUpEvent : IOnEventSO
     {
         WaitMessages.Enqueue(msg);
         
-        if(coroutine is null)
-            coroutine = StaticCoroutine.StartStaticCoroutine(WaitForAllMessages());
+        if (coroutine is null)
+            coroutine = StaticCoroutine.StartStaticCoroutine(WaitForMessagesCoroutine());
     }
 
-    private IEnumerator WaitForAllMessages()
+    public override void WaitForAllMessages()
     {
-        SignUpData signUpData;
+        // 의도적으로 비워둠
+    }
 
-        signUpData.username = null;
-        signUpData.password = null;
-        signUpData.nickname = null;
-        
+    private IEnumerator WaitForMessagesCoroutine()
+    {
+        SignUpData signUpData = new SignUpData
+        {
+            username = null,
+            password = null,
+            nickname = null
+        };
+
         while (true)
         {
-            // if (signUpData.username is not null && signUpData.password is not null &&
-            //     signUpData.image is not null)
-            if (signUpData.username is not null && signUpData.password is not null &&
-                signUpData.nickname is not null)
+            if (signUpData.username != null && 
+                signUpData.password != null && 
+                signUpData.nickname != null)
             {
                 break;
             }
@@ -36,24 +40,20 @@ public class TempRequestSignUpEvent : IOnEventSO
             {
                 var msg = WaitMessages.Dequeue();
                 
-                // if (msg.TryGetParameter(out byte[] rawImage) is true) 
-                // {
-                //     signUpData.image = rawImage;
-                // }
-                
-                if (msg.TryGetParameter(out List<string> inputStrings) is true)
+                if (msg.TryGetParameter(out List<string> inputStrings))
                 {
                     signUpData.username = inputStrings[0]; 
                     signUpData.password = inputStrings[1];
                     signUpData.nickname = inputStrings[2];
                 }
             }
-            
+
             yield return null;
         }
-        
-        TempNetworkManager.Instance.RequestsignUp(signUpData);
+
+        TempNetworkManager.Instance.RequestSignUp(signUpData);
+        coroutine = null;
     }
-    
+
     private Coroutine coroutine;
 }

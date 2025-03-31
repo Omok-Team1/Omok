@@ -12,6 +12,8 @@ using UnityEngine.UI;
 ]
 public class OnEventButton : UserFriendlyComponent
 {
+    
+
     public override void Init()
     {
         EventManager.Instance.AddListener(responseEventName ,responseOnEvent, gameObject);
@@ -63,7 +65,6 @@ public class OnEventButton : UserFriendlyComponent
     
     [Tooltip("필수로 입력해야하는 값들이 아닙니다.")]
     [Header("이벤트 발신 시 메세지에 필요한 데이터들을 설정한 후 메세지를 발신합니다.")]
-    [SerializeField] private MessagePrimitiveParams messageParameters;
     
     [Header("수신 받을 이벤트 이름입니다.")]
     [SerializeField] private string responseEventName;

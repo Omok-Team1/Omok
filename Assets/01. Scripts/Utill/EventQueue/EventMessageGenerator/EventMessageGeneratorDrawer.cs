@@ -1,8 +1,8 @@
-using System;
+#if UNITY_EDITOR
+using System; 
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 [Serializable]
@@ -114,6 +114,8 @@ public class EventMessageGeneratorDrawer : PropertyDrawer
         EditorGUI.EndProperty();
     }
     
+
+    
     private string GetPropertyValueAsString(SerializedProperty property)
     {
         switch (property.propertyType)
@@ -127,3 +129,4 @@ public class EventMessageGeneratorDrawer : PropertyDrawer
         }
     }
 }
+#endif

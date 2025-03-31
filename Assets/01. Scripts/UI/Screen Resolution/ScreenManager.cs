@@ -1,158 +1,124 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class ScreenManager : MonoBehaviour
 {
-    [Header("해상도 설정")]
-    [SerializeField] private Vector2 targetResolution = new Vector2(1280, 720);
-    
-    [Header("배경 애니메이션 설정")]
-    [SerializeField] private RawImage leftBackground;
-    [SerializeField] private RawImage rightBackground;
+    // Singleton instance
+    public static ScreenManager Instance { get; private set; }
+
+    [Header("Resolution Settings")]
+    [SerializeField] private int baseWidth = 720;
+    [SerializeField] private int baseHeight = 1280;
+    [SerializeField] private int fullscreenWidth = 1920;
+    [SerializeField] private int fullscreenHeight = 1080;
+
+    [Header("Background Settings")]
+    [SerializeField] private Material backgroundMaterial;
+    [SerializeField] private GameObject backgroundContainer;
+    [SerializeField] private RawImage backgroundImage;
     [SerializeField] private float scrollSpeed = 0.5f;
-    
-    [Header("UI 참조")]
-    [SerializeField] private Button fullscreenToggleButton;
-    
-    private bool isFullscreen = false;
-    private Resolution[] resolutions;
-    private int currentResolutionIndex = 0;
-    
-    private void Start()
+
+    // 버튼을 비활성화하기 위한 변수 추가
+    [SerializeField] private Button fullscreenButton;
+
+    private bool _isFullscreen = false;
+    private Vector2 _offset = Vector2.zero;
+    private Camera _mainCamera;
+    private CanvasScaler _canvasScaler;
+
+    private void Awake()
     {
-        // 사용 가능한 해상도 가져오기
-        resolutions = Screen.resolutions;
-        
-        // 초기 창 모드 설정
-        SetWindowedMode();
-        
-        // 버튼 이벤트 연결
-        if (fullscreenToggleButton != null)
+        // Singleton pattern
+        if (Instance != null && Instance != this)
         {
-            fullscreenToggleButton.onClick.AddListener(ToggleFullscreen);
+            Destroy(gameObject);
+            return;
         }
+        
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        _mainCamera = Camera.main;
+        _canvasScaler = FindObjectOfType<CanvasScaler>();
+        
+        // Initialize with base resolution
+        SetResolution(baseWidth, baseHeight, false);
     }
-    
+
     private void Update()
     {
-        // 배경 텍스처 스크롤링 효과
-        if (leftBackground != null && rightBackground != null)
+        // Update background shader offset for diagonal scrolling effect
+        if (backgroundMaterial != null)
         {
-            Vector2 uvOffset = new Vector2(Time.time * scrollSpeed, -Time.time * scrollSpeed);
-            leftBackground.uvRect = new Rect(uvOffset, Vector2.one);
-            rightBackground.uvRect = new Rect(uvOffset, Vector2.one);
+            _offset.x += scrollSpeed * Time.deltaTime;
+            _offset.y += scrollSpeed * Time.deltaTime;
+            backgroundMaterial.SetTextureOffset("_MainTex", _offset);
         }
     }
-    
-    // 창 모드 설정
-    private void SetWindowedMode()
-    {
-        Screen.SetResolution((int)targetResolution.x, (int)targetResolution.y, false);
-        isFullscreen = false;
-        
-        // 배경 비활성화
-        SetBackgroundsActive(false);
-    }
-    
-    // 전체화면 모드 설정
-    private void SetFullscreenMode()
-    {
-        // 현재 화면에 적합한 해상도 찾기 (예: 1920x1080)
-        int bestResIndex = FindBestResolutionIndex();
-        
-        // 전체화면으로 전환
-        Screen.SetResolution(
-            resolutions[bestResIndex].width, 
-            resolutions[bestResIndex].height, 
-            true
-        );
-        
-        isFullscreen = true;
-        
-        // 배경 활성화
-        SetBackgroundsActive(true);
-        
-        // 레터박스 설정
-        ConfigureLetterboxing();
-    }
-    
-    // 전체화면 토글
+
     public void ToggleFullscreen()
     {
-        if (isFullscreen)
+        // 항상 풀스크린으로만 전환되도록 수정 (이전 상태와 상관없이)
+        SetResolution(fullscreenWidth, fullscreenHeight, true);
+        _isFullscreen = true;
+        
+        UpdateBackgroundVisibility();
+        
+        // 버튼 비활성화
+        if (fullscreenButton != null)
         {
-            SetWindowedMode();
-        }
-        else
-        {
-            SetFullscreenMode();
+            fullscreenButton.interactable = false;
         }
     }
-    
-    // 현재 화면에 적합한 해상도 인덱스 찾기
-    private int FindBestResolutionIndex()
+
+    private void SetResolution(int width, int height, bool fullscreen)
     {
-        int bestResIndex = 0;
+        Screen.SetResolution(width, height, fullscreen);
         
-        // 기본값으로 가장 큰 해상도 사용
-        for (int i = 0; i < resolutions.Length; i++)
+        if (_canvasScaler != null)
         {
-            if (resolutions[i].width >= resolutions[bestResIndex].width &&
-                resolutions[i].height >= resolutions[bestResIndex].height)
-            {
-                bestResIndex = i;
-            }
+            // Update the Canvas Scaler to maintain UI proportions
+            _canvasScaler.referenceResolution = new Vector2(baseWidth, baseHeight);
+            _canvasScaler.matchWidthOrHeight = 1f; // Match height (vertical)
         }
         
-        return bestResIndex;
-    }
-    
-    // 레터박스 설정 (화면 비율 유지를 위한 설정)
-    private void ConfigureLetterboxing()
-    {
-        // 카메라에 레터박스 설정
-        Camera mainCamera = Camera.main;
-        if (mainCamera != null)
+        if (_mainCamera != null)
         {
-            float targetAspect = targetResolution.x / targetResolution.y;
-            float screenAspect = (float)Screen.width / (float)Screen.height;
-            float scaleHeight = screenAspect / targetAspect;
-            
-            if (scaleHeight < 1.0f)
+            // Set the camera viewport to maintain game view proportions
+            if (fullscreen)
             {
-                Rect rect = mainCamera.rect;
+                // Calculate the aspect ratio
+                float targetAspect = (float)baseWidth / baseHeight;
+                float currentAspect = (float)width / height;
                 
-                rect.width = 1.0f;
-                rect.height = scaleHeight;
-                rect.x = 0;
-                rect.y = (1.0f - scaleHeight) / 2.0f;
-                
-                mainCamera.rect = rect;
+                if (currentAspect > targetAspect)
+                {
+                    // Wider screen than needed - letterbox sides
+                    float viewportWidth = targetAspect / currentAspect;
+                    float viewportX = (1f - viewportWidth) / 2f;
+                    _mainCamera.rect = new Rect(viewportX, 0, viewportWidth, 1);
+                }
+                else
+                {
+                    // Taller screen than needed - letterbox top/bottom
+                    float viewportHeight = currentAspect / targetAspect;
+                    float viewportY = (1f - viewportHeight) / 2f;
+                    _mainCamera.rect = new Rect(0, viewportY, 1, viewportHeight);
+                }
             }
             else
             {
-                float scaleWidth = 1.0f / scaleHeight;
-                
-                Rect rect = mainCamera.rect;
-                
-                rect.width = scaleWidth;
-                rect.height = 1.0f;
-                rect.x = (1.0f - scaleWidth) / 2.0f;
-                rect.y = 0;
-                
-                mainCamera.rect = rect;
+                // Reset to full viewport when in base resolution
+                _mainCamera.rect = new Rect(0, 0, 1, 1);
             }
         }
     }
-    
-    // 배경 이미지 활성화/비활성화
-    private void SetBackgroundsActive(bool active)
+
+    private void UpdateBackgroundVisibility()
     {
-        if (leftBackground != null)
-            leftBackground.gameObject.SetActive(active);
-            
-        if (rightBackground != null)
-            rightBackground.gameObject.SetActive(active);
+        if (backgroundContainer != null)
+        {
+            backgroundContainer.SetActive(_isFullscreen);
+        }
     }
 }
