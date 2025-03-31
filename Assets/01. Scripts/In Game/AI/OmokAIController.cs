@@ -14,11 +14,15 @@ public static class OmokAIController
 
     public static UniTask<(int row, int col)> GetBestMove(CancellationToken token)
     {
-        // if (_board == null)
-        // {
-        //     Debug.LogError("OmokAIController: _board is null in GetBestMove()");
-        //     return new UniTask<(int row, int col)>;
-        // }
+        if (_board == null)
+        {
+            Debug.LogError("OmokAIController: _board is null in GetBestMove()");
+        }
+
+        if (zobristKeys == null)
+        {
+            InitializeAI();
+        }
         if (IsBoardEmpty())
         {
             int center = Constants.BOARD_SIZE / 2;
