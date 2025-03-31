@@ -9,14 +9,6 @@ public class TempRequestLogInEvent : IOnEventSO
     {
         var inputStrings = msg.GetParameter<List<string>>();
 
-        foreach (var inputString in inputStrings)
-        {
-            foreach (var s in inputString)
-            {
-                Debug.Log(s);
-            }
-        }
-        
         SignInData inputData = new SignInData(inputStrings[0], inputStrings[1]);
         
         TempNetworkManager.Instance.RequestLogIn(inputData);

@@ -5,7 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResponseSignUpOnEvent", menuName = "IOnEventSO/ResponseSignUpOnEvent")]
 public class ResponseSignUpOnEvent : IOnEventSO
 {
-    //서버를 열어야합니다.
     public override void OnEvent(EventMessage msg)
     {
         if (msg.GetParameter<string>() == "Success")

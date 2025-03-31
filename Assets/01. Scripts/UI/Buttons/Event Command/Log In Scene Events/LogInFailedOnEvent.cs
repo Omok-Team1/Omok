@@ -9,8 +9,10 @@ public class LogInFailedOnEvent : IOnEventSO
     public override void OnEvent(EventMessage msg)
     {
         var eventObj = msg.GetParameter<GameObject>();
-        
-        eventObj.GetComponent<IUIComponent>().Show();
+
+        IUIComponent component = UIManager.Instance.triggeredEventUIComponent;
+
+        UIManager.Instance.OpenChildrenCanvas(component);
 
         var txt = eventObj.GetComponentInChildren<TextMeshProUGUI>();
         
