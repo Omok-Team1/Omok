@@ -64,18 +64,13 @@ public class UIManager : Singleton<UIManager>
     {
         if (isThisCanvasHide)
         {
-            foreach (var subCanvas in currentCanvas.GetChildren())
-            {
-                subCanvas.Hide();
-            }
+            currentCanvas.Hide();
         }
-        
-        _canvasTrace.Push(childComponent.GetChildren());
-        
-        foreach (var nextCanvas in _canvasTrace.Peek())
-        {
-            nextCanvas.Show();
-        }
+
+        _canvasTrace.Push(new List<IUIComponent> { currentCanvas });
+        _canvasTrace.Push(new List<IUIComponent> { childComponent });
+
+        childComponent.Show();
     }
 
     /// <summary>
