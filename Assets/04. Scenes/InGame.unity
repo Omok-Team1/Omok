@@ -3835,6 +3835,9 @@ MonoBehaviour:
   gameSceneName: InGame
   titleSceneName: Title
   notEnoughCoinsPanel: {fileID: 0}
+  listenerObjectsToClear: []
+  listenerEventsToClear: []
+  clearAllListeners: 0
 --- !u!1001 &996684060
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4352,7 +4355,7 @@ RectTransform:
   m_GameObject: {fileID: 1277863359}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.69062, y: 0.69062, z: 0.69062}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1798236669}
@@ -4362,7 +4365,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1198}
+  m_AnchoredPosition: {x: 0, y: -1052}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1277863361
@@ -5803,6 +5806,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0134acd27df92ba41bb35b3a71a315da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoCollectOnAwake: 1
+  includeInactiveObjects: 1
+  exclusionList:
+  - targetObject: {fileID: 216443058}
+    eventName: '""'
+    excludeObject: 1
+    excludeEvent: 1
+  clearAllListeners: 1
 --- !u!1 &1604231790
 GameObject:
   m_ObjectHideFlags: 0
@@ -7281,6 +7292,9 @@ MonoBehaviour:
   gameSceneName: InGame
   titleSceneName: Title
   notEnoughCoinsPanel: {fileID: 1850542590}
+  listenerObjectsToClear: []
+  listenerEventsToClear: []
+  clearAllListeners: 0
 --- !u!1 &1933149897
 GameObject:
   m_ObjectHideFlags: 0
@@ -8321,6 +8335,9 @@ MonoBehaviour:
   gameSceneName: InGame
   titleSceneName: Title
   notEnoughCoinsPanel: {fileID: 0}
+  listenerObjectsToClear: []
+  listenerEventsToClear: []
+  clearAllListeners: 0
 --- !u!1 &2120105030
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,12 @@ public class CurrentEnemyRematchButton : MonoBehaviour
     [SerializeField] private string gameSceneName = "InGame";
     [SerializeField] private string titleSceneName = "Title";
     [SerializeField] private GameObject notEnoughCoinsPanel;
+    
+    // 초기화할 GameObject 목록 (인스펙터에서 설정)
+    [Header("이벤트 리스너 초기화 설정")]
+    [SerializeField] private List<GameObject> listenerObjectsToClear;
+    [SerializeField] private List<string> listenerEventsToClear;
+    [SerializeField] private bool clearAllListeners = false; // 전체 초기화 여부 (주의: 모든 리스너 삭제됨)
 
     private void Awake()
     {
@@ -94,7 +100,7 @@ public class CurrentEnemyRematchButton : MonoBehaviour
             eventManager.ClearEventQueue();
         }
 
-        // 이벤트 리스너 초기화
+        // 이벤트 리스너 초기화 - 선택적 초기화 방식으로 변경
         if (eventDispatcher != null)
         {
             Debug.Log("GameEndEventDispatcher 리스너 초기화");
@@ -149,11 +155,31 @@ public class CurrentEnemyRematchButton : MonoBehaviour
         // 1. 패널 닫기
         if (confirmPanel != null) confirmPanel.SetActive(false);
 
-        // 2. 이벤트 시스템 초기화 (ReturnToTitle 참조)
+        // 2. 이벤트 시스템 초기화 (선택적 초기화 방식으로 변경)
         if (EventManager.Instance != null)
         {
             EventManager.Instance.ClearEventQueue();
-            EventManager.Instance.ClearAllListeners(); // 메서드 추가 필요
+            
+            // 설정에 따라 선택적으로 리스너 초기화
+            if (clearAllListeners)
+            {
+                // 기존 방식 (전체 초기화) - 주의: 모든 리스너 삭제됨
+                EventManager.Instance.ClearAllListeners();
+            }
+            else
+            {
+                // 객체별 초기화
+                if (listenerObjectsToClear != null && listenerObjectsToClear.Count > 0)
+                {
+                    EventManager.Instance.ClearListenersForGameObjects(listenerObjectsToClear);
+                }
+                
+                // 이벤트별 초기화
+                if (listenerEventsToClear != null && listenerEventsToClear.Count > 0)
+                {
+                    EventManager.Instance.ClearListenersForEvents(listenerEventsToClear);
+                }
+            }
         }
 
         if (GameEndEventDispatcher.Instance != null)

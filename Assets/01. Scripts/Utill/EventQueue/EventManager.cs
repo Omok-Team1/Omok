@@ -119,9 +119,83 @@ public class EventManager : Singleton<EventManager>
         _eventQueue.Clear();
         Debug.Log("이벤트 큐가 초기화되었습니다.");
     }
+
     public void ClearAllListeners()
     {
         _listeners.Clear();
         Debug.Log("모든 이벤트 리스너 초기화됨");
+    }
+    
+    // 특정 GameObject의 리스너만 제거하는 메서드
+    public void ClearListenersForGameObject(GameObject targetObject)
+    {
+        if (targetObject == null) return;
+        
+        // 이벤트 이름 목록을 가져옴 (반복문 중에 컬렉션 변경 방지)
+        var eventNames = _listeners.Keys.ToList();
+        
+        foreach (var eventName in eventNames)
+        {
+            if (_listeners.TryGetValue(eventName, out var listeners))
+            {
+                // 특정 GameObject와 연결된 리스너만 제거
+                int beforeCount = listeners.Count;
+                listeners.RemoveAll(item => item.Item2 == targetObject);
+                int removedCount = beforeCount - listeners.Count;
+                
+                // 리스너가 비어있으면 해당 이벤트 키 제거
+                if (listeners.Count == 0)
+                {
+                    _listeners.Remove(eventName);
+                }
+                
+                if (removedCount > 0)
+                {
+                    Debug.Log($"GameObject '{targetObject.name}'에 연결된 이벤트 '{eventName}'의 리스너 {removedCount}개 제거됨");
+                }
+            }
+        }
+    }
+    
+    // 특정 GameObject 목록의 리스너만 제거하는 메서드
+    public void ClearListenersForGameObjects(List<GameObject> targetObjects)
+    {
+        foreach (var obj in targetObjects)
+        {
+            ClearListenersForGameObject(obj);
+        }
+    }
+    
+    // 특정 이벤트 타입에 대한 리스너만 제거하는 메서드
+    public void ClearListenersForEvent(string eventName)
+    {
+        if (_listeners.ContainsKey(eventName))
+        {
+            int count = _listeners[eventName].Count;
+            _listeners.Remove(eventName);
+            Debug.Log($"이벤트 '{eventName}'에 대한 리스너 {count}개 제거됨");
+        }
+    }
+    
+    // 특정 이벤트 목록에 대한 리스너를 제거하는 메서드
+    public void ClearListenersForEvents(List<string> eventNames)
+    {
+        foreach (var eventName in eventNames)
+        {
+            ClearListenersForEvent(eventName);
+        }
+    }
+    
+    // 특정 컴포넌트 타입을 가진 GameObject에 대한 리스너를 제거하는 메서드
+    public void ClearListenersForComponentType<T>() where T : Component
+    {
+        // 씬에서 해당 타입의 모든 컴포넌트 찾기
+        T[] components = GameObject.FindObjectsOfType<T>();
+        foreach (var component in components)
+        {
+            ClearListenersForGameObject(component.gameObject);
+        }
+        
+        Debug.Log($"{typeof(T).Name} 타입을 가진 {components.Length}개의 GameObject에 대한 리스너 초기화됨");
     }
 }
