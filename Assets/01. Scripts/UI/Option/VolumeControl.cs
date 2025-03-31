@@ -4,15 +4,39 @@ using UnityEngine.EventSystems;
 
 public class VolumeControl : MonoBehaviour, IPointerClickHandler
 {
+    public enum VolumeType
+    {
+        Master,
+        BackgroundMusic,
+        EffectSound
+    }
+    
+    public VolumeType volumeType; // 볼륨 타입 (인스펙터에서 설정)
     public Image[] volumeBars;  // 볼륨 막대 배열 (Inspector에서 설정)
     public int maxVolume = 5;  // 최대 볼륨 단계 (5단계)
     private int currentVolume = 3;  // 현재 볼륨 단계 (초기값 3)
     private bool increasing = true; // 증가 방향인지 여부
 
-    public Button volumeKeyButton; // 투명한 볼륨 키 버튼 (Inspector에서 할당)
-
     private void Start()
     {
+        // 시작할 때 현재 볼륨 값을 가져옴
+        switch (volumeType)
+        {
+            case VolumeType.Master:
+                currentVolume = Mathf.RoundToInt(AudioListener.volume * maxVolume);
+                break;
+                
+            case VolumeType.BackgroundMusic:
+                if (BackgroundMusicManager.Instance != null)
+                    currentVolume = Mathf.RoundToInt(BackgroundMusicManager.Instance.GetVolume() * maxVolume);
+                break;
+                
+            case VolumeType.EffectSound:
+                if (EffectSoundManager.Instance != null)
+                    currentVolume = Mathf.RoundToInt(EffectSoundManager.Instance.GetVolume() * maxVolume);
+                break;
+        }
+        
         UpdateVolumeUI(); // UI 초기 설정
     }
 
@@ -43,6 +67,7 @@ public class VolumeControl : MonoBehaviour, IPointerClickHandler
         }
 
         UpdateVolumeUI();
+        ApplyVolumeChange();
     }
 
     private void UpdateVolumeUI()
@@ -51,7 +76,26 @@ public class VolumeControl : MonoBehaviour, IPointerClickHandler
         {
             volumeBars[i].enabled = (i < currentVolume);  // 현재 볼륨 값에 맞게 활성화/비활성화
         }
-
-        AudioListener.volume = (float)currentVolume / maxVolume;  // 실제 볼륨 적용
+    }
+    
+    private void ApplyVolumeChange()
+    {
+        // 볼륨 타입에 따라 적절한 매니저에 볼륨 변경 적용
+        switch (volumeType)
+        {
+            case VolumeType.Master:
+                AudioListener.volume = (float)currentVolume / maxVolume;
+                break;
+                
+            case VolumeType.BackgroundMusic:
+                if (BackgroundMusicManager.Instance != null)
+                    BackgroundMusicManager.Instance.SetVolumeLevel(currentVolume, maxVolume);
+                break;
+                
+            case VolumeType.EffectSound:
+                if (EffectSoundManager.Instance != null)
+                    EffectSoundManager.Instance.SetVolumeLevel(currentVolume, maxVolume);
+                break;
+        }
     }
 }
