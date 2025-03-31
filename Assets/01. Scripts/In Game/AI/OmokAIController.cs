@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 public static class OmokAIController
 {
@@ -8,24 +10,23 @@ public static class OmokAIController
     private static readonly (int, int)[] directions = { (1, 0), (0, 1), (1, 1), (1, -1) };
     private static Dictionary<ulong, (float score, int depth)> zobristTable = new();    
     private static ulong[,,] zobristKeys; // zobrist 해싱키
-    private static BoardGrid _board => GameManager.Instance?.BoardManager?.Grid; // null 안전 처리 (?.)
+    public static BoardGrid _board; 
 
-
-    public static (int row, int col) GetBestMove()
+    public static UniTask<(int row, int col)> GetBestMove(CancellationToken token)
     {
-        if (_board == null)
-        {
-            Debug.LogError("OmokAIController: _board is null in GetBestMove()");
-            return (-1, -1);
-        }
+        // if (_board == null)
+        // {
+        //     Debug.LogError("OmokAIController: _board is null in GetBestMove()");
+        //     return new UniTask<(int row, int col)>;
+        // }
         if (IsBoardEmpty())
         {
             int center = Constants.BOARD_SIZE / 2;
-            return (center, center);
+            return new UniTask<(int, int)>((center, center));
         }
 
         var blockMove = CheckImmediateWinOrBlock(Turn.PLAYER1);
-        if (blockMove != (-1, -1)) return blockMove;
+        if (blockMove != (-1, -1)) return new UniTask<(int, int)>(blockMove);
 
         float bestScore = float.MinValue;
         (int, int) bestMove = (-1, -1);
@@ -44,7 +45,7 @@ public static class OmokAIController
                 bestMove = (row, col);
             }
         }
-        return bestMove;
+        return new UniTask<(int, int)>(bestMove);
     }
 
    private static (int, int) CheckImmediateWinOrBlock(Turn opponent)

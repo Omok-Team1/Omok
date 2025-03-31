@@ -114,7 +114,7 @@ public class BoardGrid : MonoBehaviour
         {
             for (int col = -7; col < GridSize - 7; col++)
             {
-                _grid[(row, col)].EraseMarker(_gameData.emptySprite);
+                _grid[(row, col)].EraseMarker();
             }
         }
     }
