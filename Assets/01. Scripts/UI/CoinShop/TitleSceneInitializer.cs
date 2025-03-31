@@ -5,6 +5,12 @@ public class TitleSceneInitializer : MonoBehaviour
 {
     [SerializeField] private Button startButton; // 시작 버튼 참조
     [SerializeField] private GameStartManager gameStartManager; // 게임 시작 매니저 참조
+    
+    [SerializeField] private GameObject ProfileImage;
+    [SerializeField] private IOnEventSO imageLoadedOnEvent;
+
+    [SerializeField] private GameObject Nickname;
+    [SerializeField] private IOnEventSO nicknameLoadedOnEvent;
 
     private void Awake()
     {
@@ -16,6 +22,8 @@ public class TitleSceneInitializer : MonoBehaviour
     {
         // 타이틀 씬이 활성화될 때마다 컴포넌트 초기화
         InitializeComponents();
+        //TempNetworkManager.Instance.RequestMyProfilePic();
+        //TempNetworkManager.Instance.RequestMyNickname();
     }
 
     private void Start()
@@ -72,6 +80,14 @@ public class TitleSceneInitializer : MonoBehaviour
             if (gameStartManager == null)
                 Debug.LogError("TitleSceneInitializer: GameStartManager를 찾을 수 없습니다!");
         }
+
+        // 프로필 이미지가 Inspector에서 할당되지 않았다면 찾기
+        if (ProfileImage == null) ProfileImage = GameObject.Find("Profile Image");
+        // 닉네임 Text Inspector에서 할당되지 않았다면 찾기
+        if (Nickname == null) Nickname = GameObject.Find("[TMPro] Nick Name");
+
+        EventManager.Instance.AddListener("ImageLoaded", imageLoadedOnEvent, ProfileImage);
+        EventManager.Instance.AddListener("NicknameLoaded", nicknameLoadedOnEvent, Nickname);
     }
 
     private void OnStartButtonClicked()
