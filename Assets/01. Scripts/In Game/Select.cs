@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,10 +11,11 @@ public class Select : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     
-    void Start()
+    void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+    
     void OnMouseEnter()
     {
         spriteRenderer.enabled = true;

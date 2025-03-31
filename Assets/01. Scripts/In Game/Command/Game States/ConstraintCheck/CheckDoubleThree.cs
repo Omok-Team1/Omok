@@ -6,15 +6,15 @@ public class CheckDoubleThree : ICommand
 {
     public bool Execute()
     {
-        // if (_constraintCoordinates is not null)
-        // {
-        //     foreach (Cell constraintCoordinate in _constraintCoordinates)
-        //     {
-        //         constraintCoordinate.EraseMarker();
-        //     }
-        //
-        //     _constraintCoordinates = null;
-        // }
+        if (_constraintCoordinates is not null)
+        {
+            foreach (Cell constraintCoordinate in _constraintCoordinates)
+            {
+                constraintCoordinate.EraseMarker();
+            }
+        
+            _constraintCoordinates = null;
+        }
         
         _constraintCoordinates = _boardManager.ConstraintsCheck();
         

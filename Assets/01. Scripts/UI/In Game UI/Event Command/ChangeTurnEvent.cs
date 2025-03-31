@@ -7,6 +7,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ChangeTurnEvent", menuName = "IOnEventSO/ChangeTurnEvent")]
 public class ChangeTurnEvent : IOnEventSO
 {
+    
     public override void OnEvent(EventMessage msg)
     {
         var listenerObj = msg.GetParameter<GameObject>();

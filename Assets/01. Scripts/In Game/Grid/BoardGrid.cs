@@ -63,7 +63,7 @@ public class BoardGrid : MonoBehaviour
                 _grid[coordi].Marker = _gameData.player2Marker;
                 _grid[coordi].CellOwner = Turn.PLAYER2;
             }
-
+            
             _grid[coordi].gameObject.layer = LayerMask.NameToLayer("Selected");
             _remainCells--;
             

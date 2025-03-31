@@ -39,18 +39,18 @@ public class GameEndEventDispatcher : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
     
-   private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-{
-    ClearEventListeners();
-    ResetDispatchState();
-
-    // 새 씬에서 싱글톤 인스턴스 재설정
-    if (scene.name == "InGame")
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Instance = this;
-        Debug.Log("새 씬에서 GameEndEventDispatcher 인스턴스 재설정");
+        ClearEventListeners();
+        ResetDispatchState();
+
+        // 새 씬에서 싱글톤 인스턴스 재설정
+        if (scene.name == "InGame")
+        {
+            Instance = this;
+            Debug.Log("새 씬에서 GameEndEventDispatcher 인스턴스 재설정");
+        }
     }
-}
     
     // 모든 이벤트 리스너 초기화
     public void ClearEventListeners()
