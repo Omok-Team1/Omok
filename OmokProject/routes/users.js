@@ -48,7 +48,7 @@ const upload = multer({storage: storage});
 
 // 프로필 이미지 파일 업로드
 router.post("/profileImageUpload", upload.single("profile"), function (req, res) {
-  res.status(200).send('file uploaded');
+  res.json({ fileName: req.file.filename});
 });
 
 // 요청 시, 본인 계정의 프로필 이미지 파일 전송
@@ -61,7 +61,7 @@ router.post("/getMyProfileImage", async (req, res) => {
   }
 });
 
-// 요청 시, 해당 계정의 프로필 이미지 파일 전송
+// 요청 시, 해당 경로의 프로필 이미지 파일 전송
 router.post("/getProfileImage", async (req, res) => {
   res.sendFile(path.join(profilePath, req.body.filename));
 });
@@ -109,6 +109,7 @@ router.post('/signup', async function(req,res,next){
     // 아이디가 email 형식인지 확인
     let regEmail = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     if(regEmail.test(username) == false){
+      console.log("정규식 x");
       return res.status(400).send("아이디는 이메일 형식이어야 합니다");
     }
 

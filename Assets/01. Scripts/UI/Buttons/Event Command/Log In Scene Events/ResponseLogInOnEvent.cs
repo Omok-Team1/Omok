@@ -10,12 +10,9 @@ public class ResponseLogInOnEvent : IOnEventSO
     {
         if (msg.GetParameter<string>() == "Success")
         {
+            // TODO : DB에서 이미지 받아와서 sprite에 저장
+            //Sprite sprite;
             SceneId.Title.Load();
-        }
-        else
-        {
-            Debug.Log(msg.GetParameter<string>());
-            UIManager.Instance.OpenChildrenCanvas(UIManager.Instance.triggeredEventUIComponent);
         }
     }
 }
