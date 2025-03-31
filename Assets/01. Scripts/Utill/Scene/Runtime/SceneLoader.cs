@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -52,5 +53,4 @@ public static class SceneLoader
         if (isAsync) SceneManager.LoadSceneAsync(sceneName, mode);
         else SceneManager.LoadScene(sceneName, mode);
     }
-    
 }

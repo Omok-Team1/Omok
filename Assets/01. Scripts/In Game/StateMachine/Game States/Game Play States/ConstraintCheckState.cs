@@ -8,23 +8,24 @@ public class ConstraintCheckState : IState
     {
         StateMachine = stateMachine;
         
-        //TODO: 이전에는 쌍삼 자리였지만, 이번 턴에는 쌍삼 자리가 아니게 되었을 때 x 마커를 지워주는 커맨드가 필요
-        _actions.AddCommand(new CheckDoubleThree());
+        //_actions.AddCommand(new CheckDoubleThree());
+        //_actions.AddCommand(new CheckDoubleFour());
     }
     
     public void EnterState()
     {
-        if (_actions.ExecuteCommands() is true)
+        if (_actions.ExecuteCommand(new CheckDoubleThree()) is true || _actions.ExecuteCommand(new CheckDoubleFour()) is true)
         {
-            Debug.Log("쌍삼이 검출 되었습니다.");
+            Debug.Log("쌍삼 or 쌍사가 검출 되었습니다.");
         }
         else
         {
-            Debug.Log("쌍삼이 검출 되지 않았습니다.");
+            Debug.Log("쌍삼 or 쌍사가 검출 되지 않았습니다.");
         }
         
         bool branchFlag = _actions.ExecuteCommand(new BranchPlayerOpponent());
 
+        //TODO: For Debug 테스트 끝나면 여기 주석 풀기
         //true : Player 상태로 전환
         //false : Opponent 상태로 전환
         if (branchFlag is true)
@@ -35,6 +36,8 @@ public class ConstraintCheckState : IState
         {
             StateMachine.ChangeState<OpponentState>();
         }
+        //TODO: For Debug 테슽 끝나면 아래 코드 지우기
+        //StateMachine.ChangeState<PlayerState>();
     }
 
     public void UpdateState()

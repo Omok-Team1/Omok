@@ -1,15 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class EventManager : Singleton<EventManager>
 {
-    private new void Awake()
+    public new void Awake()
     {
         base.Awake();
-
-        SceneLoader.OnAnySceneLoadedStarts += _listeners.Clear;
+        // 씬 로드 시작 시 이벤트 큐와 리스너 초기화
+        SceneLoader.OnAnySceneLoadedStarts += () => 
+        {
+            ClearEventQueue();
+            _listeners.Clear();
+            Debug.Log("씬 로드 시작: 이벤트 큐 및 리스너 초기화 완료");
+        };
     }
     
     /// <summary>
@@ -45,6 +51,34 @@ public class EventManager : Singleton<EventManager>
         _eventQueue.Enqueue(eventMessage);
     }
 
+    public void PopLastEventMessageEvent()
+    {
+        Queue<EventMessage> messageQueue = new Queue<EventMessage>();
+        
+        if(_eventQueue.Count == 0) return;
+        else
+        {
+            int count = _eventQueue.Count;
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                messageQueue.Enqueue(_eventQueue.Dequeue());
+            }
+
+            _eventQueue.Dequeue();
+            
+            foreach (var eventMessage in _eventQueue)
+            {
+                Debug.LogError(eventMessage.EventName);
+            }
+            
+            for (int i = 0; i < messageQueue.Count; i++)
+            {
+                _eventQueue.Enqueue(messageQueue.Dequeue());
+            }
+        }
+    }
+
     public void ProcessEvent(EventMessage eventMessage)
     {
         if (_listeners.TryGetValue(eventMessage.EventName, out List<(IOnEventSO, GameObject)> eventListener))
@@ -76,4 +110,18 @@ public class EventManager : Singleton<EventManager>
     
     private readonly IDictionary<string, List<(IOnEventSO, GameObject)>> _listeners = new Dictionary<string, List<(IOnEventSO, GameObject)>>();
     private Queue<EventMessage> _eventQueue = new Queue<EventMessage>();
+    
+    
+    
+    
+    public void ClearEventQueue()
+    {
+        _eventQueue.Clear();
+        Debug.Log("이벤트 큐가 초기화되었습니다.");
+    }
+    public void ClearAllListeners()
+    {
+        _listeners.Clear();
+        Debug.Log("모든 이벤트 리스너 초기화됨");
+    }
 }

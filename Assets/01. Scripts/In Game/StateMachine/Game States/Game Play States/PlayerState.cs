@@ -20,7 +20,7 @@ public class PlayerState : IState
     
     public void EnterState()
     {
-        
+
     }
 
     public void UpdateState()
