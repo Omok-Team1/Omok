@@ -17,9 +17,12 @@ public class MatchingState : IState
     
     public void EnterState()
     {
+        currentTime = 0f;
+        
         _actions.ExecuteCommands();
             
-        StateMachine.ChangeState<StartState>();
+        StaticCoroutine.StartStaticCoroutine(Wait());
+        //StateMachine.ChangeState<StartState>();
     }
 
     public void UpdateState()
@@ -29,8 +32,23 @@ public class MatchingState : IState
 
     public void ExitState()
     {
-
+        UIManager.Instance.CloseAllChildrenCanvas();
     }
+
+    private IEnumerator Wait()
+    {
+        while (currentTime < maxWaitingTime)
+        {
+            currentTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        
+        StateMachine.ChangeState<StartState>();
+    }
+    
+    private float currentTime = 0f;
+    private float maxWaitingTime = 7f;
 
     private readonly Invoker _actions = new();
 

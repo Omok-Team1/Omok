@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class TryOnDropCommand : ICommand
 {
-    // public bool Execute()
-    // {
-    //     if (_boardManager.OnDropMarker() is false)
-    //         return false;
-    //     else
-    //         return true;
-    // }
     public bool Execute() => _boardManager.OnDropMarker();
     private readonly BoardManager _boardManager = GameManager.Instance.BoardManager;
 }

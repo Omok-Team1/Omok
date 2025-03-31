@@ -104,7 +104,11 @@ public class TimerController : MonoBehaviour
         // }
 
         EventManager.Instance.PublishMessageQueue();
-        
+
+        yield return null;
+
+        TimerStartCoroutine = null;
+
         //제한시간 초과 시 상대 턴으로 전환
         //EndTurn(true);
     }
@@ -177,6 +181,11 @@ public class TimerController : MonoBehaviour
 
         // 턴을 넘기고 다음 플레이어의 턴 시작
         //isPlayer1Turn = !isPlayer1Turn;
+
+        if(TimerStartCoroutine is not null)
+            StopCoroutine(TimerStartCoroutine);
+        
+        TimerStartCoroutine = null;
         
         // 유예시간 동안 기다림
         yield return new WaitForSeconds(delayTime);

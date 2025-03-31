@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using Task = System.Threading.Tasks.Task;
 
@@ -21,9 +20,13 @@ public class OpponentState : IState
 
     public async void EnterState()
     {
-        //얘가 한 프레임 동안 모든 연산을 끝내고 값을 던지기 때문에,
+        //AI연산이 한 프레임 동안 모든 연산을 끝내고 값을 던지기 때문에,
         //누구의 턴인지 표시해주는 애니메이션 코루틴이 블락(정확히는 yield return null으로 인해 다음 프레임에 호출되어야 하는데 못함)되어서 비동기로 실행함
-        OmokAIController._board = GameManager.Instance.BoardManager.Grid.CloneInvisibleObj();
+        
+        //타이머 세팅이 모두 완료 될 때까지 대기한다.
+        coordi = (INF, INF);
+        
+        await UniTask.WaitUntil(() => GameManager.Instance.TimerController.TimerStartCoroutine is null);
         
         var cts = new CancellationTokenSource();
         
@@ -34,11 +37,7 @@ public class OpponentState : IState
         
         GameManager.Instance.TimerController.StartTurn(Turn.PLAYER2);
         
-        coordi = ((int)1e9, (int)1e9);
-        
         coordi = await GameManager.Instance.OpponentController.BeginOpponentTask(cts);
-
-        
     }
 
     public void UpdateState()
@@ -56,11 +55,11 @@ public class OpponentState : IState
             }
             else
             {
-                Debug.Log("Opponent OnDrop!!!!!!!.");
+                Debug.Log("Opponent OnDrop!!!!!!! : " + coordi.Item1 + " : " + coordi.Item2);
                 EventManager.Instance.PopLastEventMessageEvent();
-                GameManager.Instance.TimerController.EndTurn();
             }
         
+            GameManager.Instance.TimerController.EndTurn();
             StateMachine.ChangeState<OnDropState>();
         }
     }
@@ -72,7 +71,7 @@ public class OpponentState : IState
 
     private readonly int INF = (int)1e9;
     
-    private (int, int) coordi;
+    private (int, int) coordi = ((int)1e9, (int)1e9);
     private readonly IOnEventSO _eventSO;
     private readonly Invoker _actions;
     public StateMachine StateMachine { get; set; }

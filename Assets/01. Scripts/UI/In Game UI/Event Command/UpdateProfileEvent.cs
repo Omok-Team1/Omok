@@ -30,7 +30,13 @@ public class UpdateProfileEvent : IOnEventSO
 
         if (listenerObj.TryGetComponent(out Image profile))
         {
-            profile.sprite = spriteData;
+            if (_aspectFitter is not null)
+            {
+                _aspectFitter.aspectRatio = (float)spriteData.texture.width / spriteData.texture.height;
+                profile.sprite = spriteData;
+            }
         }
     }
+    
+    private AspectRatioFitter _aspectFitter;
 }
