@@ -19,8 +19,8 @@
   UniTask 라이브러리를 활용해 UI를 위한 메인 스레드에서 작업 분리
 
 # 인 게임 구조 설계 및 구현
-** 게임 상태 정의, 관리
-** 코드 위치 : [In Game State](https://github.com/Omok-Team1/Omok/tree/ParkJongHan/Assets/01.%20Scripts/In%20Game/StateMachine/Game%20States/Game%20Play%20States)
+### 게임 상태 정의, 관리
+### 코드 위치 : [In Game State](https://github.com/Omok-Team1/Omok/tree/ParkJongHan/Assets/01.%20Scripts/In%20Game/StateMachine/Game%20States/Game%20Play%20States)
 
 ![Image](https://github.com/user-attachments/assets/96348d68-e5d4-45b2-a540-83149de26e20)
 1. 턴제 게임인 오목을 게임 상태를 정의해 각 State에 기능에 대한 책임을 부여해 FSM으로 관리하면 Requirements에서 도출된 기능과 클래스들을 효과적으로 인 게임 담당 팀원들과 협업해 개발할 수 있을 것이라 생각했습니다.
