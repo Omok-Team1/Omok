@@ -1,5 +1,43 @@
 # 오목 프로젝트
-+ Hello World
++ 렌주룰이 적용된 오목을 온라인 대국과 인공지능 대국으로 즐길 수 있는 오목 프로젝트입니다.
++ 
+
+# 개발 기간
++ 25/03/11 ~ 25/03/31
+
+# 팀원
++ 박종한, 이채은, 유승종, 조재현, 서보람, 김동욱
+
+# 담당 업무
+1. 인 게임 구조 설계 및 구현
+  State Pattern을 활용한 게임 상태 관리, Event Queue를 이용해 협업, Custom Scene Loader
+
+2. 승리 체크, 렌주룰 구현(3-3, 4-4 탐지 알고리즘)
+  Back-Tracking을 활용한 완전 탐색 알고리즘
+
+3. AI 연산 비동기화
+  UniTask 라이브러리를 활용해 UI를 위한 메인 스레드에서 작업 분리
+
+# 인 게임 구조 설계 및 구현
+** 게임 상태 정의, 관리
+** 코드 위치 : [In Game State](https://github.com/Omok-Team1/Omok/tree/ParkJongHan/Assets/01.%20Scripts/In%20Game/StateMachine/Game%20States/Game%20Play%20States)
+
+![Image](https://github.com/user-attachments/assets/96348d68-e5d4-45b2-a540-83149de26e20)
+1. 턴제 게임인 오목을 게임 상태를 정의해 각 State에 기능에 대한 책임을 부여해 FSM으로 관리하면 Requirements에서 도출된 기능과 클래스들을 효과적으로 인 게임 담당 팀원들과 협업해 개발할 수 있을 것이라 생각했습니다.
+2. State들을 정의하고 클래스들에게 각각의 State들에서 동작해야 하는 기능들을 부여한 후 팀원들에게 역할(AIController, TimerController 개발)을 분배했습니다.
+
+** Cell, BoardGrid, BoardManager 정의
+** 코드 위치 : [Cell, BoardGrid 클래스](https://github.com/Omok-Team1/Omok/tree/ParkJongHan/Assets/01.%20Scripts/In%20Game/Grid)
+![Image](https://github.com/user-attachments/assets/8b3aba4e-0f57-45f3-a3c0-b9c09ae9bca9)
+3. Board판과 Board판의 원소 Cell을 정의하고 Baord에 대한 연산을 지원하는 BoardManager를 정의하여 관리하였습니다.
+
+** Event Queue를 이용해 협업
+
+** Custom Scene Loader
+
+# 렌주룰 구현(3-3, 4-4 탐지 알고리즘)
+
+# AI 연산 비동기화
 
 ## 급수 시스템
 
@@ -76,17 +114,3 @@
 :비번(암호화 되어 저장되어야 합니다)
 
 :프로필 이미지(디폴트 제공, 하나를 선택)
-
-
-
-
-# 개발 기간
-1. Hello Omok
-
-# 팀원
-![image](https://media-cldnry.s-nbcnews.com/image/upload/rockcms/2022-01/210602-doge-meme-nft-mb-1715-8afb7e.jpg)
-1. 박종한
-
-2. 이채은
-
-3. 유승종
