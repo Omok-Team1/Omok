@@ -33,11 +33,11 @@
 
 ### Event Queue를 이용해 협업
 ### 코드 위치 : [EventManager, Message](https://github.com/Omok-Team1/Omok/tree/ParkJongHan/Assets/01.%20Scripts/Utill/EventQueue)
-1. 다른 팀원에게 데이터를 넘겨주거나(대국 정보, 로그인시 ID, PW 등등) 어떤 클래스의 동작 혹은 이벤트를 기다려야 하는 의존적인 상황을 독립적으로 분리하기 위해 사용했습니다.
+1. 다른 팀원에게 데이터를 넘겨주거나(대국 정보, 로그인시 ID, PW 등등) 어떤 클래스의 동작 혹은 이벤트를 기다려야 하는 의존적인 상황을 독립적으로 분리하기 위해 사용했습니다.   
 ![Image](https://github.com/user-attachments/assets/186cd4fe-063e-4892-a4c0-e20c176fc1e8)
-2. Singleton으로 구현하여 어디서든 접근 할 수 있게 하였고 AddListener를 통해 이벤트를 수신받고 해당 이벤트를 발신한 객체가 보낸 데이터를 전달 받을 수 있습니다.
+2. Singleton으로 구현하여 어디서든 접근 할 수 있게 하였고 AddListener를 통해 이벤트를 수신받고 해당 이벤트를 발신한 객체가 보낸 데이터를 전달 받을 수 있습니다.   
 ![Image](https://github.com/user-attachments/assets/8596f824-680a-4e9d-b557-18ade3206d57)
-3. 이벤트를 발신하려는 객체는 EventMessage 객체를 만들어 AddParameter<T>(object)를 통해 메세지에 전달한 데이터를 추가할 수 있고 EventManager의 PushEventMessage()와 PublishEventMessageQueue()를 통해 발신 할 수 있습니다.
+3. 이벤트를 발신하려는 객체는 EventMessage 객체를 만들어 AddParameter<T>(object)를 통해 메세지에 전달한 데이터를 추가할 수 있고 EventManager의 PushEventMessage()와 PublishEventMessageQueue()를 통해 발신 할 수 있습니다.   
 ![Image](https://github.com/user-attachments/assets/7cc5c1f0-c58c-4eea-802a-d459bc4ffbba)
 4. 추가적으로 Block-Coding 느낌으로 기능을 ScriptableObject로 만들어 인스펙터에서만 작업할 수 있도록 구현해봤습니다.
 
