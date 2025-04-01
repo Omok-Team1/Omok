@@ -46,7 +46,7 @@
 # 렌주룰 구현(3-3, 4-4 탐지 알고리즘)
 ### 코드 위치 : [147 ~ 392번 라인](https://github.com/Omok-Team1/Omok/blob/ParkJongHan/Assets/01.%20Scripts/In%20Game/ManagerController/BoardManager.cs#L147)
 1. Requirements는 아래와 같았습니다.   
-> 일반 렌주룰:
+> 일반 렌주룰:   
 > i. 흑이 유리한 입장을 보완하기 위해 3x3, 혹은 4x4가 불가능하게 하는 것입니다.   
 > ii. 렌즈룰에 의해 착수할 수 없는 곳은 “x” 마크가 표시 되어야 합니다.
 2. 렌주룰에 대해서 찾아보고 문제에 대해서 먼저 분석했습니다.   
