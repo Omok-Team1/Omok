@@ -9,13 +9,13 @@
 + 박종한, 이채은, 유승종, 조재현, 서보람, 김동욱
 
 # 담당 업무
-1. 인 게임 구조 설계 및 구현
+1. 인 게임 구조 설계 및 구현   
   State Pattern을 활용한 게임 상태 관리, Event Queue를 이용해 협업, Custom Scene Loader
 
-2. 렌주룰 구현(3-3, 4-4 탐지 알고리즘)
+2. 렌주룰 구현(3-3, 4-4 탐지 알고리즘)   
   Back-Tracking을 활용한 완전 탐색 알고리즘
 
-3. AI 연산 비동기화
+3. AI 연산 비동기화   
   UniTask 라이브러리를 활용해 UI를 위한 메인 스레드에서 작업 분리
 
 # 인 게임 구조 설계 및 구현
@@ -63,3 +63,19 @@
 ![Image](https://github.com/user-attachments/assets/41edabe8-64f4-465b-b67b-4f0b00b91526)
 
 # AI 연산 비동기화
+### 코드 위치 : [33 ~ 61번 라인](https://github.com/Omok-Team1/Omok/blob/ebbf28985b4fc2f2e9fbead82d168464d80e6e2b/Assets/01.%20Scripts/In%20Game/ManagerController/OpponentController.cs#L33)
+### 문제 발견   
+1. AI를 담당 했던 팀원분이 작업한 GetBestMove() 메소드를 호출 했을 때 Timer를 비롯한 모든 UI의 애니메이션이 정지되는 문제가 있었습니다.
+2. (1)을 해결하기 위해 UniTask로 백그라운드 스레드에서 연산 시켜 해결했을 때 Unity Event Update()안에서 구현된 Timer 기능이 의도하지 않게 작동하는 문제가 있었습니다.
+  (Time-out 되었을 때, EventMessage를 보내, CancelationTokenSource를 이용해 스레드를 강제로 종료하는 구조에서, Update()와 동기화가 잘 되지 않아, 이미 cancel()을 호출한 Token을 다시 cancel()을 시도하는 등의 문제가 생겼습니다.)
+3. AI 연산이 BoardGrid의 데이터를 임시로 수정 후 다시 복구하며 연산하는데, cancel()될 때 원본 데이터 무결성을 위해 Clone Method를 구현해 복사본 위에서 연산을 진행하게 만들었습니다.
+   (이 때 Timer의 Update()와 스레드가 동기화 되지 않았기에, Clone()되는 순서도 보장이 되지 않아 AI 연산이 계속 같은 위치만 반환하는 문제도 생겼습니다.) 
+
+### 해결
+1. 최대한 다른 분이 작업한 Timer를 수정하고 싶지 않았기에, 먼저 Update()와 동기화를 시도했습니다.
+2. 이 과정에서 Task Queue를 활용해 실행 순서를 제어하려 시도했지만, 스레드 작업 미숙으로 인해 실패했습니다.
+3. Update()로 작업하신 것을 제어할 수 있게 코루틴으로 수정하고 Token 또한 cancel()을 호출 한 message에서 자원을 정리하게 만들었습니다.
+![Image](https://github.com/user-attachments/assets/ecd7df82-ff07-40b4-8b22-d40474ccf39e)
+4. 스레드 작업 전 Timer의 기능이 완전 끝날 때까지 기다린 후 스레드 작업을 시작하게 만들고 cancel()시 좌표값을 "음의 무한대"를 반환하게 하여 예외 처리를 진행하여 해결하였습니다.
+5. 유니티의 Transform, GetComponent와 같은 메소드들이 메인 스레드에서만 호출 가능하다는 것을 알았습니다.
+6. 또한 async / await의 활용에 대해 조금 더 익숙해 질 수 있었습니다.
