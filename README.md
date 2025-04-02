@@ -74,7 +74,7 @@
 ### 해결
 1. 최대한 다른 분이 작업한 Timer를 수정하고 싶지 않았기에, 먼저 Update()와 동기화를 시도했습니다.
 2. 이 과정에서 Task Queue를 활용해 실행 순서를 제어하려 시도했지만, 스레드 작업 미숙으로 인해 실패했습니다.
-3. Update()로 작업하신 것을 제어할 수 있게 코루틴으로 수정하고 Token 또한 cancel()을 호출 한 message에서 자원을 정리하게 만들었습니다.
+3. Update()로 작업하신 것을 제어할 수 있게 코루틴으로 수정하고 Token 또한 cancel()을 호출 한 message에서 자원을 정리하게 만들었습니다.   
 ![Image](https://github.com/user-attachments/assets/ecd7df82-ff07-40b4-8b22-d40474ccf39e)
 4. 스레드 작업 전 Timer의 기능이 완전 끝날 때까지 기다린 후 스레드 작업을 시작하게 만들고 cancel()시 좌표값을 "음의 무한대"를 반환하게 하여 예외 처리를 진행하여 해결하였습니다.
 5. 유니티의 Transform, GetComponent와 같은 메소드들이 메인 스레드에서만 호출 가능하다는 것을 알았습니다.
