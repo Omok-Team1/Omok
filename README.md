@@ -59,8 +59,7 @@
 ![Image](https://github.com/user-attachments/assets/0ad15912-66b2-4d90-b84c-70fad6161eeb)
 3. 또한, 해당 방향의 빈 칸이 3-3/4-4의 자리가 아니더라도 "띈 3", "띈 4"도 3-3/4-4를 성립시키므로 현재 검사한 빈 칸으로부터 빈 칸이 검출된 방향으로 한 칸 더 위치한 곳도 3-3/4-4를 검사해야합니다.
 ![Image](https://github.com/user-attachments/assets/50da4458-5451-45b6-ad43-90c6177f326c)
-4. 해당 빈 칸이 3-3/4-4인지는 해당 위치로 부터 base-condition을 정의하고 **8 방향을 재귀적으로** 검사했습니다.
+4. 해당 빈 칸이 3-3/4-4인지는 base-condition을 정의하고 해당 위치로부터 **8 방향을 재귀적으로** 검사했습니다. 재귀적으로 자신이 지금 보는 칸이 "빈칸", "자신의 돌", "상대 돌", "보드 밖"인지를 판단하면서 "자신의 돌"이 해당 방향으로 몇 개가 있는지 카운트해서 반환합니다.
 ![Image](https://github.com/user-attachments/assets/41edabe8-64f4-465b-b67b-4f0b00b91526)
-
 
 # AI 연산 비동기화
