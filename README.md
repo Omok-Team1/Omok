@@ -41,8 +41,6 @@
 ![Image](https://github.com/user-attachments/assets/7cc5c1f0-c58c-4eea-802a-d459bc4ffbba)
 4. 추가적으로 Block-Coding 느낌으로 기능을 ScriptableObject로 만들어 인스펙터에서만 작업해도 수정이 가능하도록 Editor를 구성해봤습니다.
 
-### Custom Scene Loader
-
 # 렌주룰 구현(3-3, 4-4 탐지 알고리즘)
 ### 코드 위치 : [147 ~ 392번 라인](https://github.com/Omok-Team1/Omok/blob/ParkJongHan/Assets/01.%20Scripts/In%20Game/ManagerController/BoardManager.cs#L147)
 1. Requirements는 아래와 같았습니다.   
